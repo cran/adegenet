@@ -1,0 +1,100 @@
+############################################
+# 
+# Functions to transform a genind object 
+# into other R classes
+#
+# Thibaut Jombart
+# jombart@biomserv.univ-lyon1.fr
+#
+############################################
+
+
+
+###########################
+# Function genind2genotype
+###########################
+genind2genotype <- function(x,pop=NULL,res.type=c("matrix","list")){
+  if(!inherits(x,"genind")) stop("x must be a genind object (see ?genind)")
+  if(!require(genetics)) stop("genetics package is not required but not installed.")
+  if(is.null(pop)) pop <- x$pop
+  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x$tab)))
+  res.type <- tolower(res.type[1])
+  
+  # make one table by locus from x$tab
+  kX <- seploc(x)
+  # kX is a list of nloc tables
+  
+  # function to recode a genotype in form "A1/A2" from frequencies
+  recod <- function(vec,lab){
+    if(all(is.na(vec))) return(NA)
+    if(round(sum(vec),10) != 1) return(NA)
+    temp <- c(which(vec==0.5),which(vec==1))
+    if(length(temp)==0) return(NA)
+    lab <- lab[temp]
+    res <- paste(lab[1],lab[length(lab)],sep="/")
+    return(res)
+  }
+
+  # function which converts data of a locus into a list of genotypes per population
+  f1 <- function(X){
+    tapply(X,pop,function(mat) apply(mat,1,recod))
+  }
+
+  # kGen is a list of nloc vectors of genotypes
+  kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x$all.names[[i]]))
+  names(kGen) <- x$loc.names
+
+  if(res.type=="list"){ # type list
+    # each genotype is splited per population
+    res <- lapply(kGen,split,pop)
+    res <- lapply(res,function(e) lapply(e,as.genotype))
+  } else if(res.type=="matrix"){ # type matrix
+    res <- cbind.data.frame(kGen)
+    res <- makeGenotypes(res,convert=1:ncol(res))
+  } else stop("Unknown res.type requested.")
+  
+  return(res)
+}
+
+
+
+############################
+# Function genind2hierfstat
+############################
+genind2hierfstat <- function(x,pop=NULL){
+  if(!inherits(x,"genind")) stop("x must be a genind object (see ?genind)")
+  if(is.null(pop)) pop <- x$pop
+  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x$tab)))
+  
+  # make one table by locus from x$tab
+  kX <- seploc(x)
+  # kX is a list of nloc tables
+
+  # prepare allele names
+  all.names <- x$all.names
+
+  # check the number of first 0 to remove from all.names
+  nfirstzero <- attr(regexpr("^0*",unlist(all.names)),"match.length")
+  nrmzero <- min(nfirstzero)
+
+  for(i in 1:nrmzero) {
+  all.names <- lapply(all.names,function(e) gsub("^0","",e))
+  }
+   
+  # function to recode a genotype in form "A1A2" (as integers) from frequencies
+  recod <- function(vec,lab){
+    if(all(is.na(vec))) return(NA)
+    if(sum(vec) < 0) return(NA)
+    temp <- which(vec!=0)
+    lab <- lab[temp]
+    res <- as.integer(paste(lab[1],lab[length(lab)],sep=""))
+    return(res)
+  }
+
+  # kGen is a list of nloc vectors of genotypes
+  kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,all.names[[i]]))
+  res <- cbind(as.numeric(pop),as.data.frame(kGen))
+  colnames(res) <- c("pop",x$loc.names)
+
+  return(res)
+}
