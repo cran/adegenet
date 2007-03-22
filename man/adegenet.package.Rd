@@ -11,6 +11,10 @@
   packages, making Hardy-Weinberg equilibrium test, F statistics,
   Goudet's G test for population structure, or linkage disequilibrium
   measure available directly or using simple conversion functions.\cr
+  Since the second version (1.0-1), \code{adegenet} also includes
+  spatial analysis function like Monmonier algorithm (see
+  \code{\link{monmonier}}) to define genetic boundaries among
+  individuals or populations.
 
   The basic class of object is \code{\link{genind}}, and contains
   genotypes (genind stands for genotypes-individuals).\cr
@@ -37,16 +41,23 @@
   - \code{\link{genind2hierfstat}} assures conversion into
   the format (particular data.frame) used in \code{hierfstat} package.\cr
 
-  Lastly, several genetic distances between populations can be computed
+  Moreover, several genetic distances between populations can be computed
   using \code{\link{dist.genpop}}.
-  Genetic distances between individuals are not yet implemented.  
+  Genetic distances between individuals are not yet implemented.
+
+  Lastly, the Monmonier algorithm is implemented to seek genetic
+  boundaries. The main function is \code{\link{monmonier}}, but
+  better (optimized) boundaries can be obtained using
+  \code{\link{optimize.monmonier}}. Object of the class \code{monmonier}
+  can be plotted and printed using the corresponding methods.   
+  
 }
 \details{
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.0-0\cr
-    Date: \tab 2007-03-27\cr
+    Version: \tab 1.0-1\cr
+    Date: \tab 2007-08-19\cr
     License: \tab GPL version 2 or newer
   }  
 
@@ -67,6 +78,9 @@
 
   \code{\link{gstat.randtest}}: Monte Carlo test of Goudet's G statistic
   for multilocus data\cr
+
+  \code{\link{monmonier}}: Monmonier algorithm to find genetic
+  boundaries among genetic entities on a connection network\cr
 
 }
 \author{Thibaut Jombart <jombart@biomserv.univ-lyon1.fr>}

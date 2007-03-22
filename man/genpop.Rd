@@ -16,8 +16,8 @@
 \usage{
 is.genpop(x)
 as.genpop(tab = NULL, prevcall = NULL)
-print.genpop(x,...)
-summary.genpop(object,...)
+\method{print}{genpop}(x, \dots)
+\method{summary}{genpop}(object, \dots)
 }
 \arguments{
   \item{x}{an object of class \code{genpop}.}

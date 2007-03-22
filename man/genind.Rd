@@ -19,8 +19,8 @@
 \usage{
 is.genind(x)
 as.genind(tab=NULL,pop=NULL,prevcall=NULL)
-print.genind(x,...)
-summary.genind(object,...)
+\method{print}{genind}(x, \dots)
+\method{summary}{genind}(object, \dots)
 genind2genpop(x,pop=NULL,missing=NA,quiet=FALSE)
 }
 \arguments{
@@ -50,6 +50,8 @@ genind2genpop(x,pop=NULL,missing=NA,quiet=FALSE)
   number of observations in 'k' ) equals the frequency 'f' computed on the whole data (i.e. considering all pop as one)\cr
   Then x verifies:\cr
   \deqn{x/s = f(1-f) => x=f(1-f)s}
+
+  Note on 'pop': the factor is sorted in the order of appearance of each modality.
 }
 \value{
   \item{tab}{matrix of genotypes -in rows- for all alleles -in

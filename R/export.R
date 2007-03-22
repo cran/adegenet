@@ -44,11 +44,20 @@ genind2genotype <- function(x,pop=NULL,res.type=c("matrix","list")){
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x$all.names[[i]]))
   names(kGen) <- x$loc.names
 
-  if(res.type=="list"){ # type list
+  if(res.type=="list"){ # list type
     # each genotype is splited per population
+
+    # correction of an error due to a change in as.genotype
+    # error occurs in list type when a population is entierly untyped for a locus,
+    # that is, all values are NA.
     res <- lapply(kGen,split,pop)
-    res <- lapply(res,function(e) lapply(e,as.genotype))
-  } else if(res.type=="matrix"){ # type matrix
+
+    f2 <- function(x){# x is a vector of character to be converted into genotype
+      if(all(is.na(x))) return(NA)
+      return(as.genotype(x))
+    }
+    res <- lapply(res,function(e) lapply(e,f2))
+  } else if(res.type=="matrix"){ # matrix type
     res <- cbind.data.frame(kGen)
     res <- makeGenotypes(res,convert=1:ncol(res))
   } else stop("Unknown res.type requested.")
