@@ -287,9 +287,15 @@ as.genind <- function(tab=NULL,pop=NULL,prevcall=NULL){
               loc.nall=loc.nall, loc.fac=loc.fac, all.names=all.names )
   
   # populations name (optional)
+  # beware, keep levels of pop sorted in
+  # there order of appearance
   if(!is.null(pop)) {
     pop.lab <- .genlab("P",length(levels(pop)) )
+    # put pop levels in appearance order
+    pop <- as.character(pop)
+    pop <- factor(pop, levels=unique(pop))
     temp <- pop
+    # now levels are correctly ordered
     levels(pop) <- pop.lab
     res$pop <- pop
     res$pop.names <- as.character(levels(temp))
@@ -564,9 +570,14 @@ genind2genpop <- function(x,pop=NULL,missing=NA,quiet=FALSE){
   # choose pop argument over x$pop
    if(!is.null(pop)) {
     if(length(pop) != nrow(x$tab)) stop("inconsistent length for factor pop")
-    pop <- as.factor(pop)
+    # keep levels in order of appearance
+    pop <- as.character(pop)
+    pop <- factor(pop, levels=unique(pop))
   } else {
     pop <- x$pop
+    # keep levels in order of appearance
+    pop <- as.character(pop)
+    pop <- factor(pop, levels=unique(pop))
     if(!is.null(x$pop.names)) levels(pop) <- x$pop.names # restore real names
   }
 
@@ -583,9 +594,9 @@ genind2genpop <- function(x,pop=NULL,missing=NA,quiet=FALSE){
     if(all(is.na(v)) || sum(v,na.rm=TRUE)==0) return(NA)
     return(v/(sum(v,na.rm=TRUE)))       
   }
-  
+
   tabcount <- 2* apply(x$tab,2,function(c) tapply(c,pop,f1))
-  # restitue matrix class when only one pop
+  # restitute matrix class when only one pop
   if(is.null(dim(tabcount))) {
     lab.col <- names(tabcount)
     tabcount <- matrix(tabcount,nrow=1)
