@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{HWE.test.genind}
 \alias{HWE.test.genind}
 \title{Hardy-Weinberg Equilibrium test for multilocus data}

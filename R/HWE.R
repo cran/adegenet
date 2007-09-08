@@ -17,8 +17,12 @@ HWE.test.genind <- function(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.t
     temp <- unique(vec)
     temp <- temp[!is.na(temp)]
     if(length(temp) < 2) return(NA)
-    if(res.type=="full") {res <- HWE.chisq(vec, simulate.p.value=permut, B=nperm)}
-    else {res <- HWE.chisq(genotype(vec), simulate.p.value=permut, B=nperm)$p.value}
+    if(res.type=="full") {
+      res <- HWE.chisq(vec, simulate.p.value=permut, B=nperm)
+    } else {
+      res <- HWE.chisq(genotype(vec), simulate.p.value=permut, B=nperm)$p.value
+    }
+    return(res)
   }
   
   res <- lapply(kGen,function(e) lapply(e,ftest,permut,nsim))

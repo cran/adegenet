@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{gstat.randtest}
 \alias{gstat.randtest}
 \title{Goudet's G-statistic Monte Carlo test for genind object}

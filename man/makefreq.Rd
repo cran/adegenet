@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{makefreq}
 \alias{makefreq}
 \title{Function to generate allelic frequencies}
@@ -15,9 +16,9 @@ makefreq(x,quiet=FALSE,missing=NA)
     (see details)}
 }
 \details{There are 3 treatments for missing values: \cr
-  - NA: kept as NA. \cr
+  - NA: kept as NA.\cr
   - 0: missing values are considered as zero. Recommended for a PCA on
-  compositionnal data. \cr
+  compositionnal data.\cr
   - "mean": missing values are given the mean frequency of the
   corresponding allele. Recommended for a centred PCA.  
 }

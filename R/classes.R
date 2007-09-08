@@ -89,7 +89,7 @@
   }
 
   # tests des dimensions des éléments 
-  n <- nrow(x$tab)
+  # n <- nrow(x$tab) ## no longer used
   p <- ncol(x$tab)
   k <- length(unique(x$loc.names))
 
@@ -389,7 +389,7 @@ print.genind <- function(x,...){
   cat("\n$call: ")
   print(x$call)
 
-  n <- nrow(x$tab)
+  # n <- nrow(x$tab) ## no longer used
   p <- ncol(x$tab)
   len <- 7
 
@@ -432,7 +432,7 @@ print.genpop <- function(x,...){
   cat("\n$call: ")
   print(x$call)
 
-  n <- nrow(x$tab)
+  # n <- nrow(x$tab) ## no longer used
   p <- ncol(x$tab)
 
   cat("\n$tab: ", nrow(x$tab), "x", ncol(x$tab), "matrix of alleles counts\n" )
@@ -582,7 +582,7 @@ genind2genpop <- function(x,pop=NULL,missing=NA,quiet=FALSE){
   }
 
   # make generic pop labels, store real pop names
-  pop.names <- levels(pop)
+  # pop.names <- levels(pop) ## no longer used
 
   # tabcount is a matrix pop x alleles, counting alleles per pop
   # *2 to have alleles count
@@ -602,7 +602,7 @@ genind2genpop <- function(x,pop=NULL,missing=NA,quiet=FALSE){
     tabcount <- matrix(tabcount,nrow=1)
     colnames(tabcount) <- lab.col
   }
-  meancol <- apply(tabcount,2,function(c) mean(c,na.rm=TRUE))
+  #meancol <- apply(tabcount,2,function(c) mean(c,na.rm=TRUE)) ## no longer used
 
   # NA treatment
   # Treatment when missing='REPLACE':

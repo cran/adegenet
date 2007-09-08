@@ -35,10 +35,10 @@ genind2genotype <- function(x,pop=NULL,res.type=c("matrix","list")){
     return(res)
   }
 
-  # function which converts data of a locus into a list of genotypes per population
-  f1 <- function(X){
-    tapply(X,pop,function(mat) apply(mat,1,recod))
-  }
+  # function which converts data of a locus into a list of genotypes per population ## no longer used
+  # f1 <- function(X){
+  #  tapply(X,pop,function(mat) apply(mat,1,recod))
+  #}
 
   # kGen is a list of nloc vectors of genotypes
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x$all.names[[i]]))

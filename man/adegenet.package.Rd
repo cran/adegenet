@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{adegenet-package}
 \alias{adegenet-package}
 \alias{adegenet}
@@ -56,8 +57,8 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.0-1\cr
-    Date: \tab 2007-08-19\cr
+    Version: \tab 1.0-2\cr
+    Date: \tab 2007-09-08\cr
     License: \tab GPL version 2 or newer
   }  
 
@@ -84,7 +85,9 @@
 
 }
 \author{Thibaut Jombart <jombart@biomserv.univ-lyon1.fr>}
-\references{ }
+\references{
+  See adegenet website: \url{http://pbil.univ-lyon1.fr/software/adegenet/}
+}
 \keyword{manip}
 \keyword{multivariate}
 \seealso{\code{ade4} package for multivariate analysis}
