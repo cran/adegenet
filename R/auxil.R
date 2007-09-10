@@ -151,3 +151,13 @@ seploc <- function(x,truenames=FALSE){
 
   return(kX)  
 }
+
+
+
+#######################
+# Function adegenetWeb
+#######################
+adegenetWeb <- function(){
+  cat("Opening url \"http://pbil.univ-lyon1.fr/software/adegenet/\" ...\n")
+  browseURL("http://pbil.univ-lyon1.fr/software/adegenet/")
+}

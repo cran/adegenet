@@ -10,6 +10,7 @@
 monmonier <- function(xy,dist,cn,threshold=NULL,nrun=1,skip.local.diff=rep(0,nrun),scanthres=is.null(threshold)){
 if(!require(spdep) & !require(ade4)) stop("The package spdep is required but not installed")
 if(!inherits(cn,"nb")) stop('cn is not a nb object')
+if(is.data.frame(xy)) xy <- as.matrix(xy)
 if(!is.matrix(xy)) stop('xy must be a matrix')
 if(!inherits(dist,"dist")) stop('Argument \'dist\' must be a distance matrix of class dist')
 if(nrow(xy) != nrow(as.matrix(dist))) stop('Number of sites and number of observations differ')
@@ -31,7 +32,7 @@ D <- M*D
 if(is.null(threshold) || threshold<0) {Dlim <- summary(unique(D[D>0]))[5]} else {Dlim <- threshold}
 
 if(scanthres){
-  barplot(sort(unique(D)[unique(D) > 0],dec=T),main="Local distances barplot")
+  barplot(sort(unique(D)[unique(D) > 0],dec=TRUE),main="Local distances barplot")
   abline(h=Dlim,lty=2)
   mtext("Dashed line indicates present threshold")
   cat("Indicate the threshold (\'d\' for default): ")
@@ -173,13 +174,13 @@ for(run in 1:nrun){
 	i <- 1
 	s <- 1
 	while(temp$val>Dlim){
-		temp <- getNext(D,s)
+          temp <- getNext(D,s) 
 		if( (checkNext(result[[run]]$dir1[[length(result[[run]]$dir1)]]$M,
-                              temp$M,
-                              result[[run]]$dir1[[length(result[[run]]$dir1)]]$A[2:3],
-                              result[[run]]$dir1[[length(result[[run]]$dir1)]]$B[2:3],
-                              temp$A[2:3],
-                              temp$B[2:3])) & (temp$val>Dlim)){
+                               temp$M,
+                               result[[run]]$dir1[[length(result[[run]]$dir1)]]$A[2:3],
+                               result[[run]]$dir1[[length(result[[run]]$dir1)]]$B[2:3],
+                               temp$A[2:3],
+                               temp$B[2:3])) & (temp$val>Dlim)){
 			i <- i+1
 			result[[run]]$dir1[[i]] <- temp
                         # mise à jour matrice des différences
@@ -273,9 +274,11 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
 
 if (!inherits(x, "monmonier")) stop("Use only with 'monmonier' objects")
 if(!is.null(variable) & !is.numeric(variable)) stop('If provided, variable must be numeric.\n')
-call <- as.list(x$call)
+# call <- as.list(x$call) ## no longer used
 
 xy <- x$xy
+cpoint <- 0
+
 if(cneig>0) {neig <- nb2neig(x$cn)} else {neig <- NULL}
 if(is.null(variable)){
 	variable <- rep(1,nrow(xy))
@@ -284,7 +287,7 @@ if(is.null(variable)){
 	clegend <- 0
 }
 s.value(xy,variable,grid=FALSE,include.ori=FALSE,addaxes=FALSE,neig=neig,
-        cneig=cneig,clegend=clegend,csize=csize,cpoint=0,pch=20,pixmap=pixmap,
+        cneig=cneig,clegend=clegend,csize=csize,cpoint=cpoint,pch=20,pixmap=pixmap,
         method=method,sub=sub,csub=csub,possub=possub,add.plot=add.plot)
 opar <- par(no.readonly=TRUE)
 on.exit(par(mar=opar$mar))
@@ -420,10 +423,10 @@ cn <- nb2neig(cn)
 M <- neig2mat(cn)
 D <- as.matrix(dist)
 D <- M*D
-if(is.null(threshold) || (threshold<0)) {Dlim <- median(unique(D[D>0]))} else {Dlim <- threshold}
+if(is.null(threshold) || (threshold<0)) {Dlim <- summary(unique(D[D>0]))[5]} else {Dlim <- threshold}
 
 if(scanthres){
-  barplot(sort(unique(D)[unique(D) > 0],dec=T),main="Local distances barplot")
+  barplot(sort(unique(D)[unique(D) > 0],dec=TRUE),main="Local distances barplot")
   abline(h=Dlim,lty=2)
   mtext("Dashed line indicates present threshold")
   cat("Indicate the threshold (\'d\' for default): ")
@@ -437,7 +440,7 @@ cat(paste("Boundaries computed (required: ",ntry,")\n",sep=""))
 # boucle for obligée pour utiliser aussi pour le cat
 tests <- list()
 for(i in 0:(ntry-1)){
-  tests[[i+1]] <- monmonier(xy, dist, cn.nb,skip=i,scan=F,thres=Dlim)
+  tests[[i+1]] <- monmonier(xy, dist, cn.nb,skip=i,scanthres=FALSE,threshold=Dlim)
   cat(paste(1+i," "))
 }
 

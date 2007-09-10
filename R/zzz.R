@@ -5,5 +5,5 @@ library.dynam("adegenet", pkg, lib)
   cat("   ##########################\n\n")
   
   cat(" - to start, type ?adegenet\n")
-  cat(" - send questions, bugs, ... to jombart@biomserv.univ-lyon1.fr\n\n")
+  cat(" - to browse adegenet website, type adegenetWeb()\n")
 }

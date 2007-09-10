@@ -199,7 +199,7 @@ fstat2genind <- function(file,missing=NA,quiet=FALSE){
 
   # read first infos
   info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
-  npop <- as.numeric(info[1])
+  # npop <- as.numeric(info[1]) ## no longer used
   nloc <- as.numeric(info[2]) 
   
   loc.names <- txt[2:(nloc+1)]
@@ -279,7 +279,7 @@ genepop2genind <- function(file,missing=NA,quiet=FALSE){
   nocomma <- which(! (1:length(txt)) %in% grep(",",txt))
   splited <- nocomma[which(! nocomma %in% pop.idx)]
   if(length(splited)>0){
-    for(i in sort(splited,dec=T)){
+    for(i in sort(splited,dec=TRUE)){
       txt[i-1] <- paste(txt[i-1],txt[i],sep=" ")
     }
     txt <- txt[-splited]

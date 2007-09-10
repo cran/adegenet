@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{Auxiliary functions}
 \alias{truenames}
 \alias{.truenames.genind}
@@ -5,17 +6,21 @@
 \alias{seploc}
 \alias{.seploc.genind}
 \alias{.seploc.genpop}
-\title{ Utilities functions for adegenet objects}
-\description{ Theses functions are to be used with \code{genind} and
+\alias{adegenetWeb}
+\title{ Utilities functions}
+\description{ Most of theses functions are to be used with \code{genind} and
   \code{genpop} objects.\cr
   \code{truenames} returns elements of the object with using true names
   (as opposed to generic labels) for individuals, markers, alleles, and population.\cr
   The function \code{seploc} splits the table (\code{x\$tab}) by marker,
   allowing separate analysis of markers.
+  An exception is \code{adegenetWeb}, which simply opens the adegenet
+  website in the default navigator.
 }
 \usage{
 truenames(x)
 seploc(x,truenames=FALSE)
+adegenetWeb()
 }
 \arguments{
   \item{x}{ a \code{genind} or \code{genpop} object.}

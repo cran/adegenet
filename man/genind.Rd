@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{genind}
 \alias{genind}
 \alias{is.genind}

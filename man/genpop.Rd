@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{genpop}
 \alias{genpop}
 \alias{is.genpop}

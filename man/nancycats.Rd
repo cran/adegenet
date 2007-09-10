@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{nancycats}
 \alias{nancycats}
 \docType{data}
@@ -20,17 +21,7 @@ Dominique Pontier (UMR CNRS 5558, University Lyon1, France)
 \references{
   Devillard, S.; Jombart, T. & Pontier, D. Disentangling spatial and
   genetic structure of stray cat (Felis catus L.) colonies in urban
-  habitat using: not all colonies are equal submitted to \emph{Molecular Ecology}
-
-  Jombart, T.; Devillard, S.; Dufour, A. & Pontier, D. A multivariate
-  method to investigate spatial patterns of genetic variability
-  submitted to \emph{Molecular Ecology}
-
-
-  Lalo\"e D., Jombart T., Dufour A.-B. and Moazami-Goudarzi K. (2007)
-  Consensus genetic structuring and typological value of markers using
-  Multiple Co-Inertia Analysis. accepted in \emph{Genetics Selection
-  Evolution}. 
+  habitat using: not all colonies are equal. submitted to \emph{Molecular Ecology}
 }
 \examples{
 data(nancycats)

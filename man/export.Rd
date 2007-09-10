@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{export}
 \alias{genind2genotype}
 \alias{genind2hierfstat}

@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{import}
 \alias{import2genind}
 \alias{genetix2genind}
@@ -31,9 +32,9 @@ fstat2genind(file,missing=NA,quiet=FALSE)
   in columns. Missing values are coded as "000000".}
   \item{pop}{an optional factor giving the population of each genotype in 'x'. }}
 \details{There are 3 treatments for missing values: \cr
-  - NA: kept as NA. \cr
+  - NA: kept as NA.\cr
   - 0: missing values are considered as zero. Recommended for a PCA on
-  compositionnal data. \cr
+  compositionnal data.\cr
   - "mean": missing values are given the mean frequency of the
   corresponding allele. Recommended for a centred PCA.\cr
 

@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{chooseCN}
 \alias{chooseCN}
 \title{Function to choose a connection network}
@@ -42,7 +43,7 @@ chooseCN(xy, ask = TRUE, type = 1, result.type = "nb", d1 = NULL,
 \value{Returns a connection network having the class \code{nb} or \code{listw}.
 }
 \references{}
-\seealso{}
+\seealso{\code{\link{monmonier}}
 }
 \author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
 \examples{
