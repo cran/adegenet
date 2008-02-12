@@ -4,13 +4,14 @@
 gstat.randtest <- function(x,pop=NULL, method=c("global","within","between"),
                            sup.pop=NULL, sub.pop=NULL, nsim=499){
   
-  if(!inherits(x,"genind")) stop("x must be a genind object (see ?genind)")
+  if(!is.genind(x)) stop("x is not a valid genind object")
+
   if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
   if(!require(ade4)) stop("ade4 package is required. Please install it.")
   
-  if(is.null(pop)) pop <- x$pop
-  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x$tab)))
-  if(length(pop)!=nrow(x$tab)) stop("pop has a wrong length.")
+  if(is.null(pop)) pop <- x@pop
+  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
+  if(length(pop)!=nrow(x@tab)) stop("pop has a wrong length.")
 
   met <- tolower(method[1])
   if(met=="within" && is.null(sup.pop)) stop("Method 'within' chosen but 'sup.pop' is not provided.")

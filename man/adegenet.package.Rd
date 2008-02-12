@@ -3,86 +3,105 @@
 \alias{adegenet-package}
 \alias{adegenet}
 \docType{package}
-\title{Genetic data handling for multivariate analysis}
+\title{The adegenet package}
 
-\description{This package is devoted to manipulate data obtained from
-  molecular markers. The newly defined classes of object facilitate their
-  analysis within the multivariate framework of the \code{ade4}
-  package. However, this package also provides interfaces with other
-  packages, making Hardy-Weinberg equilibrium test, F statistics,
-  Goudet's G test for population structure, or linkage disequilibrium
-  measure available directly or using simple conversion functions.\cr
-  Since the second version (1.0-1), \code{adegenet} also includes
-  spatial analysis function like Monmonier algorithm (see
-  \code{\link{monmonier}}) to define genetic boundaries among
-  individuals or populations.
+\description{This package is devoted to the multivariate analysis of
+  molecular markers data. It defines two formal (S4) classes:
+  - \linkS4class{genind}: a class for data of individuals ("genind" stands for genotypes-individuals).\cr
+  - \linkS4class{genpop}: a class for data of groups of individuals ("genpop" stands for genotypes-populations)\cr
+  For more information about these classes, type "class ? genind" or
+  "class ? genpop".\cr  
 
-  The basic class of object is \code{\link{genind}}, and contains
-  genotypes (genind stands for genotypes-individuals).\cr
-  It can be obtained by converting files from GENETIX, Fstat
-  and Genepop using \code{\link{import2genind}}.\cr
-  The second class is \code{\link{genpop}}: such object contains alleles counts per populations and
-  loci. It can be obtained from any \code{\link{genind}} object using
-  \code{\link{genind2genpop}}.\cr
-  It is also possible to obtain a table of allelic frequencies using
-  \code{\link{makefreq}} on a \code{\link{genpop}} object.
-  In all cases, missing data can be treated using different options.\cr
+  Both types of objects store information from molecular markers in a matrix (\$tab slot),
+  that can be directly analyzed using multivariate methods such as
+  Principal Component Analysis, Correspondance Analysis, etc. See the
+  "dudi.[...]" methods in the \code{ade4} package. Moreover, this
+  package offers methods for manipulating and analyzing information
+  coming from genetic markers (see below). \cr
 
-  The package proposes useful functions for \code{genind} objects:\cr
-  - \code{\link{HWE.test.genind}} to test for Hardy-Weinberg equilibrium on every locus
-  x population combinaisons (based on \code{HWE.test}, package
-  \code{genetics}).\cr
-  - \code{\link{gstat.randtest}} is Monte Carlo test (class
-  \code{\link[pkg:ade4]{randtest}}) of Goudet's G statistic measuring
-  population structure (based on \code{\link[pkg:hierfstat]{g.stat.glob}}, package
-  \code{hierfstat}).\cr
-  - \code{\link{genind2genotype}} assures conversion into
-  \code{\link[pkg:genetics]{genotype}} objects used in \code{genetics}
-  and \code{LDheatmap} packages.\cr
-  - \code{\link{genind2hierfstat}} assures conversion into
-  the format (particular data.frame) used in \code{hierfstat} package.\cr
-
-  Moreover, several genetic distances between populations can be computed
-  using \code{\link{dist.genpop}}.
-  Genetic distances between individuals are not yet implemented.
-
-  Lastly, the Monmonier algorithm is implemented to seek genetic
-  boundaries. The main function is \code{\link{monmonier}}, but
-  better (optimized) boundaries can be obtained using
-  \code{\link{optimize.monmonier}}. Object of the class \code{monmonier}
-  can be plotted and printed using the corresponding methods.   
   
-}
+  === IMPORTING DATA ===\cr
+  \code{adegenet} imports data to \linkS4class{genind} object from the
+  following softwares:\cr
+  - STRUCTURE: see \code{\link{read.structure}}\cr
+  - GENETIX: see \code{\link{read.genetix}}\cr
+  - FSTAT: see \code{\link{read.fstat}}\cr
+  - Genepop: see \code{\link{read.genepop}}\cr
+
+  To import data from any of these formats, you can also use the general
+  function \code{\link{import2genind}}.\cr
+  It is also possible to read genotypes coded by character strings from
+  a data.frame in which genotypes are in rows, markers in columns. For
+  this, use \code{\link{df2genind}}.\cr
+
+  
+   === EXPORTING DATA ===\cr
+   \code{adegenet} exports data from \linkS4class{genind} object to
+   formats recognized by other R packages:\cr
+   - the genetics package: see \code{\link{genind2genotype}}\cr 
+   - the hierfstat package: see \code{\link{genind2hierfstat}}\cr
+
+   Genotypes can also be recoded from a \linkS4class{genind} object into
+   a data.frame of character strings, using any separator between
+   alleles. This covers formats from many softwares like GENETIX or
+   STRUCTURE. For this, see \code{\link{genind2df}}.\cr
+
+   
+   === MANIPULATING DATA ===\cr
+   Several functions allow one to manipulate \linkS4class{genind} or
+   \linkS4class{genpop} objects\cr
+   - \code{\link{genind2genpop}}: convert a \linkS4class{genind} object
+   to a  \linkS4class{genpop} \cr
+   - \code{\link{seploc}}: creates one object per marker \cr
+   - \code{\link{seppop}}: creates one object per population \cr
+   - \code{\link{na.replace}}: replaces missing data (NA) in an
+   approriate way \cr
+   - \code{\link{truenames}}: restores true names of an object
+   (\linkS4class{genind} and \linkS4class{genpop} use generic labels)
+   \cr
+   - x[i,j]: create a new object keeping only genotypes (or populations)
+   indexed by 'i' and the alleles indexed by 'j'.\cr
+   - \code{\link{makefreq}}: returns a table of allelic frequencies from
+   a \linkS4class{genpop} object.\cr
+   - \code{\link{repool}} merges genoptypes from different
+   genetic pools into one single \linkS4class{genind} object.\cr
+
+   
+   === ANALYZING DATA ===\cr
+   Several functions allow to use usual, and less usual analyses:\cr
+   - \code{\link{HWE.test.genind}}: performs HWE test for all
+   populations and loci combinations \cr
+   - \code{\link{gstat.randtest}}: performs a Monte Carlo test of Goudet's G statistic, measuring
+   population structure (based on \code{\link[pkg:hierfstat]{g.stat.glob}} package \code{hierfstat}).\cr
+   - \code{\link{dist.genpop}}: computes 5 genetic distances among populations. \cr
+   - \code{\link{monmonier}}: implementation of the Monmonier algorithm,
+   used to seek genetic boundaries among individuals or populations. Optimized boundaries can be obtained using
+   \code{\link{optimize.monmonier}}. Object of the class
+   \code{monmonier} can be plotted and printed using the corresponding
+   methods. \cr   
+   - \code{\link{hybridize}}: implements hybridization between two populations. \cr
+   - \code{\link{spca}}: implements Jombart et al. (in revision) spatial
+   Principal Component Analysis \cr
+   - \code{\link{global.rtest}}: implements Jombart et al. (in revision)
+   test for global spatial structures \cr
+   - \code{\link{local.rtest}}: implements Jombart et al. (in revision)
+   test for local spatial structures \cr
+
+   Adegenet also proposes several real or simulated datasets.\cr
+
+   For more information, visit the adegenet website by typing
+   \code{adegenetWeb()}.\cr
+
+   To cite adegenet, please use \code{citation("adegenet")}.
+ }
 \details{
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.0-2\cr
-    Date: \tab 2007-09-08\cr
-    License: \tab GPL version 2 or newer
+    Version: \tab 1.1-0\cr
+    Date: \tab 2008-02-12\cr
+    License: \tab GPL (>=2)
   }  
-
-  These are the essential functions provided by the package:\cr
-
-  \code{\link{genind}}: adegenet class for individual genotypes\cr
-  
-  \code{\link{genpop}}: adegenet class for allele counts in
-  populations\cr
-  
-  \code{\link{import2genind}}: Conversion function for adegenet (from
-  GENETIX, Fstat, Genepop)\cr
-  
-  \code{\link{makefreq}}: Function to generate allelic frequencies\cr
-
-  \code{\link{HWE.test.genind}}: Hardy-Weinberg Equilibrium test for
-  multilocus data\cr
-
-  \code{\link{gstat.randtest}}: Monte Carlo test of Goudet's G statistic
-  for multilocus data\cr
-
-  \code{\link{monmonier}}: Monmonier algorithm to find genetic
-  boundaries among genetic entities on a connection network\cr
-
 }
 \author{Thibaut Jombart <jombart@biomserv.univ-lyon1.fr>}
 \references{
@@ -90,4 +109,4 @@
 }
 \keyword{manip}
 \keyword{multivariate}
-\seealso{\code{ade4} package for multivariate analysis}
+\seealso{The \code{ade4} package for multivariate analysis}

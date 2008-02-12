@@ -1,18 +1,20 @@
 \encoding{UTF-8}
 \name{HWE.test.genind}
 \alias{HWE.test.genind}
+
 \title{Hardy-Weinberg Equilibrium test for multilocus data}
-\description{The function \code{HWE.test.genind} performs Hardy-Weinberg
-  Equilibrium test on multilocus data (object of class
-  \code{genind}).
-  The test itself is performed using the function \code{HWE.test} of the \code{genetics} package.
+\description{The function \code{HWE.test} is a generic function to
+  perform Hardy-Weinberg Equilibrium tests defined by the
+  \code{genetics} package. adegenet proposes a method for \code{genind}
+  objects.\cr
+   
   The output can be of two forms:\cr
   - a list of tests (class \code{htest}) for each locus-population
   combinaison \cr
   - a population x locus matrix containing p-values of the tests  
 }
 \usage{
-HWE.test.genind(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.type=c("full","matrix"))
+\method{HWE.test}{genind}(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.type=c("full","matrix"))
 }
 \arguments{
   \item{x}{an object of class \code{genind}.}
@@ -53,10 +55,10 @@ HWE.test.genind(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.type=c("full"
 data(nancycats)
 obj <- nancycats
 if(require(genetics)){
-obj.test <- HWE.test.genind(obj)
+obj.test <- HWE.test(obj)
 
 # pvalues matrix to have a preview
-HWE.test.genind(obj,res.type="matrix")
+HWE.test(obj,res.type="matrix")
 
 #more precise view to...
 obj.test$fca90$P10

@@ -3,10 +3,12 @@
 ##################
 
 HWE.test.genind <- function(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.type=c("full","matrix")){
-  if(!inherits(x,"genind")) stop("x must be a genind object (see ?genind)")
+  
+  if(!is.genind(x)) stop("x is not a valid genind object")
+
   if(!require(genetics)) stop("genetics package is required. Please install it.")
-  if(is.null(pop)) pop <- x$pop
-  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x$tab)))
+  if(is.null(pop)) pop <- x@pop
+  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
   res.type <- tolower(res.type[1])
   if(res.type != "full" && res.type != "matrix") stop("unknown res.type specified.")
   

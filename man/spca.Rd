@@ -1,0 +1,155 @@
+\encoding{UTF-8}
+\name{spca}
+\alias{spca}
+\alias{print.spca}
+\alias{summary.spca}
+\alias{plot.spca}
+\alias{screeplot.spca}
+\title{Spatial principal component analysis}
+\description{These functions are designed to perform a spatial principal
+  component analysis and to display the results. They call upon
+  \code{multispati} from the \code{ade4} package.
+  
+  \code{spca} performs the spatial component analysis. Other
+  functions are:\cr
+  
+  - \code{print.spca}: prints the spca content\cr
+  
+  - \code{summary.spca}: gives variance and autocorrelation
+  statistics\cr
+  
+  - \code{plot.spca}: usefull graphics (connection network, 3 different
+  representations of map of scores, eigenvalues barplot and
+  decomposition)\cr
+  
+  - \code{screeplot.spca}: decomposes spca eigenvalues into variance and
+  autocorrelation\cr
+}
+\usage{
+spca(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfnega=1, type=1, ask=TRUE,
+plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
+
+\method{print}{spca}(x, \dots)
+
+\method{summary}{spca}(object, \dots, printres=TRUE)
+
+\method{plot}{spca}(x, axis = 1, \dots)
+
+\method{screeplot}{spca}(x, \dots, main=NULL)
+}
+\arguments{
+  \item{obj}{a \code{genind} or \code{genpop} object.}
+  \item{xy}{an matrix or data.frame with two columns for x and y
+    coordinates. Can be NULL if cn is provided.}
+  \item{cn}{a connection network of the class 'nb' (package spdep). Can
+    be NULL if xy is provided. Can be easily obtained using the function
+    chooseCN.}
+  \item{scale}{a logical indicating whether alleles should be scaled to
+    unit variance (TRUE) or not (FALSE, default).}
+  \item{scannf}{a logical stating whether eigenvalues should be chosen
+    interactively (TRUE, default) or not (FALSE).}
+  \item{nfposi}{an integer giving the number of positive eigenvalues retained
+    ('global structures').}
+  \item{nfnega}{an integer giving the number of negative eigenvalues retained
+    ('local structures').}
+  \item{type}{an integer giving the type of graph (see details in
+    \code{chooseCN} help page). Used if \code{ask=FALSE}}
+  \item{ask}{a logical stating whether graph should be chosen
+    interactively (TRUE,default) or not (FALSE).}
+  \item{plot.nb}{a logical stating whether the resulting graph should be
+    plotted (TRUE, default) or not  (FALSE).}
+  \item{edit.nb}{a logical stating whether the resulting graph should be
+    edited manually for corrections (TRUE) or not  (FALSE, default).}  
+  \item{truenames}{a logical stating whether true names should be used
+    for 'obj' (TRUE, default) instead of generic labels (FALSE)}
+  \item{d1}{the minimum distance between any two neighbours. Used if
+    \code{type=5.}}
+  \item{d2}{the maximum distance between any two neighbours. Used if
+    \code{type=5}.}
+  \item{k}{the number of neighbours per point. Used if
+    \code{type=6}.}
+  \item{x}{a \code{spca} object.}
+  \item{object}{a \code{spca} object.}
+  \item{printres}{a logical stating whether results should be printed on
+    the screen (TRUE, default) or not (FALSE).}
+  \item{axis}{an integer between 1 and (nfposi+nfnega) indicating which
+    axis should be plotted.}
+  \item{main}{a title for the screeplot; if NULL, a default one is
+    used.}
+  \item{\dots}{further arguments passed to other methods.}
+}
+\details{The spatial principal component analysis (sPCA) is designed to
+  investigate spatial patterns in the genetic variability. Given
+  multilocus genotypes (individual level) or allelic frequency
+  (population level) and spatial coordinates, it finds individuals (or
+  population) scores maximizing the product of variance and spatial
+  autocorrelation (Moran's I). Large positive and negative eigenvalues
+  correspond to global and local structures. 
+}
+\value{The class \code{spca} are given to lists with the following
+  components:\cr
+  \item{eig}{a numeric vector of eigenvalues.}
+  \item{nfposi}{an integer giving the number of global structures
+    retained.}
+  \item{nfnega}{an integer giving the number of local structures retained.}
+  \item{c1}{a data.frame of alleles loadings for each axis.}
+  \item{li}{a data.frame of row (individuals or populations) coordinates
+    onto the sPCA axes.}
+  \item{ls}{a data.frame of lag vectors of the row coordinates; useful
+    to clarify maps of global scores .}
+  \item{as}{a data.frame giving the coordinates of the PCA axes onto the
+    sPCA axes.}
+  \item{call}{the matched call.}
+  \item{xy}{a matrix of spatial coordinates.}
+  \item{cn}{a connection network of class \code{nb}.}
+  
+  Other functions have different outputs:\cr
+  - \code{summary.spca} returns a list with 3 components: \code{Istat}
+  giving the null, minimum and maximum Moran's I values; \code{pca}
+  gives variance and I statistics for the principal component analysis;
+  \code{spca} gives variance and I statistics for the sPCA.\cr
+
+  - \code{plot.spca} returns the matched call.\cr
+
+  - \code{screeplot.spca} returns the matched call.  
+}
+\references{
+Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.
+Revealing cryptic spatial patterns in genetic variability by a new
+multivariate method. Submitted to \emph{Heredity}.
+
+Smouse, P. E. and Peakall, R. (1999) Spatial autocorrelation analysis of
+individual multiallele and multilocus genetic structure.  \emph{Heredity},
+\bold{82}, 561--573.
+
+Wartenberg, D. E. (1985) Multivariate spatial correlation: a method for
+exploratory geographical analysis. \emph{Geographical Analysis},
+\bold{17}, 263--283.
+
+Moran, P.A.P. (1948) The interpretation of statistical
+maps. \emph{Journal of the Royal Statistical Society, B}
+\bold{10}, 243--251.
+
+Moran, P.A.P. (1950) Notes on continuous stochastic
+phenomena. \emph{Biometrika}, \bold{37}, 17--23.
+
+de Jong, P. and Sprenger, C. and van Veen, F. (1984) On extreme values
+of Moran's I and Geary's c. \emph{Geographical Analysis}, \bold{16}, 17--24.
+
+}
+\seealso{\code{\link{spcaIllus}}, a set of simulated data illustrating
+  the sPCA \cr
+  \code{\link{global.rtest}} and \code{\link{local.rtest}} \cr
+  \code{\link{chooseCN}}, \code{\link[pkg:ade4]{multispati}}, \code{\link[pkg:ade4]{multispati.randtest}}
+}
+\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\examples{
+## data(spcaIllus) illustrates the sPCA
+## see ?spcaIllus
+##
+
+example(spcaIllus)
+
+}
+\keyword{spatial}
+\keyword{multivariate}

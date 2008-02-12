@@ -11,9 +11,9 @@ whose spatial coordinates are also provided.
 \usage{data(nancycats)}
 \format{
     \code{nancycats} is a genind object with spatial coordinates of the
-    colonies as a supplementary components (\$xy). Beware: these
-    coordinates are given for the true names (stored in \$pop.names) and
-    not for the generic names (used in \$pop).
+    colonies as a supplementary components (@xy). Beware: these
+    coordinates are given for the true names (stored in @pop.names) and
+    not for the generic names (used in @pop).
 }
 \source{
 Dominique Pontier (UMR CNRS 5558, University Lyon1, France)
@@ -38,7 +38,7 @@ plot(x$pop.eff,x$pop.nall,type="n",xlab="Sample size",ylab="Number of alleles")
 text(x$pop.eff,y=x$pop.nall,lab=names(x$pop.nall))
 
 par(las=3)
-barplot(table(nancycats$pop),ylab="Number of genotypes",main="Number of genotypes per colony")
+barplot(table(nancycats@pop),ylab="Number of genotypes",main="Number of genotypes per colony")
 
 # are cats structured among colonies ?
 if(require(hierfstat)){

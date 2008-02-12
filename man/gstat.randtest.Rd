@@ -12,12 +12,13 @@
   schemes (see details).
 }
 \usage{
-gstat.randtest(x,pop=NULL, method=c("global","within","between"),sup.pop=NULL, sub.pop=NULL, nsim=499)
+gstat.randtest(x,pop=NULL, method=c("global","within","between"),
+sup.pop=NULL, sub.pop=NULL, nsim=499)
 }
 \arguments{
   \item{x}{an object of class \code{genind}.}
   \item{pop}{a factor giving the 'population' of each individual. If NULL,
-  pop is seeked from x\$pop. Note that the term population refers in
+  pop is seeked from x\@pop. Note that the term population refers in
   fact to any grouping of individuals'.}
   \item{method}{a character (if a vector, only first argument is kept)
     giving the method to be applied: 'global', 'within' or 'between'
@@ -52,7 +53,7 @@ gstat.randtest(x,pop=NULL, method=c("global","within","between"),sup.pop=NULL, s
 if(require(hierfstat)){
 # here the example of g.stats.glob is taken using gstat.randtest
 data(gtrunchier)
-x <- genetix2genind(X=gtrunchier[,-c(1,2)],pop=gtrunchier$Patch)
+x <- df2genind(X=gtrunchier[,-c(1,2)],pop=gtrunchier$Patch)
 
 # test in hierfstat
 gtr.test<- g.stats.glob(gtrunchier[,-1])

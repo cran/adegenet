@@ -2,7 +2,8 @@
 # Function makefreq
 ####################
 makefreq <- function(x,quiet=FALSE,missing=NA){
-  if(!is.genpop(x)) stop("To be used with a genpop object")
+
+  if(!is.genpop(x)) stop("x is not a valid genpop object")
 
   if(!quiet) cat("\n Finding allelic frequencies from a genpop object... \n")
 
@@ -13,13 +14,13 @@ makefreq <- function(x,quiet=FALSE,missing=NA){
 
   res <- list()
   
-  tabcount <- x$tab
+  tabcount <- x@tab
   
-  eff.pop <- t(apply(tabcount,1,function(r) tapply(r,x$loc.fac,sum,na.rm=TRUE)))  
+  eff.pop <- t(apply(tabcount,1,function(r) tapply(r,x@loc.fac,sum,na.rm=TRUE)))  
    
   # tabfreq is a pop x loci table of allelic frequencies
-  tabfreq <- t(apply(tabcount,1,function(r) unlist(tapply(r,x$loc.fac,f1))))
-  colnames(tabfreq) <- colnames(x$tab)
+  tabfreq <- t(apply(tabcount,1,function(r) unlist(tapply(r,x@loc.fac,f1))))
+  colnames(tabfreq) <- colnames(x@tab)
 
   # NA treatment
   # NA can be kept as is, or replaced 0 or by the mean frequency of the allele.

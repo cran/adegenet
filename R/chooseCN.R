@@ -44,7 +44,7 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
         cat("\t Relative neighbours (type 3)\n")
         cat("\t Minimum spanning tree (type 4)\n")
         cat("\t Neighbourhood by distance (type 5)\n")
-        cat("\t K nearests neighbours (type 6)\n")
+        cat("\t K nearest neighbours (type 6)\n")
         cat("Answer: ")
         
         type <- as.integer(readLines(n = 1))
@@ -131,8 +131,9 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
   
   if(result.type == "listw") {cn <- nb2listw(cn, style="W", zero.policy=TRUE)}
 
-  res$xy <- xy
-  res$cn <- cn
+  res <- cn
+
+  attr(res,"xy") <- xy
   
   return(res)
   

@@ -4,7 +4,7 @@
 \title{Function to choose a connection network}
 \description{The function \code{chooseCN} is a simple interface to
   build a connection network (CN) from xy coordinates. The user chooses
-  from 6 kind of graphes. \code{chooseCN} calls functions from
+  from 6 types of graph. \code{chooseCN} calls functions from
   appropriate packages, handles non-unique coordinates and returns a
   connection network either with classe \code{nb} or \code{listw}.  
 }
@@ -40,10 +40,12 @@ chooseCN(xy, ask = TRUE, type = 1, result.type = "nb", d1 = NULL,
   Neighbourhood by distance (type 5)\cr
   K nearests neighbours (type 6)\cr
 }
-\value{Returns a connection network having the class \code{nb} or \code{listw}.
+\value{Returns a connection network having the class \code{nb} or
+  \code{listw}. The xy coordinates are passed as attribute to the
+  created object.
 }
 \references{}
-\seealso{\code{\link{monmonier}}
+\seealso{\code{\link{spca}}
 }
 \author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
 \examples{
@@ -51,10 +53,10 @@ data(nancycats)
 if(require(spdep) & require(ade4)){
 
 par(mfrow=c(2,2))
-cn1 <- chooseCN(nancycats$xy,ask=FALSE,type=1)
-cn2 <- chooseCN(nancycats$xy,ask=FALSE,type=2)
-cn3 <- chooseCN(nancycats$xy,ask=FALSE,type=3)
-cn4 <- chooseCN(nancycats$xy,ask=FALSE,type=4)
+cn1 <- chooseCN(nancycats@other$xy,ask=FALSE,type=1)
+cn2 <- chooseCN(nancycats@other$xy,ask=FALSE,type=2)
+cn3 <- chooseCN(nancycats@other$xy,ask=FALSE,type=3)
+cn4 <- chooseCN(nancycats@other$xy,ask=FALSE,type=4)
 par(mfrow=c(1,1))
 }
 }
