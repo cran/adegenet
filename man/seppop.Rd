@@ -1,0 +1,45 @@
+\encoding{UTF-8}
+\docType{methods}
+\name{seploc}
+\alias{seppop}
+\alias{seppop-methods}
+\alias{seppop,ANY-method}
+\alias{seppop,genind-method}
+\title{ Separate genotypes per population}
+\description{
+  The function \code{seppop} splits a \linkS4class{genind} object by
+  population, returning a list of objects whose components each
+  correspond to a population.\cr
+
+  By default, components of the list are \linkS4class{genind} objects.
+  It can also be a matrix of genotypes corresponding to the x\$tab.\cr
+}
+\usage{
+\S4method{seppop}{genind}(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"))
+}
+\arguments{
+  \item{x}{a \linkS4class{genind} object}
+  \item{pop}{a factor giving the population of each genotype in 'x'. If
+    not provided, seeked in x\$pop.}
+  \item{truenames}{a logical indicating whether true names should be
+    used (TRUE, default) instead of generic labels (FALSE); used if
+    res.type is "matrix".}
+  \item{res.type}{a character indicating the type of returned results,
+      a list of \linkS4class{genind} object (default) or a matrix of data
+      corresponding to the 'tab' slots.}
+}
+\value{
+  According to 'rse.type': a list of \linkS4class{genind} object
+  (default) or a matrix of data corresponding to the 'tab' slots.
+}
+\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\seealso{\code{\link{seploc}}, \code{\link{repool}}}
+\examples{
+data(microbov)
+
+obj <- seppop(microbov)
+names(obj)
+
+obj$Salers
+}
+\keyword{manip}

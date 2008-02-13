@@ -52,7 +52,7 @@ genind2hierfstat(x,pop=NULL)
 \examples{
 if(require(hierfstat)){
 
-obj <- fstat2genind(system.file("data/diploid.dat",package="hierfstat"))
+obj <- read.fstat(system.file("data/diploid.dat",package="hierfstat"))
 
 X <- genind2hierfstat(obj)
 X

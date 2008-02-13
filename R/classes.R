@@ -1,25 +1,24 @@
 ########################################################################
-# Ensemble de fonctions pour le traitement des données génétiques
-# dans le cadre de l'interface avec des méthodes d'analyse multivariées
-# du package ade4 de R.
+# adegenet classes definitions. All classes are S4.
 #
-# Thibaut Jombart, Février 2007
+# Thibaut Jombart, November 2007
 # jombart@biomserv.univ-lyon1.fr
 ########################################################################
 
 ###############################
 # Two classes of R object are 
 # defined :
+# gen - common part to genind and genpop
 # genind - genotypes of individuals
 # genpop - allelic frequencies of populations
 ###############################
 
 
-#############################################################################################
-#############################################################################################
+###############################################################
+###############################################################
 # AUXILIARY FUNCTIONS
-#############################################################################################
-#############################################################################################
+###############################################################
+###############################################################
 
 
 
@@ -32,90 +31,6 @@
     charvec <- gsub("([[:blank:]]*)([[:space:]]*)$","",charvec)
     return(charvec)
 }
-
-
-
-#######################################
-# Function .is.gen
-# used in both is.genind and is.genpop
-#######################################
-.is.gen <- function(x){
-  if(!is.list(x)) {
-    cat("\nnot a list\n")
-    return(FALSE)
-  }
-  
-# tests sur l'existence des éléments
-  if( is.null(x$tab) ||
-     is.null(x$loc.names) ||
-     is.null(x$loc.fac) ||
-     is.null(x$loc.nall) ||
-     is.null(x$all.names) ||
-     is.null(x$call)) {
-       cat("\nMissing elements.\n")
-       return(FALSE)
-     }
-
-# tests sur la nature des éléments
-  if(is.data.frame(x$tab)) x$tab <- as.matrix(x$tab)
-  if(!is.matrix(x$tab)) {
-    cat("\ntab not a matrix\n")
-    return(FALSE)
-  }
-  
-  if(!is.character(x$loc.names)) {
-    cat("\nloc.names not a character vector\n")
-    return(FALSE)
-  }
-  
-  if(!is.factor(x$loc.fac)) {
-    cat("\nloc.fac not a factor\n")
-    return(FALSE)
-  }
-  
-  if(!is.numeric(x$loc.nall)) {
-    cat("\nloc.nall not a numeric vector\n")
-    return(FALSE)
-  }
-  
-  if(!is.list(x$all.names)) {
-    cat("\nall.names is not a list\n")
-    return(FALSE)
-  }
-
-  if(!all(lapply(x$all.names,is.character))) {
-    cat("\nall.names does not contains only character vectors\n")
-    return(FALSE)
-  }
-
-  # tests des dimensions des éléments 
-  # n <- nrow(x$tab) ## no longer used
-  p <- ncol(x$tab)
-  k <- length(unique(x$loc.names))
-
-  if(length(x$loc.fac) != p) {
-    cat("\ninvalid length for loc.fac\n")
-    return(FALSE)
-  }
-
-  if(length(levels(x$loc.fac)) != k) {
-    cat("\ninvalid number of levels in loc.fac\n")
-    return(FALSE)
-  }
-
-  if(length(x$loc.nall) != k) {
-    cat("\ninvalid length in loc.nall\n")
-    return(FALSE)
-  }
-
-  if(length(unlist(x$all.names)) != p) {
-    cat("\ninvalid length in all.names\n")
-    return(FALSE)
-  }
-
-  return(TRUE)
-
-}# end .is.gen
 
 
 
@@ -140,105 +55,185 @@
 
 
 
+###############################################################
+###############################################################
+# CLASSES DEFINITION
+###############################################################
+###############################################################
 
-#############################################################################################
-#############################################################################################
-# CLASS FUNCTIONS
-#############################################################################################
-#############################################################################################
+#.initAdegenetClasses <- function(){
+
+
+####################
+# Unions of classes
+####################
+setClassUnion("listOrNULL", c("list","NULL"))
+setClassUnion("factorOrNULL", c("factor","NULL"))
+setClassUnion("charOrNULL", c("character","NULL"))
+setClassUnion("callOrNULL", c("call","NULL"))
+setClassUnion("intOrNum", c("integer","numeric"))
 
 
 
-#####################
-# Function .is.genind
-#####################
-is.genind <- function(x){
-  if(!inherits(x,"genind")) return(FALSE)
+####################
+# virtual class gen
+####################
+.gen.valid <- function(object){
+  # this function tests only the consistency
+  # of the length of each component
+  p <- ncol(object@tab)
+  k <- length(unique(object@loc.names))
 
-  if(!.is.gen(x)) return(FALSE)
-
-  if(!is.null(x$pop)){
-    if(is.character(x$pop) || is.numeric(x$pop)) x$pop <- as.factor(x$pop)
-
-    if(!is.factor(x$pop)) {
-      cat("\npop is given but not a factor\n")
-      return(FALSE)
-    }
-
-    if(length(x$pop) != nrow(x$tab)) {
-      cat("\npop is given but invalid length\n")
-      return(FALSE)
-    }
-  }
-
-  if(is.null(x$ind.names)) {
-    cat("\nind.names is missing\n")
+  if(length(object@loc.fac) != p) {
+    cat("\ninvalid length for loc.fac\n")
     return(FALSE)
   }
 
-  if(!is.character(x$ind.names)) {
-      cat("\nind.names is not a character vector\n")
-      return(FALSE)
-    }
+  if(length(levels(object@loc.fac)) != k) {
+    cat("\ninvalid number of levels in loc.fac\n")
+    return(FALSE)
+  }
 
-   if(length(x$ind.names) != nrow(x$tab)) {
-      cat("\ninvalid length in ind.names\n")
-      return(FALSE)
-    }
+  if(length(object@loc.nall) != k) {
+    cat("\ninvalid length in loc.nall\n")
+    return(FALSE)
+  }
 
-  if(!is.null(x$pop.names)){
-    if(is.null(x$pop)) warning("\npop.names is given but pop is not\n")
-    if(!is.character(x$pop.names)) {
-      cat("\npop.names is given but not a character vector\n")
-      return(FALSE)
-    }
-    if(length(x$pop.names) != length(levels(x$pop))) {
-      cat("\npop.names is given but invalid length\n")
-      return(FALSE)
-    }
+  if(length(unlist(object@all.names)) != p) {
+    cat("\ninvalid length in all.names\n")
+    return(FALSE)
   }
 
   return(TRUE)
-  
-}# end is.genind
+
+}# end .gen.valid
+
+
+setClass("gen", representation(tab = "matrix",
+                               loc.names = "character",
+                               loc.fac = "factor",
+                               loc.nall = "intOrNum",
+                               all.names = "list",
+                               call = "callOrNULL",
+                               "VIRTUAL"),
+         prototype(tab=matrix(ncol=0,nrow=0), loc.nall=integer(0), call=NULL))
+
+setValidity("gen", .gen.valid)
 
 
 
-#####################
-# Function is.genpop
-#####################
-is.genpop <- function(x){
-  if(!inherits(x,"genpop")) return(FALSE)
 
-  if(!.is.gen(x)) return(FALSE)
-  
-  if(is.null(x$pop.names)) {
-    cat("\npop.names missing\n")
-    return(FALSE)
-  }
 
-  if(!is.character(x$pop.names)) {
-    cat("\npop.names is not a character vector\n")
-    return(FALSE)
-  }
-
-  if(length(x$pop.names) != nrow(x$tab)) {
-    cat("\ninvalid length in pop.names\n")
-    return(FALSE)
-  }
-  
-  return(TRUE)
-  
-}# end is.genpop
+########################
+# virtual class indInfo
+########################
+setClass("indInfo", representation(ind.names = "character",
+                                  pop = "factorOrNULL",
+                                  pop.names = "charOrNULL",
+                                  other = "listOrNULL", "VIRTUAL"),
+         prototype(pop=NULL, pop.names = NULL, other = NULL))
 
 
 
-#####################
-# Function as.genind
-#####################
-as.genind <- function(tab=NULL,pop=NULL,prevcall=NULL){
 
-  if(is.null(tab)) stop("tab not provided.")
+
+###############
+# Class genind
+###############
+.genind.valid <- function(object){
+    if(!.gen.valid(object)) return(FALSE)
+    
+    if(length(object@ind.names) != nrow(object@tab)) {
+        cat("\ninvalid length in ind.names\n")
+        return(FALSE)
+    }
+    
+    if(!is.null(object@pop)){ # check pop
+        
+        if(length(object@pop) != nrow(object@tab)) {
+            cat("\npop is given but has invalid length\n")
+            return(FALSE)
+        }
+        
+        if(is.null(object@pop.names)) {
+            cat("\npop is provided without pop.names")
+        }  
+        
+        if(length(object@pop.names) != length(levels(object@pop))) {
+            cat("\npop.names has invalid length\n")
+            return(FALSE)
+        }
+    } # end check pop
+    
+    return(TRUE)
+} #end .genind.valid
+
+setClass("genind", contains=c("gen", "indInfo"))
+setValidity("genind", .genind.valid)
+
+
+
+########################
+# virtual class popInfo
+########################
+setClass("popInfo", representation(pop.names = "character", other = "listOrNULL", "VIRTUAL"),
+         prototype(other = NULL))
+
+
+
+###############
+# Class genpop
+###############
+.genpop.valid <- function(object){
+    if(!.gen.valid(object)) return(FALSE)
+    if(length(object@pop.names) != nrow(object@tab)) {
+        cat("\ninvalid length in pop.names\n")
+        return(FALSE)
+    }
+    
+    return(TRUE)
+} #end .genpop.valid
+
+setClass("genpop", contains=c("gen", "popInfo"))
+setValidity("genpop", .genpop.valid)
+
+
+
+
+
+
+
+###############################################################
+###############################################################
+# MAIN CLASS METHODS
+###############################################################
+###############################################################
+
+
+
+#################
+# Function names
+#################
+setMethod("names", signature(x = "genind"), function(x){
+  temp <- rev(names(attributes(x)))[-1]
+  return(rev(temp))
+})
+
+setMethod("names", signature(x = "genpop"), function(x){
+  temp <- rev(names(attributes(x)))[-1]
+  return(rev(temp))
+})
+
+
+
+
+
+##################
+# Function genind
+##################
+## constructor of a genind object
+genind <- function(tab,pop=NULL,prevcall=NULL){
+
   X <- as.matrix(tab)
   if(is.null(colnames(X))) stop("tab columns have no name.")
   if(is.null(rownames(X))) {rownames(X) <- 1:nrow(X)}
@@ -257,7 +252,8 @@ as.genind <- function(tab=NULL,pop=NULL,prevcall=NULL){
   temp <- .rmspaces(temp)
   # beware !!! Function 'table' gives ordred output.
   loc.names <- unique(temp)
-  loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]    
+  loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
+  loc.nall <- as.integer(loc.nall)
 
   nloc <- length(loc.names)
   loc.codes <- .genlab("L",nloc)
@@ -283,8 +279,19 @@ as.genind <- function(tab=NULL,pop=NULL,prevcall=NULL){
   colnames(X) <- paste(loc.fac,unlist(all.codes),sep=".")
   loc.fac <- as.factor(loc.fac)
   
-  res <- list( tab=X, ind.names=ind.names, loc.names=loc.names,
-              loc.nall=loc.nall, loc.fac=loc.fac, all.names=all.names )
+  # This was used in S3 version
+  #
+  #res <- list( tab=X, ind.names=ind.names, loc.names=loc.names,
+  #            loc.nall=loc.nall, loc.fac=loc.fac, all.names=all.names )
+
+  # Ideally I should use an 'initialize' method here
+  res <- new("genind")
+  res@tab <- X
+  res@ind.names <- ind.names
+  res@loc.names <- loc.names
+  res@loc.nall <- loc.nall
+  res@loc.fac <- loc.fac
+  res@all.names <- all.names
   
   # populations name (optional)
   # beware, keep levels of pop sorted in
@@ -297,28 +304,31 @@ as.genind <- function(tab=NULL,pop=NULL,prevcall=NULL){
     temp <- pop
     # now levels are correctly ordered
     levels(pop) <- pop.lab
-    res$pop <- pop
-    res$pop.names <- as.character(levels(temp))
-    names(res$pop.names) <- as.character(levels(res$pop))
+    res@pop <- pop
+    pop.names <- as.character(levels(temp))
+    names(pop.names) <- as.character(levels(res@pop))
+    res@pop.names <- pop.names
   }
 
   if(is.null(prevcall)) {prevcall <- match.call()}
-  res$call <- prevcall
-
-  class(res) <- "genind"
-  
+  res@call <- prevcall
+ 
   return(res)
   
-} # end as.genind
+} # end genind
+
+######################
+# alias for as.genind
+######################
+as.genind <- genind
 
 
 
-#####################
-# Function as.genpop
-#####################
-as.genpop <- function(tab=NULL,prevcall=NULL){
+##################
+# Function genpop
+##################
+genpop <- function(tab,prevcall=NULL){
 
-  if(is.null(tab)) stop("tab not provided.")
   X <- as.matrix(tab)
   if(is.null(colnames(X))) stop("tab columns have no name.")
   if(is.null(rownames(X))) {rownames(X) <- 1:nrow(X)}
@@ -336,7 +346,8 @@ as.genpop <- function(tab=NULL,prevcall=NULL){
   temp <- .rmspaces(temp)
   # beware !!! Function 'table' gives ordred output.
   loc.names <- unique(temp)
-  loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]    
+  loc.nall <-  table(temp)[match(loc.names,names(table(temp)))]
+  loc.nall <- as.integer(loc.nall)
 
   nloc <- length(loc.names)
   loc.codes <- .genlab("L",nloc)
@@ -361,125 +372,154 @@ as.genpop <- function(tab=NULL,prevcall=NULL){
   rownames(X) <- pop.codes
   colnames(X) <- paste(loc.fac,unlist(all.codes),sep=".")
   loc.fac <- as.factor(loc.fac)
-  
-  res <- list( tab=X, pop.names=pop.names, loc.names=loc.names,
-              loc.nall=loc.nall, loc.fac=loc.fac, all.names=all.names )
-  
-  if(is.null(prevcall)) {prevcall <- match.call()}
-  res$call <- prevcall
 
-  class(res) <- "genpop"
+  # Old S3 version
+  #
+  #res <- list( tab=X, pop.names=pop.names, loc.names=loc.names,
+  #            loc.nall=loc.nall, loc.fac=loc.fac, all.names=all.names )
+
+  res <- new("genpop")
+
+  res@tab <- X
+  res@pop.names <- pop.names
+  res@loc.names <- loc.names
+  res@loc.nall <- loc.nall
+  res@loc.fac <- loc.fac
+  res@all.names <- all.names
+ 
+  if(is.null(prevcall)) {prevcall <- match.call()}
+  res@call <- prevcall
   
   return(res)
   
-} # end as.genpop
+} # end genpop
 
 
 
-########################
-# Function print.genind
-########################
-print.genind <- function(x,...){
+######################
+# alias for as.genpop
+######################
+as.genpop <- genpop
+
+
+
+
+##########################
+# Method show for genind
+##########################
+setMethod ("show", "genind", function(object){
+  x <- object
+  cat("\n")
   cat("   #####################\n")
   cat("   ### Genind object ### \n")
   cat("   #####################")
   cat("\n- genotypes of individuals - \n")
-  cat("\nclass: ")
-  print(class(x))
-  cat("\n$call: ")
-  print(x$call)
+  cat("\nS4 class: ", as.character(class(x)))
+  
+  cat("\n@call: ")
+  print(x@call)
 
-  # n <- nrow(x$tab) ## no longer used
-  p <- ncol(x$tab)
+  p <- ncol(x@tab)
   len <- 7
 
-  cat("\n$tab: ", nrow(x$tab), "x", ncol(x$tab), "matrix of genotypes\n" )
-  head(x$tab[,1:min(p,5)],3)
-
-  cat("\n$ind.names: vector of ", length(x$ind.names), "individual names")
-  cat("\n$loc.names: vector of ", length(x$loc.names), "locus names")
-  cat("\n$loc.nall: number of alleles per locus")
-  cat("\n$loc.fac: locus factor for the ", ncol(x$tab), "columns of $tab")
-  cat("\n$all.names: list of ", length(x$all.names), "components yielding allele names for each locus")
-  if(!is.null(x$pop)) {
-    cat("\n\nOptionnal contents: ")
-    cat("\n$pop: factor giving the population of each individual")
-    len=len+1
-  }
-  if(!is.null(x$pop.names)) {
-    cat("\n$pop.names: vector giving the names of the populations")
-    len=len+1
-  }
+  cat("\n@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of genotypes\n" )
  
-  cat("\n\nother elements: ")
-  if (length(names(x)) > len) cat(paste("$",names(x)[(len+1):(length(names(x)))],sep=""), "\n")
-  else cat("NULL\n")
-  return(len)
-} #end print.genind 
+  cat("\n@ind.names: vector of ", length(x@ind.names), "individual names")
+  cat("\n@loc.names: vector of ", length(x@loc.names), "locus names")
+  cat("\n@loc.nall: number of alleles per locus")
+  cat("\n@loc.fac: locus factor for the ", ncol(x@tab), "columns of @tab")
+  cat("\n@all.names: list of ", length(x@all.names), "components yielding allele names for each locus")
+
+  cat("\n\nOptionnal contents: ")
+  cat("\n@pop: ", ifelse(is.null(x@pop), "- empty -", "factor giving the population of each individual"))
+  cat("\n@pop.names: ", ifelse(is.null(x@pop.names), "- empty -", "factor giving the population of each individual"))
+ 
+  cat("\n\n@other: ")
+  if(!is.null(x@other)){
+    cat("a list containing: ")
+    cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
+  } else {
+    cat("- empty -\n")
+  }
+  
+  cat("\n")
+} 
+) # end show method for genind
 
 
 
-########################
-# Function print.genpop
-########################
-print.genpop <- function(x,...){
+
+##########################
+# Method show for genpop
+##########################
+setMethod ("show", "genpop", function(object){
+  x <- object
+  cat("\n")
   cat("       #####################\n")
   cat("       ### Genpop object ### \n")
   cat("       #####################")
   cat("\n- Alleles counts for populations - \n")
-  cat("\nclass: ")
-  print(class(x))
-  cat("\n$call: ")
-  print(x$call)
+  cat("\nS4 class: ", as.character(class(x)))
+  
+  cat("\n@call: ")
+  print(x@call)
 
-  # n <- nrow(x$tab) ## no longer used
-  p <- ncol(x$tab)
+  p <- ncol(x@tab)
 
-  cat("\n$tab: ", nrow(x$tab), "x", ncol(x$tab), "matrix of alleles counts\n" )
-  head(x$tab[,1:min(p,5)],3)
-
-  cat("\n$pop.names: vector of ", length(x$pop.names), "population names")
-  cat("\n$loc.names: vector of ", length(x$loc.names), "locus names")
-  cat("\n$loc.nall: number of alleles per locus")
-  cat("\n$loc.fac: locus factor for the ", ncol(x$tab), "columns of $tab")
-  cat("\n$all.names: list of ", length(x$all.names), "components yielding allele names for each locus")
+  cat("\n@tab: ", nrow(x@tab), "x", ncol(x@tab), "matrix of alleles counts\n" )
+  
+  cat("\n@pop.names: vector of ", length(x@pop.names), "population names")
+  cat("\n@loc.names: vector of ", length(x@loc.names), "locus names")
+  cat("\n@loc.nall: number of alleles per locus")
+  cat("\n@loc.fac: locus factor for the ", ncol(x@tab), "columns of @tab")
+  cat("\n@all.names: list of ", length(x@all.names), "components yielding allele names for each locus")
  
-  cat("\n\nother elements: ")
-  if (length(names(x)) > 7) cat(paste("$",names(x)[8:(length(names(x)))],sep=""), "\n")
-  else cat("NULL\n")
-} # end print.genpop
+  cat("\n\n@other: ")
+  if(!is.null(x@other)){
+    cat("a list containing: ")
+    cat(ifelse(is.null(names(x@other)), "elements without names", paste(names(x@other), collapse= "  ")), "\n")
+  } else {
+    cat("- empty -\n")
+  }
+  
+  cat("\n")
+  
+} 
+) # end show method for genpop
 
 
 
-##########################
-# Function summary.genind
-##########################
-summary.genind <- function(object, ...){
+
+
+############################
+# Method summary for genind
+############################
+setMethod ("summary", "genind", function(object, ...){
   x <- object
-  if(!is.genind(x)) stop("To be used with a genind object")
-  if(is.null(x$pop)){
-    x$pop <- rep(1,nrow(x$tab))
-    x$pop.names <- ""
-    names(x$pop.names) <- "P1"
+  if(!inherits(x,"genind")) stop("To be used with a genind object")
+  if(is.null(x@pop)){
+    x@pop <- factor(rep(1,nrow(x@tab)))
+    x@pop.names <- ""
+    names(x@pop.names) <- "P1"
   }
 
   res <- list()
 
-  res$N <- nrow(x$tab)
+  res$N <- nrow(x@tab)
 
-  res$pop.eff <- as.numeric(table(x$pop))
-  names(res$pop.eff) <- names(x$pop.names)
+  res$pop.eff <- as.numeric(table(x@pop))
+  names(res$pop.eff) <- names(x@pop.names)
 
-  res$loc.nall <- x$loc.nall
+  res$loc.nall <- x@loc.nall
 
-  temp <- genind2genpop(x,quiet=TRUE)$tab
+  temp <- genind2genpop(x,quiet=TRUE)@tab
 
   res$pop.nall <- apply(temp,1,function(r) sum(r!=0,na.rm=TRUE))
 
-  res$NA.perc <- 100*sum(is.na(x$tab))/prod(dim(x$tab))
+  res$NA.perc <- 100*sum(is.na(x@tab))/prod(dim(x@tab))
 
-  # auxiliary function to compute observed heterozygosity 
-  temp <- seploc(x,truenames=FALSE) 
+  # auxiliary function to compute observed heterozygosity
+  temp <- seploc(x,truenames=FALSE,res.type="matrix")
   f1 <- function(tab){
     H <- sum(tab==0.5,na.rm=TRUE)/(2*nrow(tab))
     return(H)
@@ -494,12 +534,12 @@ summary.genind <- function(object, ...){
     return(H)
   }
 
-  temp <- genind2genpop(x,pop=rep(1,nrow(x$tab)),quiet=TRUE)
+  temp <- genind2genpop(x,pop=rep(1,nrow(x@tab)),quiet=TRUE)
   temp <- makefreq(temp,quiet=TRUE)$tab
   temp.names <- colnames(temp)
   temp <- as.vector(temp)
   names(temp) <- temp.names
-  temp <- split(temp,x$loc.fac)
+  temp <- split(temp,x@loc.fac)
   # temp is a list of alleles frequencies (one element per locus)
 
   res$Hexp <- unlist(lapply(temp,f2))  
@@ -519,25 +559,28 @@ summary.genind <- function(object, ...){
   }
   
   return(invisible(res))
-} # end summary.genind
+}) # end summary.genind
 
 
 
-##########################
-# Function summary.genpop
-##########################
-summary.genpop <- function(object,...){
+
+
+############################
+# Method summary for genpop
+############################
+setMethod ("summary", "genpop", function(object, ...){
   x <- object
-  if(!is.genpop(x)) stop("To be used with a genpop object")
+  if(!inherits(x,"genpop")) stop("To be used with a genpop object")
+  
   res <- list()
 
-  res$npop <- nrow(x$tab)
+  res$npop <- nrow(x@tab)
 
-  res$loc.nall <- x$loc.nall
+  res$loc.nall <- x@loc.nall
 
-  res$pop.nall <- apply(x$tab,1,function(r) sum(r>0,na.rm=TRUE))
+  res$pop.nall <- apply(x@tab,1,function(r) sum(r>0,na.rm=TRUE))
 
-  res$NA.perc <- 100*sum(is.na(x$tab))/prod(dim(x$tab))
+  res$NA.perc <- 100*sum(is.na(x@tab))/prod(dim(x@tab))
 
   # print to screen
   listlab <- c("# Number of populations: ",
@@ -552,33 +595,67 @@ summary.genpop <- function(object,...){
   
   return(invisible(res))
 
-} # end summary.genpop
+} 
+)# end summary.genpop
 
 
+
+#} # end .initAdegenetClasses()
+
+
+
+
+
+
+###############
+# Methods "is"
+###############
+is.genind <- function(x){
+  res <- ( is(x, "genind") & validObject(x))
+  return(res)
+}
+
+is.genpop <- function(x){
+  res <- ( is(x, "genpop") & validObject(x))
+  return(res)
+}
+
+
+
+
+
+
+###############################################################
+###############################################################
+# OTHER FUNCTIONS
+###############################################################
+###############################################################
 
 #########################
 # Function genind2genpop
 #########################
-genind2genpop <- function(x,pop=NULL,missing=NA,quiet=FALSE){
-  if(!is.genind(x)) stop("x must be a genind object")
-  if(is.null(x$pop) && is.null(pop)) stop("pop is not provided either in x or in pop")
+genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE){
+
+  if(!is.genind(x)) stop("x is not a valid genind object")
+  
+  if(is.null(x@pop) && is.null(pop)) stop("pop is not provided either in x or in pop")
+
+  missing <- match.arg(missing)
 
   if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
-
-  res <- list()
   
-  # choose pop argument over x$pop
+  # choose pop argument over x@pop
    if(!is.null(pop)) {
-    if(length(pop) != nrow(x$tab)) stop("inconsistent length for factor pop")
+    if(length(pop) != nrow(x@tab)) stop("inconsistent length for factor pop")
     # keep levels in order of appearance
     pop <- as.character(pop)
     pop <- factor(pop, levels=unique(pop))
   } else {
-    pop <- x$pop
+    pop <- x@pop
     # keep levels in order of appearance
     pop <- as.character(pop)
     pop <- factor(pop, levels=unique(pop))
-    if(!is.null(x$pop.names)) levels(pop) <- x$pop.names # restore real names
+    if(!is.null(x@pop.names)) levels(pop) <- x@pop.names # restore real names
   }
 
   # make generic pop labels, store real pop names
@@ -595,55 +672,107 @@ genind2genpop <- function(x,pop=NULL,missing=NA,quiet=FALSE){
     return(v/(sum(v,na.rm=TRUE)))       
   }
 
-  tabcount <- 2* apply(x$tab,2,function(c) tapply(c,pop,f1))
+  tabcount <- 2* apply(x@tab,2,function(c) tapply(c,pop,f1))
   # restitute matrix class when only one pop
   if(is.null(dim(tabcount))) {
     lab.col <- names(tabcount)
     tabcount <- matrix(tabcount,nrow=1)
     colnames(tabcount) <- lab.col
   }
-  #meancol <- apply(tabcount,2,function(c) mean(c,na.rm=TRUE)) ## no longer used
+##   #meancol <- apply(tabcount,2,function(c) mean(c,na.rm=TRUE)) ## no longer used
 
-  # NA treatment
-  # Treatment when missing='REPLACE':
-  # if allele 'j' of locus 'k' in pop 'i' is missing, replace the NA by a number 'x' so that
-  # the frequency 'x/s' ('s' being the number of observations in 'k' ) equals the frequency 'f'
-  # computed on the whole data (i.e. considering all pop as one)
-  # Then x must verify:
-  # x/s = f(1-f) => x=f(1-f)s
-  #
-  # - eff.pop is a pop x locus matrix giving the corresponding sum of observations (i.e., 's')
-  # - temp is the same table but duplicated for all alleles
-  # - odd.vec is the vector of 'f(1-f)'
-  # - count.replace is a pop x alleles table yielding appropriate replacement numbers (i.e., 'x')
+##   # NA treatment
+##   # Treatment when missing='REPLACE':
+##   # if allele 'j' of locus 'k' in pop 'i' is missing, replace the NA by a number 'x' so that
+##   # the frequency 'x/s' ('s' being the number of observations in 'k' ) equals the frequency 'f'
+##   # computed on the whole data (i.e. considering all pop as one)
+##   # Then x must verify:
+##   # x/s = f(1-f) => x=f(1-f)s
+##   #
+##   # - eff.pop is a pop x locus matrix giving the corresponding sum of observations (i.e., 's')
+##   # - temp is the same table but duplicated for all alleles
+##   # - odd.vec is the vector of 'f(1-f)'
+##   # - count.replace is a pop x alleles table yielding appropriate replacement numbers (i.e., 'x')
 
-  if(!is.na(missing) && any(is.na(tabcount))){
-    if(missing==0) tabcount[is.na(tabcount)] <- 0
-    if(toupper(missing)=="REPLACE") {
-    eff.pop <- t(apply(tabcount,1,function(r) tapply(r,x$loc.fac,sum,na.rm=TRUE)))
-    temp <- t(apply(eff.pop,1,function(r) rep(r,table(x$loc.fac))))
+##   if(!is.na(missing) && any(is.na(tabcount))){
+##     if(missing==0) tabcount[is.na(tabcount)] <- 0
+##     if(toupper(missing)=="REPLACE") {
+##     eff.pop <- t(apply(tabcount,1,function(r) tapply(r,x@loc.fac,sum,na.rm=TRUE)))
+##     temp <- t(apply(eff.pop,1,function(r) rep(r,table(x@loc.fac))))
 
-    freq.allpop <- apply(tabcount,2,sum,na.rm=TRUE)
-    freq.allpop <- unlist(tapply(freq.allpop,x$loc.fac,f2))
-    odd.vec <- freq.allpop/(1-freq.allpop)
+##     freq.allpop <- apply(tabcount,2,sum,na.rm=TRUE)
+##     freq.allpop <- unlist(tapply(freq.allpop,x@loc.fac,f2))
+##     odd.vec <- freq.allpop/(1-freq.allpop)
   
-    count.replace <- t(apply(temp,1,function(r) r*odd.vec))
+##     count.replace <- t(apply(temp,1,function(r) r*odd.vec))
 
-    tabcount[is.na(tabcount)] <- count.replace[is.na(tabcount)]
-    }
-  } # end of NA treatment
+##     tabcount[is.na(tabcount)] <- count.replace[is.na(tabcount)]
+##     }
+##   } # end of NA treatment
 
-  # make final object
-  temp <- paste(rep(x$loc.names,x$loc.nall),unlist(x$all.names),sep=".")
+  
+  ## make final object
+  temp <- paste(rep(x@loc.names,x@loc.nall),unlist(x@all.names),sep=".")
   colnames(tabcount) <- temp
 
   prevcall <- match.call()
   
-  res <- as.genpop(tab=tabcount, prevcall=prevcall)
+  res <- genpop(tab=tabcount, prevcall=prevcall)
+  res@other <- x@other
+
+  if(missing != "NA"){
+      res <- na.replace(res, method=missing, quiet=quiet)
+  }
 
   if(!quiet) cat("\n...done.\n\n")
 
   return(res)
   
 } # end genind2genpop
+
+
+
+
+
+##################
+# Methods old2new
+##################
+setGeneric("old2new",  function(object) standardGeneric("old2new"))
+
+setMethod("old2new", "genind", function(object){
+  x <- object
+  res <- new("genind")
+
+  res@tab <- as.matrix(x$tab)
+  res@ind.names <- as.character(x$ind.names)
+  res@loc.names <- as.character(x$loc.names)
+  res@loc.nall <- as.integer(x$loc.nall)
+  res@loc.fac <- as.factor(x$loc.fac)
+  res@all.names <- as.list(x$all.names)
+  res@pop <- as.factor(x$pop)
+  res@pop.names <- as.character(x$pop.names)
+  res@call <- match.call()
+
+  if(length(object)>9) warning("optional content else than pop and pop.names was not converted")
+
+  return(res)
+})
+
+
+setMethod("old2new", "genpop", function(object){
+  x <- object
+  res <- new("genpop")
+
+  res@tab <- as.matrix(x$tab)
+  res@pop.names <- as.character(x$pop.names)
+  res@loc.names <- as.character(x$loc.names)
+  res@loc.nall <- as.integer(x$loc.nall)
+  res@loc.fac <- as.factor(x$loc.fac)
+  res@all.names <- as.list(x$all.names)
+  res@call <- match.call()
+
+  if(length(object)>7) warning("optional content was not converted")
+
+  return(res)
+})
 

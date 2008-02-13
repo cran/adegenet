@@ -76,7 +76,7 @@ tPointd c,d,crois;
 n = *nrow;
 p = *ncol;
 
- taballoc(&mat, n, p); // fonction C ade4 
+ taballoc(&mat, n, p); /* fonction C ade4 */
 
 /* On reconstruit la matrice des segments en C (mat) */
 k = 0;
@@ -116,7 +116,7 @@ segments ab and cd. Returned values :
   0 : The segments do not intersect.
   10 : initial value, i.e. failure.
 ---------------------------------------------------------------------*/
-//int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d, tPointd p)
+/* int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d, tPointd p) */
 int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
 {
    double  s, t;       /* The two parameters of the parametric eqns. */
