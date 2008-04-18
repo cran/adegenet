@@ -91,9 +91,11 @@ df2genind <- function(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, m
     temp <- apply(X,1,function(c) all(c==missTyp))
     if(any(temp)){
         X <- X[!temp,]
+        pop <- pop[!temp]
+        ind.names <- ind.names[!temp]
         warning("entirely non-type individual(s) deleted")        
     }
-    pop <- pop[!temp]
+    
     n <- nrow(X)
     # ind.names <- rownames(X) this erases the real labels
     # note: if X is kept as a matrix, duplicate row names are no problem

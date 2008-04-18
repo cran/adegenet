@@ -16,12 +16,14 @@
 ################
 # Function spca
 ################
-spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfnega=1, type=1,
-                 ask=TRUE, plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL) {
+spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfnega=1, type=NULL,
+                 ask=TRUE, plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL,
+                 a=NULL, dmin=NULL) {
   
   if(!inherits(obj,c("genind","genpop"))) stop("obj must be a genind or genpop object.")
   invisible(validObject(obj))
-  
+
+  if(is.null(xy) & !is.null(obj$other$xy)) xy <- obj$other$xy
   if(is.data.frame(xy)) xy <- as.matrix(xy)
   if(ncol(xy) != 2) stop("xy does not have two columns.")
   if(nrow(xy) != nrow(obj@tab)) stop("obj@tab and xy must have the same row numbers.")
@@ -33,14 +35,15 @@ spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfne
   # connection network
   if(is.null(cn)) {
     if(is.null(xy)) stop("'xy' and 'cn' are both missing")
-    resCN <- chooseCN(xy=xy, ask=ask, type=type, plot.nb=plot.nb, edit.nb=edit.nb, result.type="nb", d1=d1, d2=d2, k=k)
+    resCN <- chooseCN(xy=xy, ask=ask, type=type, plot.nb=plot.nb, edit.nb=edit.nb,
+                      result.type="listw", d1=d1, d2=d2, k=k, a=a, dmin=dmin)
   } else {
-    if(!inherits(cn,"nb")) stop("cn is not of class 'nb' (package spdep)")
-    resCN <- cn
+      if(inherits(cn,"nb") & !inherits(cn,"listw")) { cn <- nb2listw(cn, style="W", zero.policy=TRUE) }
+      if(!inherits(cn,"listw")) stop("cn does not have a recognized class ('nb' or 'listw', package spdep)")
+      resCN <- cn
   }
-  cn.nb <- resCN
-  xy <- resCN@xy
-  cn.lw <- nb2listw(cn.nb, style="W", zero.policy=TRUE)
+  
+  xy <- attr(resCN,"xy")
  
   # prepare data
   f1 <- function(vec){
@@ -62,7 +65,7 @@ spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfne
   # perform analyses
   pcaX <- dudi.pca(X, center=TRUE, scale=scale, scannf=FALSE)
 
-  spcaX <- multispati(dudi=pcaX, listw=cn.lw, scannf=scannf, nfposi=nfposi, nfnega=nfnega)
+  spcaX <- multispati(dudi=pcaX, listw=resCN, scannf=scannf, nfposi=nfposi, nfnega=nfnega)
 
   nfposi <- spcaX$nfposi
   nfnega <- spcaX$nfnega
@@ -71,7 +74,7 @@ spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfne
   rownames(spcaX$xy) <- rownames(spcaX$li)
   colnames(spcaX$xy) <- c("x","y")
   
-  spcaX$cn <- cn.nb
+  spcaX$lw <- resCN
   
   spcaX$call <- appel
 
@@ -136,7 +139,7 @@ print.spca <- function(x, ...){
   print(sumry)
 
   cat("\n$xy: matrix of spatial coordinates")
-  cat("\n$cn: connection network (class nb)")
+  cat("\n$lw: a list of spatial weights (class 'listw')")
   
   cat("\n\nother elements: ")
   if (length(names(x)) > 10) 
@@ -203,12 +206,12 @@ summary.spca <- function (object, ..., printres=TRUE) {
   dudi <- dudi.pca(X, center=TRUE, scale=FALSE, scannf=FALSE, nf=nfposi+nfnega)
   ## end of pca
     
-  listw <- nb2listw(object$cn, style="W", zero.policy=TRUE)
+  lw <- object$lw
 
   # I0, Imin, Imax
   n <- nrow(X)
   I0 <- -1/(n-1)
-  L <- listw2mat(listw)
+  L <- listw2mat(lw)
   eigL <- eigen(0.5*(L+t(L)))$values
   Imin <- min(eigL)
   Imax <- max(eigL)
@@ -229,7 +232,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   eig <- dudi$eig[1:nf]
   cum <- cumsum(dudi$eig)[1:nf]
   ratio <- cum/sum(dudi$eig)
-  w <- apply(dudi$l1,2,lag.listw,x=listw)
+  w <- apply(dudi$l1,2,lag.listw,x=lw)
   moran <- apply(w*as.matrix(dudi$l1)*dudi$lw,2,sum)
   res <- data.frame(var=eig,cum=cum,ratio=ratio, moran=moran)
   row.names(res) <- paste("Axis",1:nf)
@@ -247,7 +250,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   nfposimax <- sum(eig > 0)
   nfnegamax <- sum(eig < 0)
     
-  ms <- multispati(dudi=dudi, listw=listw, scannf=FALSE,
+  ms <- multispati(dudi=dudi, listw=lw, scannf=FALSE,
                      nfposi=nfposimax, nfnega=nfnegamax)
 
   ndim <- dudi$rank
@@ -289,13 +292,20 @@ plot.spca <- function (x, axis = 1, ...){
     z <- x$ls[,axis]
     nfposi <- x$nfposi
     nfnega <- x$nfnega
-    neig <- nb2neig(x$cn)
+    ## handle neig parameter - hide cn if nore than 100 links
+    nLinks <- sum(card(x$lw$neighbours))
+    if(nLinks < 500) {
+        neig <- nb2neig(x$lw$neighbours)
+    } else {
+        neig <- NULL
+    }
+    
     sub <- paste("Score",axis)
     csub <- 2
       
     # 1
     if(n<30) clab <- 1 else clab <- 0
-    s.label(xy, cpoi=0, clab=clab, include.ori=FALSE, addaxes=FALSE, neig=neig,
+    s.label(xy, clab=clab, include.ori=FALSE, addaxes=FALSE, neig=neig,
             cneig=1, sub="Connection network", csub=2)    
     
     # 2
@@ -304,7 +314,7 @@ plot.spca <- function (x, axis = 1, ...){
     box()
     
     # 3
-    if(n<30) {neig <- nb2neig(x$cn)} else {neig <- NULL}
+    if(n<30) {neig <- nb2neig(x$lw$neighbours)} else {neig <- NULL}
     s.value(xy,z, include.ori=FALSE, addaxes=FALSE, clegend=0, csize=.6,
             neig=neig, sub=sub, csub=csub, possub="bottomleft")
     

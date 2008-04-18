@@ -1,17 +1,17 @@
 \encoding{UTF-8}
 \docType{methods}
 \name{Accessors}
-\alias{$,pdata-method}
-\alias{$,phylo4-method}
-\alias{$<-,pdata-method}
-\alias{$<-,phylo4-method}
+\alias{$,genind-method}
+\alias{$,genpop-method}
+\alias{$<-,genind-method}
+\alias{$<-,genpop-method}
 \alias{[,genind-method}
 \alias{[,genpop-method}
 \title{ Accessors for adegenet objects}
 \description{
   Several accessors for \linkS4class{genind} or
   \linkS4class{genpop} objects. The operator "\$" and "\$<-" are used to
-  access the slots, being equivalent to "@" and "@<-".
+  access the slots, being equivalent to "@" and "@<-".\cr
 
   The operator "[" can be used to access components of the matrix slot
   "@tab", returning a \linkS4class{genind} or \linkS4class{genpop}
@@ -21,8 +21,9 @@
   "obj" is a \linkS4class{genind}) or the first 10 populations (if
   "obj" is a \linkS4class{genpop}) of "obj" \cr
   - "obj[1:10, 5:10]" returns an object keeping the first 10 entities and
-  the alleles 5 to 10. 
-  
+  the alleles 5 to 10.\cr
+  The argument \code{treatOther} handles the treatment of objects in the
+  \code{@other} slot (see details).
 }
 \usage{
 }
@@ -30,6 +31,18 @@
   A \linkS4class{genind} or \linkS4class{genpop} object.
 }
 \author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\details{
+  The "[" operator can treat elements in the \code{@other} slot as
+  well. For instance, if \code{obj@other$xy} contains spatial
+  coordinates, the \code{obj[1:3,]@other$xy} will contain the spatial
+  coordinates of the genotypes (or population) 1,2 and 3. This is
+  handled through the argument \code{treatOther}, a logical defaulting
+  to TRUE. If set to FALSE, the \code{@other} component is not
+  returned.\cr
+  Note that only matrix-like, vector-like and lists can be proceeded in
+  \code{@other}. Other kind of objects will issue a warning an be
+  returned as they are.\cr
+}
 \examples{
 data(nancycats)
 nancycats
@@ -52,5 +65,12 @@ obj
 
 obj$loc.fac 
 obj$loc.names
+
+# illustrate how other slot is handled
+colonies <- genind2genpop(nancycats)
+colonies@other$aChar <- "This will not be proceeded"
+colonies123 <- colonies[1:3]
+colonies
+colonies@other$xy
 }
 \keyword{manip}

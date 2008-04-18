@@ -26,8 +26,9 @@
   autocorrelation\cr
 }
 \usage{
-spca(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfnega=1, type=1, ask=TRUE,
-plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
+spca(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfnega=1, type=NULL, ask=TRUE,
+plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL,
+  a=NULL, dmin=NULL)
 
 \method{print}{spca}(x, \dots)
 
@@ -39,8 +40,8 @@ plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
 }
 \arguments{
   \item{obj}{a \code{genind} or \code{genpop} object.}
-  \item{xy}{an matrix or data.frame with two columns for x and y
-    coordinates. Can be NULL if cn is provided.}
+  \item{xy}{a matrix or data.frame with two columns for x and y
+    coordinates. Seeked from obj\$other\$xy if it exists. Can be NULL if \code{cn} is provided.}
   \item{cn}{a connection network of the class 'nb' (package spdep). Can
     be NULL if xy is provided. Can be easily obtained using the function
     chooseCN.}
@@ -53,7 +54,7 @@ plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
   \item{nfnega}{an integer giving the number of negative eigenvalues retained
     ('local structures').}
   \item{type}{an integer giving the type of graph (see details in
-    \code{chooseCN} help page). Used if \code{ask=FALSE}}
+    \code{chooseCN} help page). If provided, \code{ask} is set to FALSE.}
   \item{ask}{a logical stating whether graph should be chosen
     interactively (TRUE,default) or not (FALSE).}
   \item{plot.nb}{a logical stating whether the resulting graph should be
@@ -68,6 +69,11 @@ plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
     \code{type=5}.}
   \item{k}{the number of neighbours per point. Used if
     \code{type=6}.}
+  \item{a}{the exponent of the inverse distance matrix. Used if
+    \code{type=7}.}
+  \item{dmin}{the minimum distance between any two distinct points. Used
+    to avoid infinite spatial proximities (defined as the inversed
+    spatial distances). Used if \code{type=7}.}
   \item{x}{a \code{spca} object.}
   \item{object}{a \code{spca} object.}
   \item{printres}{a logical stating whether results should be printed on
@@ -101,7 +107,7 @@ plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
     sPCA axes.}
   \item{call}{the matched call.}
   \item{xy}{a matrix of spatial coordinates.}
-  \item{cn}{a connection network of class \code{nb}.}
+  \item{lw}{a list of spatial weights of class \code{listw}.}
   
   Other functions have different outputs:\cr
   - \code{summary.spca} returns a list with 3 components: \code{Istat}
@@ -117,10 +123,6 @@ plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL)
 Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.
 Revealing cryptic spatial patterns in genetic variability by a new
 multivariate method. Submitted to \emph{Heredity}.
-
-Smouse, P. E. and Peakall, R. (1999) Spatial autocorrelation analysis of
-individual multiallele and multilocus genetic structure.  \emph{Heredity},
-\bold{82}, 561--573.
 
 Wartenberg, D. E. (1985) Multivariate spatial correlation: a method for
 exploratory geographical analysis. \emph{Geographical Analysis},

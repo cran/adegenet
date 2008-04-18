@@ -82,9 +82,9 @@
    - \code{\link{hybridize}}: implements hybridization between two populations. \cr
    - \code{\link{spca}}: implements Jombart et al. (in revision) spatial
    Principal Component Analysis \cr
-   - \code{\link{global.rtest}}: implements Jombart et al. (in revision)
+   - \code{\link{global.rtest}}: implements Jombart et al. (2008)
    test for global spatial structures \cr
-   - \code{\link{local.rtest}}: implements Jombart et al. (in revision)
+   - \code{\link{local.rtest}}: implements Jombart et al. (2008)
    test for local spatial structures \cr
 
    Adegenet also proposes several real or simulated datasets.\cr
@@ -92,20 +92,28 @@
    For more information, visit the adegenet website by typing
    \code{adegenetWeb()}.\cr
 
-   To cite adegenet, please use \code{citation("adegenet")}.
+   To cite adegenet, please use the reference given by
+   \code{citation("adegenet")} (or see reference below).
  }
 \details{
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.1-0\cr
-    Date: \tab 2008-02-12\cr
+    Version: \tab 1.1-1\cr
+    Date: \tab 2008-04-18\cr
     License: \tab GPL (>=2)
   }  
 }
-\author{Thibaut Jombart <jombart@biomserv.univ-lyon1.fr>}
+\author{Thibaut Jombart <jombart@biomserv.univ-lyon1.fr>\cr
+with contributions of Peter Solymos}
 \references{
-  See adegenet website: \url{http://pbil.univ-lyon1.fr/software/adegenet/}
+Jombart T. (2008) adegenet: a R package for the multivariate analysis of genetic markers
+\emph{Bioinformatics}. doi: 10.1093/bioinformatics/btn129\cr
+  
+See adegenet website: \url{http://adegenet.r-forge.r-project.org/}\cr
+
+Please post your questions on 'the adegenet forum': adegenet-forum@lists.r-forge.r-project.org
+
 }
 \keyword{manip}
 \keyword{multivariate}
