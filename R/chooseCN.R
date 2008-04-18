@@ -1,8 +1,8 @@
 #####################
-# Function .chooseCN
+# Function chooseCN
 #####################
-chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=NULL,
-                     plot.nb=TRUE, edit.nb=FALSE){
+chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL, k=NULL,
+                     a=NULL, dmin=NULL, plot.nb=TRUE, edit.nb=FALSE){
   
   if(is.data.frame(xy)) xy <- as.matrix(xy)
   if(ncol(xy) != 2) stop("xy does not have two columns.")
@@ -20,12 +20,20 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
   x <- xy[,1]
   y <- xy[,2]
   temp <- table(x,y)
-  if(any(temp>1)){
+  if(any(temp>1) & (!is.null(type) && type!=7)){ # coords need not be unique if type==7 (inverse distances)
     xy <- jitter(xy)
     warning("Random noise was added to xy as duplicated coordinates existed.")
   }
-  ##
+  
+  ## handle type argument
+  if(!is.null(type)){
+      type <- as.integer(type)
+      if(type < 1 |type > 7) stop("type must be between 1 and 7")
+      ask <- FALSE
+  }
 
+  if(is.null(type) & !ask) { type <- 1 }
+  
   ### begin large while ###
   chooseAgain <- TRUE
   while(chooseAgain){
@@ -45,17 +53,18 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
         cat("\t Minimum spanning tree (type 4)\n")
         cat("\t Neighbourhood by distance (type 5)\n")
         cat("\t K nearest neighbours (type 6)\n")
+        cat("\t Inverse distances (type 7)\n")
         cat("Answer: ")
         
         type <- as.integer(readLines(n = 1))
-        temp <- type < 1 |type > 6
+        temp <- type < 1 |type > 7
         if(temp) cat("\nWrong answer\n")
       } # end while
     }
     ## 
     
     ## graph types
-    # type 1: Delaunay
+    ## type 1: Delaunay
     if(type==1){
       if(!require(tripack, quiet=TRUE)) stop("tripack library is required.")
       cn <- tri2nb(xy)
@@ -67,20 +76,20 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
       cn <- graph2nb(cn, sym=TRUE)
     }
     
-    # type 3: Relative neighbours
+    ## type 3: Relative neighbours
     if(type==3){
       cn <- relativeneigh(xy)
       cn <- graph2nb(cn, sym=TRUE)
     }
   
-    # type 4: Minimum spanning tree
+    ## type 4: Minimum spanning tree
     if(type==4){
       if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
       cn <- mstree(dist(xy))
       cn <- neig2nb(cn)
     }
   
-    # type 5: Neighbourhood by distance
+    ## type 5: Neighbourhood by distance
     if(type==5){
       if(is.null(d1) |is.null(d2)){
         tempmat <- as.matrix(dist(xy))
@@ -101,7 +110,7 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
       cn <- dnearneigh(x=xy, d1=d1, d2=d2)
     }
   
-  # type 6: K nearests
+    ## type 6: K nearests
     if(type==6){
       if(is.null(k)) {
         cat("\n Enter the number of neighbours: ")
@@ -110,6 +119,30 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
       cn <- knearneigh(x=xy, k=k)
       cn <- knn2nb(cn, sym=TRUE)
     }
+    
+    ## type 7: inverse distances
+    if(type==7){
+        if(is.null(a)) {
+            cat("\n Enter the exponent: ")
+            a <- as.numeric(readLines(n = 1))
+        }
+        cn <- as.matrix(dist(xy))
+        if(is.null(dmin)) {
+            cat("\n Enter the minimum distance \n(range = 0 -", max(cn),"): ")
+            dmin <- as.numeric(readLines(n = 1))
+        }
+        if(a<1) { a <- 1 }
+        thres <- mean(cn)/1e8
+        if(dmin > thres) dmin <- thres
+        cn[cn < dmin] <- dmin
+        cn <- 1/(cn^a)
+        diag(cn) <- 0
+        cn <- prop.table(cn,1)
+        plot.nb <- FALSE
+        edit.nb <- FALSE
+        result.type <- "listw"
+    } # end type 7
+ 
 ## end graph types
 
     if(ask & plot.nb) {
@@ -122,14 +155,21 @@ chooseCN <- function(xy,ask=TRUE, type=1, result.type="nb", d1=NULL, d2=NULL, k=
       plot(cn,xy)
       chooseAgain <- FALSE
     }
-  else {chooseAgain <- FALSE}  
+  else {chooseAgain <- FALSE}
     
   }
 ### end large while
   
   if(edit.nb) {cn <- edit(cn,xy)}
   
-  if(result.type == "listw") {cn <- nb2listw(cn, style="W", zero.policy=TRUE)}
+  if(result.type == "listw") {
+      if(type!=7) {
+          cn <- nb2listw(cn, style="W", zero.policy=TRUE)
+      } else {
+          cn <- mat2listw(cn)
+          cn$style <- "W"
+      }
+  }
 
   res <- cn
 

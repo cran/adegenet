@@ -297,17 +297,19 @@ genind <- function(tab,pop=NULL,prevcall=NULL){
   # beware, keep levels of pop sorted in
   # there order of appearance
   if(!is.null(pop)) {
-    pop.lab <- .genlab("P",length(levels(pop)) )
-    # put pop levels in appearance order
-    pop <- as.character(pop)
-    pop <- factor(pop, levels=unique(pop))
-    temp <- pop
-    # now levels are correctly ordered
-    levels(pop) <- pop.lab
-    res@pop <- pop
-    pop.names <- as.character(levels(temp))
-    names(pop.names) <- as.character(levels(res@pop))
-    res@pop.names <- pop.names
+      # convert pop to a factor if it is not
+      if(!is.factor(pop)) {pop <- factor(pop)}
+      pop.lab <- .genlab("P",length(levels(pop)) )
+      # put pop levels in appearance order
+      pop <- as.character(pop)
+      pop <- factor(pop, levels=unique(pop))
+      temp <- pop
+      # now levels are correctly ordered
+      levels(pop) <- pop.lab
+      res@pop <- pop
+      pop.names <- as.character(levels(temp))
+      names(pop.names) <- as.character(levels(res@pop))
+      res@pop.names <- pop.names
   }
 
   if(is.null(prevcall)) {prevcall <- match.call()}
@@ -742,18 +744,25 @@ setGeneric("old2new",  function(object) standardGeneric("old2new"))
 setMethod("old2new", "genind", function(object){
   x <- object
   res <- new("genind")
-
+  theoLength <- 7
+  
   res@tab <- as.matrix(x$tab)
   res@ind.names <- as.character(x$ind.names)
   res@loc.names <- as.character(x$loc.names)
   res@loc.nall <- as.integer(x$loc.nall)
   res@loc.fac <- as.factor(x$loc.fac)
   res@all.names <- as.list(x$all.names)
-  res@pop <- as.factor(x$pop)
-  res@pop.names <- as.character(x$pop.names)
+  if(!is.null(x$pop)) {
+      res@pop <- as.factor(x$pop)
+      theoLength <- theoLength + 1
+  }
+  if(!is.null(x$pop.names)) {
+      res@pop.names <- as.character(x$pop.names)
+      theoLength <- theoLength + 1
+  }
   res@call <- match.call()
 
-  if(length(object)>9) warning("optional content else than pop and pop.names was not converted")
+  if(length(object) > theoLength) warning("optional content else than pop and pop.names was not converted")
 
   return(res)
 })

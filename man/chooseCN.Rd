@@ -9,36 +9,48 @@
   connection network either with classe \code{nb} or \code{listw}.  
 }
 \usage{
-chooseCN(xy, ask = TRUE, type = 1, result.type = "nb", d1 = NULL, 
-    d2 = NULL, k = NULL, plot.nb = TRUE, edit.nb = FALSE) 
+chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL, 
+    d2 = NULL, k = NULL,  a=NULL, dmin=NULL, plot.nb = TRUE, edit.nb = FALSE) 
 }
 \arguments{
   \item{xy}{an matrix or data.frame with two columns for x and y coordinates.}
   \item{ask}{a logical stating whether graph should be chosen
-    interactively (TRUE,default) or not (FALSE).}
-  \item{type}{an integer giving the type of graph (see details). Used if
-    \code{ask=FALSE}}
+    interactively (TRUE,default) or not (FALSE). Set to FALSE if \code{type} is
+  provided.}
+  \item{type}{an integer giving the type of graph (see details).}
   \item{result.type}{a character giving the class of the returned
     object. Either "nb" (default) or "listw", both from \code{spdep}
-    package.}
+    package. See details.}
   \item{d1}{the minimum distance between any two neighbours. Used if
     \code{type=5.}}
   \item{d2}{the maximum distance between any two neighbours. Used if
     \code{type=5}.}
   \item{k}{the number of neighbours per point. Used if
     \code{type=6}.}
+  \item{a}{the exponent of the inverse distance matrix. Used if
+    \code{type=7}.}
+  \item{dmin}{the minimum distance between any two distinct points. Used
+    to avoid infinite spatial proximities (defined as the inversed
+    spatial distances). Used if \code{type=7}.}
   \item{plot.nb}{a logical stating whether the resulting graph should be
     plotted (TRUE, default) or not  (FALSE).}
   \item{edit.nb}{a logical stating whether the resulting graph should be
     edited manually for corrections (TRUE) or not  (FALSE, default).}  
 }
-\details{There are 6 kinds of graphs proposed: \cr
+\details{There are 7 kinds of graphs proposed: \cr
   Delaunay triangulation (type 1)\cr
   Gabriel graph (type 2)\cr
   Relative neighbours (type 3)\cr
   Minimum spanning tree (type 4)\cr
   Neighbourhood by distance (type 5)\cr
   K nearests neighbours (type 6)\cr
+  Inverse distances (type 7)\cr
+
+  The last option (type=7) is not a true neighbouring graph: all sites are
+  neighbours, but the spatial weights are directly proportional to the
+  inversed spatial distances.\cr
+  Also not that in this case, the output of the function is always a
+  \code{listw} object, even if \code{nb} was requested. 
 }
 \value{Returns a connection network having the class \code{nb} or
   \code{listw}. The xy coordinates are passed as attribute to the

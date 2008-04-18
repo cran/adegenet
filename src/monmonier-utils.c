@@ -42,7 +42,7 @@ typedef	enum { FALSE, TRUE } bool;
 #define	DIM 2               /* Dimension of points */
 
 typedef	double tPointd[DIM];   /* Type double point */
-const double NEARZERO=10e-15; /* Seuil de tolérance du zero. */
+const double NEARZERO=10e-15; /* THRESHOLD for zero. */
 /*---------------------------------------------------------------------
 Function prototypes.
 ---------------------------------------------------------------------*/
@@ -53,7 +53,23 @@ void Assignpx( tPointd p, tPointd a );
 int Collinear( tPointd a, tPointd b, tPointd c );
 int AreaSign( tPointd a, tPointd b, tPointd c );
 void CheckAllSeg(int *nrow, int *ncol, double *tab, tPointd a, tPointd b, int *answer);
+double dAbs(double a);
+int dEqual(double a, double b);
 /*-------------------------------------------------------------------*/
+
+/* dAbs returns the absolute value of a double */
+double dAbs(double a)
+{
+  if(a>=0.0)  return a;
+  else return -a;
+}
+
+/* dEqual returns 1 if two doubles are equal, and 0 otherwise */
+int dEqual(double a, double b)
+{
+  if(dAbs(a-b) < NEARZERO) return 1;
+  else return 0;
+}
 
 
 /*-------------------------------------------------------------------
@@ -72,13 +88,13 @@ double **mat;
 tPointd c,d,crois;
 
 
-/* Allocation memoire pour les variables C locales */
+/* Memory allocation for local C variables */
 n = *nrow;
 p = *ncol;
 
- taballoc(&mat, n, p); /* fonction C ade4 */
+ taballoc(&mat, n, p); /* function from ade4 */
 
-/* On reconstruit la matrice des segments en C (mat) */
+/* Reconstruction of the matrix of segments */
 k = 0;
 for (j=1; j<=p; j++) {
   for (i=1; i<=n; i++) {
@@ -87,11 +103,11 @@ for (j=1; j<=p; j++) {
   }
 }
 
-/* On effectue les comparaisons d'un segment ab avec tous les autres (cd) 
-On s'arrete des qu'on a croise un segment */
+/* The segment of interest (ab) is checked for crossing against all other segments (cd)
+We stop as soon as one segment is crossed */
  temp = 0;
  i = 1;
- while(temp!=1 && i<=n){
+ while(temp ==0 && i<=n){
    c[X] = mat[i][1];
    c[Y] = mat[i][2];
    d[X] = mat[i][3];
@@ -101,7 +117,7 @@ On s'arrete des qu'on a croise un segment */
    }
  *answer = temp;
 
- /* Liberation memoire */
+ /* Free allocated memory */
  freetab(mat);
 }
 
@@ -123,7 +139,10 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
    double num, denom;  /* Numerator and denoninator of equations. */
    int code = 10; /* returned value, default 10 is a failure */
 
-   /* Initialisation (utile?) du point d'intersection p */
+   /* For debugging
+   printf("\n!!! SegSeg: code initialized at %d\n",code);*/
+
+   /* Initialization of the intersection point 'p' */
    tPointd p;
 
    p[X] = -1;
@@ -133,43 +152,62 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
            b[X] * (double)( c[Y] - d[Y] ) +
            d[X] * (double)( b[Y] - a[Y] ) +
            c[X] * (double)( a[Y] - b[Y] );
-   /* If denom is zero, then segments are parallel: handle separately. Beware to avoid ... == 0 with doubles */
-   if ((denom < NEARZERO) && (denom > -NEARZERO)) code =  Parallel(a, b, c, d, p);
+   /* If denom is zero, then segments are parallel: handle separately. 
+      Beware to avoid ... == 0 with doubles, 
+      as well as ...==... */
+   if (dAbs(denom) < NEARZERO) {
+     code =  Parallel(a, b, c, d, p);
+     /* For debugging 
+     printf("\n!!! SegSeg: call to Parallel (denom=%f)\n",denom);*/
+   }
    else{
-  	num =    a[X] * (double)( d[Y] - c[Y] ) +
-  	          c[X] * (double)( a[Y] - d[Y] ) +
-   	         d[X] * (double)( c[Y] - a[Y] );
-	/* code 2 handled here */
-  	if ( ((num < NEARZERO) && (num > -NEARZERO)) || (num == denom) ) code = 2;
-	s = num / denom;
-  	
- 	num = -( a[X] * (double)( c[Y] - b[Y] ) +
-    	        b[X] * (double)( a[Y] - c[Y] ) +
-   	         c[X] * (double)( b[Y] - a[Y] ) );
+     num =    a[X] * (double)( d[Y] - c[Y] ) +
+       c[X] * (double)( a[Y] - d[Y] ) +
+       d[X] * (double)( c[Y] - a[Y] );
+     /* code 2 handled here */
+     /*if ( ((num < NEARZERO) && (num > -NEARZERO)) || (num == denom) ) code = 2;*/
+     if ( (dAbs(num) < NEARZERO) || (dEqual(num,denom)) ) code = 2;
+     
+     /* Debugging step 1
+     printf("\n!!! SegSeg step1: dAbs(num)=%f, dEqual(num,denom)=%d), code=%d\n",dAbs(num),dEqual(num,denom),code);
+     printf("\nNEARZERO=%f\n",NEARZERO);*/
 
-	t = num / denom;
-
-	if ( ((num < NEARZERO) && (num > -NEARZERO)) || (num == denom) ) code = 2;
- 	
- 	if ( (NEARZERO < s) && (s < 1.0) &&
- 	            (NEARZERO < t) && (t < 1.0) )
-	     code = 1;
- 	else if ( (-NEARZERO > s) || (s > 1.0) ||
-	             (-NEARZERO > t) || (t > 1.0) )
-  	   code = 0;
-
-	 p[X] = a[X] + s * ( b[X] - a[X] );
-  	 p[Y] = a[Y] + s * ( b[Y] - a[Y] );
-	}
+     s = num / denom;
+     
+     num = -( a[X] * (double)( c[Y] - b[Y] ) +
+	      b[X] * (double)( a[Y] - c[Y] ) +
+	      c[X] * (double)( b[Y] - a[Y] ) );
+     
+     t = num / denom;
+     
+     /* if ( ((num < NEARZERO) && (num > -NEARZERO)) || (num == denom) ) code = 2;*/
+     if ( (dAbs(num) < NEARZERO) || (dEqual(num,denom)) ) code = 2;
+     /* Debugging step 2
+     printf("\n!!! SegSeg step2: dAbs(num)=%f, dEqual(num,denom)=%d), code=%d\n",dAbs(num),dEqual(num,denom),code);
+     printf("\nNEARZERO=%f\n",NEARZERO);*/
+     
+     if ( (NEARZERO < s) && (s < 1.0) &&
+	  (NEARZERO < t) && (t < 1.0) )
+       code = 1;
+     else if ( (-NEARZERO > s) || (s > 1.0) ||
+	       (-NEARZERO > t) || (t > 1.0) )
+       code = 0;
+     
+     p[X] = a[X] + s * ( b[X] - a[X] );
+     p[Y] = a[Y] + s * ( b[Y] - a[Y] );
+   }
+   
+   /* Debugging step 3
+   printf("\n!!! SegSeg step3: final value of code=%d\n",code);*/
    return code;
 }
 
 int	Parallel( tPointd a, tPointd b, tPointd c, tPointd d, tPointd p )
 {
 /* Avoid to consider segments as parallel whenever two points are the same. */
-	if ( (a[X]==b[X] && a[Y]==b[Y]) || (c[X]==d[X] && c[Y]==d[Y]) ) return 0;
-
-	if ( Collinear( a, b, c)==0 ) return 0;
+/*if ( (a[X]==b[X] && a[Y]==b[Y]) || (c[X]==d[X] && c[Y]==d[Y]) ) return 0;*/
+if ( (dEqual(a[X],b[X]) && dEqual(a[Y],b[Y])) || (dEqual(c[X],d[X]) && dEqual(c[Y],d[Y])) ) return 0;
+if ( Collinear( a, b, c)==0 ) return 0;
 
    if ( Between( a, b, c ) ) {
       Assignpx( p, c );
@@ -205,11 +243,11 @@ bool    Between( tPointd a, tPointd b, tPointd c )
 
    /* If ab not vertical, check betweenness on x; else on y. */
    if ( a[X] != b[X] )
-      return ((a[X] <= c[X]) && (c[X] <= b[X])) ||
-             ((a[X] >= c[X]) && (c[X] >= b[X]));
+     return ((a[X] <= c[X]) && (c[X] <= b[X])) ||
+       ((a[X] >= c[X]) && (c[X] >= b[X]));
    else
-      return ((a[Y] <= c[Y]) && (c[Y] <= b[Y])) ||
-             ((a[Y] >= c[Y]) && (c[Y] >= b[Y]));
+     return ((a[Y] <= c[Y]) && (c[Y] <= b[Y])) ||
+       ((a[Y] >= c[Y]) && (c[Y] >= b[Y]));
 }
 
 int Collinear( tPointd a, tPointd b, tPointd c )

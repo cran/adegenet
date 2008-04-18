@@ -67,7 +67,7 @@ spca4 <- spca(dat4,xy=dat4$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfp
 # an auxiliary function for graphics
 plotaux <- function(x,analysis,axis=1,lab=NULL,...){
 neig <- NULL
-if(inherits(analysis,"spca")) neig <- nb2neig(analysis$cn)
+if(inherits(analysis,"spca")) neig <- nb2neig(analysis$lw$neighbours)
 xrange <- range(x$other$xy[,1])
 xlim <- xrange + c(-diff(xrange)*.1 , diff(xrange)*.45)
 yrange <- range(x$other$xy[,2])

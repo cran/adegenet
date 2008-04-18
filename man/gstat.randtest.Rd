@@ -44,6 +44,7 @@ sup.pop=NULL, sub.pop=NULL, nsim=499)
 \value{Returns an object of the class \code{randtest} (package \code{ade4}).
 }
 \seealso{\code{\link[pkg:hierfstat]{g.stats.glob}},
+  \code{\link{fstat}},
   \code{\link[pkg:hierfstat]{test.g}},\code{\link[pkg:hierfstat]{test.within}},
   \code{\link[pkg:hierfstat]{test.between}},\code{\link[pkg:ade4]{as.randtest}},
   \code{\link{genind2hierfstat}}

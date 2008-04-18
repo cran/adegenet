@@ -192,8 +192,8 @@ setMethod("$<-","genpop",function(x,name,value) {
 # '[' operator
 ###############
 ## genind
-setMethod("[","genind", 
-          function(x, i, j, ..., drop=FALSE) {
+setMethod("[","genind",
+          function(x, i, j, ..., treatOther=TRUE, drop=FALSE) {
 
               if (missing(i)) i <- TRUE
               if (missing(j)) j <- TRUE
@@ -211,6 +211,27 @@ setMethod("[","genind",
               tab <- tab[i, j, ...,drop=FALSE]
               
               res <- genind(tab,pop=pop,prevcall=prevcall)
+
+              ## handle 'other' slot
+              nOther <- length(x@other)
+              namesOther <- names(x@other)
+              counter <- 0
+              if(treatOther){
+                  f1 <- function(obj,n=nrow(x@tab)){
+                      counter <<- counter+1
+                      if(!is.null(dim(obj)) && nrow(obj)==n) { # if the element is a matrix-like obj
+                          obj <- obj[i,,drop=FALSE]
+                      } else if(length(obj) == n) { # if the element is not a matrix but has a length == n
+                          obj <- obj[i]
+                          if(is.factor(obj)) {obj <- factor(obj)}
+                      } else {warning(paste("cannot treat the object",namesOther[counter]))}
+
+                      return(obj)
+                  } # end f1
+
+                  res@other <- lapply(x@other, f1) # treat all elements
+                  
+              } # end treatOther
               
               return(res)
           })
@@ -218,7 +239,7 @@ setMethod("[","genind",
 
 ## genpop
 setMethod("[","genpop", 
-          function(x, i, j, ..., drop=FALSE) {
+          function(x, i, j, ..., treatOther=TRUE, drop=FALSE) {
 
               if (missing(i)) i <- TRUE
               if (missing(j)) j <- TRUE
@@ -229,6 +250,28 @@ setMethod("[","genpop",
               tab <- tab[i, j, ...,drop=FALSE]
               
               res <- genpop(tab,prevcall=prevcall)
+
+              ## handle 'other' slot
+              nOther <- length(x@other)
+              namesOther <- names(x@other)
+              counter <- 0
+              if(treatOther){
+                  f1 <- function(obj,n=nrow(x@tab)){
+                      counter <<- counter+1
+                      if(!is.null(dim(obj)) && nrow(obj)==n) { # if the element is a matrix-like obj
+                          obj <- obj[i,,drop=FALSE]
+                      } else if(length(obj) == n) { # if the element is not a matrix but has a length == n
+                          obj <- obj[i]
+                          if(is.factor(obj)) {obj <- factor(obj)}
+                      } else {warning(paste("cannot treat the object",namesOther[counter]))}
+                      
+                      return(obj)
+                  } # end f1
+                  
+                  res@other <- lapply(x@other, f1) # treat all elements
+                  
+              } # end treatOther
+             
               
               return(res)
           })
