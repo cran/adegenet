@@ -84,6 +84,8 @@ df2genind <- function(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, m
     temp <- apply(X,2,function(c) all(c==missTyp))
     if(any(temp)){
         X <- X[,!temp]
+        loc.names <- loc.names[!temp]
+        nloc <- ncol(X)
         warning("entirely non-type marker(s) deleted")
     }
     
@@ -93,6 +95,7 @@ df2genind <- function(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, m
         X <- X[!temp,]
         pop <- pop[!temp]
         ind.names <- ind.names[!temp]
+        n <- nrow(X)
         warning("entirely non-type individual(s) deleted")        
     }
     

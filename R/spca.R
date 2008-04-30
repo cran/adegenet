@@ -23,29 +23,39 @@ spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfne
   if(!inherits(obj,c("genind","genpop"))) stop("obj must be a genind or genpop object.")
   invisible(validObject(obj))
 
+  ## spatial coordinates
   if(is.null(xy) & !is.null(obj$other$xy)) xy <- obj$other$xy
   if(is.data.frame(xy)) xy <- as.matrix(xy)
-  if(ncol(xy) != 2) stop("xy does not have two columns.")
-  if(nrow(xy) != nrow(obj@tab)) stop("obj@tab and xy must have the same row numbers.")
-
+  if(!is.null(xy) & !is.matrix(xy)) stop("wrong 'xy' provided")
+  
   if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
 
   appel <- match.call()
   
-  # connection network
+  ## connection network
   if(is.null(cn)) {
     if(is.null(xy)) stop("'xy' and 'cn' are both missing")
     resCN <- chooseCN(xy=xy, ask=ask, type=type, plot.nb=plot.nb, edit.nb=edit.nb,
                       result.type="listw", d1=d1, d2=d2, k=k, a=a, dmin=dmin)
   } else {
-      if(inherits(cn,"nb") & !inherits(cn,"listw")) { cn <- nb2listw(cn, style="W", zero.policy=TRUE) }
-      if(!inherits(cn,"listw")) stop("cn does not have a recognized class ('nb' or 'listw', package spdep)")
-      resCN <- cn
+      if(inherits(cn,"nb") & !inherits(cn,"listw")) {
+          xy <- attr(cn,"xy") # xy coords can be retrieved from cn of class nb (not from listw) 
+          cn <- nb2listw(cn, style="W", zero.policy=TRUE)
+      }
+
+      if(!inherits(cn,"listw")) {
+          stop("cn does not have a recognized class ('nb' or 'listw', package spdep)")
+      } else {
+          if(is.null(xy)) stop("listw object provided as 'cn' without providing 'xy'")
+          resCN <- cn
+      }
   }
-  
-  xy <- attr(resCN,"xy")
- 
-  # prepare data
+
+  ## check xy coordinates
+  if(ncol(xy) != 2) stop("xy does not have two columns.")
+  if(nrow(xy) != nrow(obj@tab)) stop("obj@tab and xy must have the same row numbers.")
+
+  ## prepare data
   f1 <- function(vec){
     m <- mean(vec,na.rm=TRUE)
     vec[is.na(vec)] <- m
@@ -55,7 +65,11 @@ spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfne
   if(is.genind(obj)) { X <- obj@tab }
   if(is.genpop(obj)) { X <- makefreq(obj, quiet=TRUE)$tab }
 
-  X <- apply(X,2,f1)
+  ## handle NAs
+  if(any(is.na(X))){
+      warning("NAs in data are automatically replaced (to mean allele frequency")
+      X <- apply(X,2,f1)
+  }
 
   if(truenames){
     rownames(X) <- rownames(truenames(obj))

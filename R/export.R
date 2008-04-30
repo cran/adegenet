@@ -117,12 +117,15 @@ genind2hierfstat <- function(x,pop=NULL){
 #####################
 # Function genind2df
 #####################
-genind2df <- function(x,pop=NULL, sep=""){
+genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
 
-  if(is.null(pop)) pop <- x@pop
-  if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
+  if(is.null(pop)) {
+      pop <- x@pop
+      levels(pop) <- x@pop.names
+  }
+  ## if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab))) # no longer used
   
   # make one table by locus from x@tab
   kX <- seploc(x,res.type="matrix")
@@ -131,14 +134,26 @@ genind2df <- function(x,pop=NULL, sep=""){
   
   # function to recode a genotype in form "A1/A2" from frequencies
   recod <- function(vec,lab){
-    if(all(is.na(vec))) return(NA)
-    if(round(sum(vec),10) != 1) return(NA)
-    temp <- c(which(vec==0.5),which(vec==1))
-    if(length(temp)==0) return(NA)
-    lab <- lab[temp]
-    res <- paste(lab[1],lab[length(lab)],sep=sep)
-    return(res)
+      vec <- as.logical(vec)
+      sumVec <- sum(vec)
+      if(is.na(sumVec)) {
+          return(NA)
+      } else if(sumVec==2){ # heteroZ
+          return(paste(lab[vec], collapse=sep))
+      } else if(sumVec==1){ # homoZ
+          return(paste(lab[vec],lab[vec],sep=sep))
+      } else return(NA)
   }
+  
+  ##  recod <- function(vec,lab){ ## old version, new one is faster
+  ##     if(all(is.na(vec))) return(NA)
+  ##     if(round(sum(vec),10) != 1) return(NA)
+  ##     temp <- c(which(vec==0.5),which(vec==1))
+  ##     if(length(temp)==0) return(NA)
+  ##     lab <- lab[temp]
+  ##     res <- paste(lab[1],lab[length(lab)],sep=sep)
+  ##     return(res)
+  ##   }
  
   # kGen is a list of nloc vectors of genotypes
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x@all.names[[i]]))
@@ -146,5 +161,8 @@ genind2df <- function(x,pop=NULL, sep=""){
 
   res <- cbind.data.frame(kGen,stringsAsFactors=FALSE)
 
+  ## handle pop here
+  if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res)
+  
   return(res)
 }

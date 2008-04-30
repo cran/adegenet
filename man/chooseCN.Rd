@@ -56,7 +56,6 @@ chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL,
   \code{listw}. The xy coordinates are passed as attribute to the
   created object.
 }
-\references{}
 \seealso{\code{\link{spca}}
 }
 \author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }

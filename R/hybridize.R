@@ -44,7 +44,7 @@ hybridize <- function(x1, x2, n, pop=NULL, res.type=c("genind","df","STRUCTURE")
     gam1@loc.fac <- x1@loc.fac
     gam1@all.names <- x1@all.names
     gam1@loc.nall <- x1@loc.nall
-    gam1 <- genind2df(gam1,sep="/")
+    gam1 <- genind2df(gam1,sep="/",usepop=FALSE)
     gam1 <- as.matrix(gam1)
     
     ## gam 2
@@ -55,7 +55,7 @@ hybridize <- function(x1, x2, n, pop=NULL, res.type=c("genind","df","STRUCTURE")
     gam2@loc.fac <- x2@loc.fac
     gam2@all.names <- x2@all.names
     gam2@loc.nall <- x2@loc.nall
-    gam2 <- genind2df(gam2,sep="/")
+    gam2 <- genind2df(gam2,sep="/",usepop=FALSE)
     gam2 <- as.matrix(gam2)
 
     #### construction of zygotes
@@ -68,8 +68,8 @@ hybridize <- function(x1, x2, n, pop=NULL, res.type=c("genind","df","STRUCTURE")
         res <- as.data.frame(matrix(res,ncol=k))
         names(res) <- x1@loc.names
         row.names(res) <- .genlab(hyb.label,n)
-        df1 <- genind2df(x1,sep=" ") # make df with parents and hybrids
-        df2 <- genind2df(x2,sep=" ")
+        df1 <- genind2df(x1,sep=" ",usepop=FALSE) # make df with parents and hybrids
+        df2 <- genind2df(x2,sep=" ",usepop=FALSE)
         res <- rbind.data.frame(df1,df2,res) # rbind the three df
         res[is.na(res)] <- "-9 -9" # this is two missing alleles for STRUCTURE
         pop <- rep(1:3,c(nrow(x1@tab), nrow(x2@tab), n)) # make a pop identifier

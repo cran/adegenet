@@ -83,8 +83,6 @@ add.scatter({barplot(analysis$eig,col="grey");box();title("Eigenvalues",line=-1)
 }
 
 # plots
-get(getOption("device"))(width=10,height=5)
-par(mfrow=c(1,2))
 plotaux(dat2A,pca2A,sub="dat2A - PCA",pos="bottomleft",csub=2)
 plotaux(dat2A,spca2A,sub="dat2A - sPCA glob1",pos="bottomleft",csub=2)
 
@@ -94,7 +92,6 @@ plotaux(dat2B,spca2B,sub="dat2B - sPCA glob1",pos="bottomleft",csub=2)
 plotaux(dat2C,pca2C,sub="dat2C - PCA",pos="bottomleft",csub=2)
 plotaux(dat2C,spca2C,sub="dat2C - sPCA loc1",pos="bottomleft",csub=2,axis=2)
 
-get(getOption("device"))()
 par(mfrow=c(2,2))
 plotaux(dat3,pca3,sub="dat3 - PCA axis1",pos="bottomleft",csub=2)
 plotaux(dat3,spca3,sub="dat3 - sPCA glob1",pos="bottomleft",csub=2)

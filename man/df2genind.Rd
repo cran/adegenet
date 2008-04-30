@@ -22,7 +22,7 @@
 \usage{
 df2genind(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL,
  missing=NA)
-genind2df(x,pop=NULL, sep="")
+genind2df(x,pop=NULL, sep="",usepop=TRUE)
 }
 \arguments{
   \item{X}{a matrix or a data.frame (see decription)}
@@ -37,7 +37,9 @@ genind2df(x,pop=NULL, sep="")
   \item{missing}{can be NA, 0 or "mean". See details section.}
   \item{x}{a \linkS4class{genind} object}
   \item{sep}{a character used to separate two alleles}
- }
+  \item{usepop}{a logical stating whether the population (argument \code{pop}
+    or \code{x@pop} should be used (TRUE, default) or not (FALSE).}
+}
    
 \details{There are 3 treatments for missing values: \cr
   - NA: kept as NA.\cr

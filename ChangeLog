@@ -1,0 +1,125 @@
+			CHANGES IN ADEGENET VERSION 1.1-2
+
+
+NEW FEATURES
+
+	o significant improvement in the speed of genind2df (more than
+	twice as fast as before).
+
+	o function propShared added: computes the proportion of shared
+	alleles among a set of genotypes (core computations in C).
+
+	o A warning is issued when NAs exist in the input of sPCA.
+
+	o improvement of the validity checking for genind/genpop:
+	validObject now detects duplicates in any kind of names (ind.names,
+	pop.names, etc.) and prints the corresponding items.
+
+BUG FIXES
+
+	o genind2df does now handles the pop argument correctly.
+
+	o df2genind does no longer bug when there is an entirely non-typed
+	locus.
+
+
+	
+			CHANGES IN ADEGENET VERSION 1.1-1
+
+
+NEW FEATURES
+
+	o I/O: df2genind no longer fails when entirely non-type
+	individuals exist.
+
+	o Monmonier: optimize.monmonier now computes the 'best'
+	boundary only once instead of twice. The whole code was re-thought
+	and optimized for speed. Monmonier's boundaries can now form
+	loops. Instead of stoping at a given threshold, it is also
+	possible to ask for a given length of boundary (argument
+	bd.length).
+
+	o The function chooseCN has a new option to return a list of
+	spatial weights defined as the inverse of spatial distances, at a
+	given exponent.
+
+	o A wrapper for glob.varcomp has been implemented for genind
+	objects, through the new function fstat.
+
+	o The elements of the @other slot are now proceeded wisely when
+	objects are subsetted using the '[' operator.
+
+
+BUG FIXES
+
+	o I/O: df2genind no longer fails when entirely non-type
+	individuals exist.
+
+	o monmonier no longer fails when coordinates are drawn from a
+	regular grid. The matched call of the returned object has been
+	fixed.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.1-0
+
+NEW FEATURES
+	o Data representation: S4 classes in replacement of old S3
+	classes.
+
+	o Spatial genetics: the spatial Principal Component Analysis
+	(Jombart et al, 2008, Heredity), two multivariate spatial
+	tests, and new functionalities for Monmonier's algorithm.
+
+	o I/O: functions to import data are now 'read' functions;
+	available for formats of GENETIX, Fstat, Genepop, STRUCTURE and
+	from data.frames of genotypes. Export from genind to data.frame of
+	genotypes.
+
+	o Data: five new simulated geo-referenced datasets
+
+	o Simulations: a hybridize function, which creates hybrids from
+	two parent datasets. Can output to STRUCTURE format.
+
+	o Data manipulation: new function to separate data by
+	population. Accessors to genind and genpop object like with
+	matrices using 'foo[ chosenGenotypes, chosenAlleles]'.
+
+
+
+			CHANGES IN ADEGENET VERSION 1.0-2
+
+NEW FEATURES
+
+	o adegenetWeb is a simple function opening the adegenet website in
+	the default web browser.
+
+	o sim2pop is a dataset obtained by simulation using the software
+	Easypop. It contains 130 georeferenced genotypes sampled from two
+	distinct populations.
+
+	o monmonier documentation was improved by adding a genetic
+	example, using sim2pop data.
+
+BUG FIXES
+
+	o some bugs corrected in optimize.monmonier
+
+
+			CHANGES IN ADEGENET VERSION 1.0-1
+
+NEW FEATURES
+
+	o chooseCN is a simple interactive tool for choosing and building
+	a connection network from spatial coordinates. This tool is called
+	by monmonier function.
+
+	o monmonier, optimize.monmonier, plot.monmonier and print.monmonier
+	implement the Monmonier algorithm. While not restrained to genetic
+	data analysis, this method can be used to find genetic boundaries
+	among individuals or populations based on their allelic
+	frequencies and spatial coordinates. 
+
+BUG FIXES
+
+	o several bugs fixed in I/O functions
