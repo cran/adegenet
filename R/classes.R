@@ -99,6 +99,12 @@ setClassUnion("intOrNum", c("integer","numeric"))
     return(FALSE)
   }
 
+  temp <- table(object@loc.names[object@loc.names!=""])
+  if(any(temp>1)) {
+      warning("\nduplicate names in loc.names:\n")
+      print(temp[temp>1])
+  }
+
   if(length(unlist(object@all.names)) != p) {
     cat("\ninvalid length in all.names\n")
     return(FALSE)
@@ -142,29 +148,43 @@ setClass("indInfo", representation(ind.names = "character",
 ###############
 .genind.valid <- function(object){
     if(!.gen.valid(object)) return(FALSE)
-    
+
     if(length(object@ind.names) != nrow(object@tab)) {
         cat("\ninvalid length in ind.names\n")
         return(FALSE)
     }
-    
+
+    temp <- table(object@ind.names[object@ind.names!=""])
+    if(any(temp>1)) {
+        warning("\nduplicate names in ind.names:\n")
+        print(temp[temp>1])
+    }
+
     if(!is.null(object@pop)){ # check pop
-        
+
         if(length(object@pop) != nrow(object@tab)) {
             cat("\npop is given but has invalid length\n")
             return(FALSE)
         }
-        
+
         if(is.null(object@pop.names)) {
             cat("\npop is provided without pop.names")
-        }  
-        
+        }
+
+
         if(length(object@pop.names) != length(levels(object@pop))) {
             cat("\npop.names has invalid length\n")
             return(FALSE)
         }
+
+        temp <- table(object@pop.names[object@pop.names!=""])
+        if(any(temp>1)) {
+            warning("\nduplicate names in pop.names:\n")
+            print(temp[temp>1])
+        }
+
     } # end check pop
-    
+
     return(TRUE)
 } #end .genind.valid
 
@@ -190,7 +210,13 @@ setClass("popInfo", representation(pop.names = "character", other = "listOrNULL"
         cat("\ninvalid length in pop.names\n")
         return(FALSE)
     }
-    
+
+    temp <- table(object@pop.names[object@pop.names!=""])
+    if(any(temp>1)) {
+        warning("\nduplicate names in pop.names:\n")
+        print(temp[temp>1])
+    }
+
     return(TRUE)
 } #end .genpop.valid
 

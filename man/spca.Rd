@@ -41,7 +41,11 @@ plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL,
 \arguments{
   \item{obj}{a \code{genind} or \code{genpop} object.}
   \item{xy}{a matrix or data.frame with two columns for x and y
-    coordinates. Seeked from obj\$other\$xy if it exists. Can be NULL if \code{cn} is provided.}
+    coordinates. Seeked from obj\$other\$xy if it exists when xy is not
+    provided. Can be NULL if a \code{nb} object is provided in
+    \code{cn}.\cr
+    Longitude/latitude coordinates should be converted first by a given projection (see See
+    Also section).}
   \item{cn}{a connection network of the class 'nb' (package spdep). Can
     be NULL if xy is provided. Can be easily obtained using the function
     chooseCN.}
@@ -142,7 +146,10 @@ of Moran's I and Geary's c. \emph{Geographical Analysis}, \bold{16}, 17--24.
 \seealso{\code{\link{spcaIllus}}, a set of simulated data illustrating
   the sPCA \cr
   \code{\link{global.rtest}} and \code{\link{local.rtest}} \cr
-  \code{\link{chooseCN}}, \code{\link[pkg:ade4]{multispati}}, \code{\link[pkg:ade4]{multispati.randtest}}
+  \code{\link{chooseCN}}, \code{\link[pkg:ade4]{multispati}},
+  \code{\link[pkg:ade4]{multispati.randtest}}\cr
+  \code{\link[pkg:PBSmapping]{conUL}} to convert longitude/latitude to
+  UTM coordinates.
 }
 \author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
 \examples{

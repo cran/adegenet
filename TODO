@@ -26,22 +26,15 @@
 
 # CODE ISSUES:
 ==============
-* df2genind fails when entirely non-type individuals exist -- done (TJ)
-* optimize.monmonier: check the way final object is constructed: can fail when the function is called inside another function -- fixed (TJ)
-* monmonier: fails on a regular grid; must be a problem in the C code detecting colinearity between two segments -- fixed (TJ)
-* monmonier: bug when bd.length is abnormally high -- fixed (TJ) 
 *
 
 # DOCUMENTATION ISSUES:
 =======================
-* 
+*
 
 # NEW IMPLEMENTATIONS:
 =====================
-* Implement spatial weights derived from inverse spatial distances in chooseCN -- done (TJ)
-* Implement a Fst wrapper for genind objects -- done (TJ)
-* Proceed wisely the elements of @other when subsetting objects using the "[" operator. --done (TJ)
-*
+* implement different levels of ploidy in genind / genpop objects.
 
 # TESTING:
 ==========
@@ -52,7 +45,7 @@
 # LOW PRIORITY / MINOR BUGS
 ===========================
 ===========================
-* in spca, when nfposi=0, the returned object actually contains what corresponds to nfposi=1. Comes from multispati in ade4. To correct.
+* in spca, when nfposi=0, the returned object actually contains what corresponds to nfposi=1. Comes from multispati in ade4. To correct in ade4.
 * use spcaIllus to illustrate global.rtest and local.rtest
 * check all examples and look for possible improvements
 * Implement "sep" argument in df2genind
@@ -64,9 +57,11 @@
 # LONG TERM
 ==========================
 ==========================
-* import from geneticsBase -- for now their basic class is not even documented!
+* import from geneticsBase -- wait for geneSet to be stable
 * export to geneticsBase -- same thing
 * see where code needs tuning, and use C/C++
 * implement global.rtest and local.rtest for genind/genpop objects
 * Implement method "scale" for genind / genpop objects
 * Implement dudi wrappers for genind / genpop objects
+* Check the formulae provided for Reynolds (consistent with Felsenstein's
+formulae, not straightforward reading the original article)

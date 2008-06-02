@@ -423,7 +423,7 @@ repool <- function(...){
     
     
     ## extract info
-    listTab <- lapply(x,genind2df)
+    listTab <- lapply(x,genind2df,usepop=FALSE)
     getPop <- function(obj){
         if(is.null(obj$pop)) return(factor(rep(NA,nrow(obj$tab))))
       pop <- obj$pop
