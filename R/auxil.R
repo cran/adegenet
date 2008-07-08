@@ -420,7 +420,8 @@ repool <- function(...){
     if(!all(sapply(x,is.genind))) stop("x is does not contain only valid genind objects")
     temp <- sapply(x,function(e) e$loc.names)
     if(!all(table(temp)==length(x))) stop("markers are not the same for all objects")
-    
+    temp <- sapply(x,function(e) e$ploidy)
+    if(length(unique(temp)) != as.integer(1)) stop("objects have different levels of ploidy")
     
     ## extract info
     listTab <- lapply(x,genind2df,usepop=FALSE)
@@ -452,4 +453,30 @@ repool <- function(...){
     return(res)
 } # end repool
 
+
+
+
+######################
+## miscellanous utils
+######################
+
+
+#######
+# nLoc
+#######
+setGeneric("nLoc", function(x,...){
+    standardGeneric("nLoc")
+})
+
+
+
+setMethod("nLoc","genind", function(x,...){
+    return(length(x@loc.names))
+})
+
+
+
+setMethod("nLoc","genpop", function(x,...){
+    return(length(x@loc.names))
+})
 

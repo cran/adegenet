@@ -5,6 +5,8 @@
 \alias{show,genind-method}
 \alias{names,genind-method}
 \alias{summary,genind-method}
+\alias{nLoc}
+\alias{nLoc,genind-method}
 \alias{.valid.genind}
 \title{adegenet formal class (S4) for individual genotypes}
 \description{The S4 class \code{genind} is used to store individual genotypes.\cr
@@ -16,22 +18,24 @@
   of \$.
 }
 \section{Slots}{
-         \describe{
+  \describe{
     \item{\code{tab}:}{matrix of genotypes -in rows- for all alleles -in
-    columns-. Values are frequency: '0' if the genotype does not have
-    the corresponding allele, '1' for an homozygote and 0.5 for an
-    heterozygte.Rows and columns are given generic names.}
+      columns-. Values are frequency: '0' if the genotype does not have
+      the corresponding allele, '1' for an homozygote and 0.5 for an
+      heterozygte.Rows and columns are given generic names.}
     \item{\code{loc.names}:}{character vector containing the real names of the loci}
     \item{\code{loc.fac}:}{locus factor for the columns of \code{tab}}
     \item{\code{loc.nall}:}{integer vector giving the number of alleles per locus}
     \item{\code{all.names}:}{list having one component per locus, each containing a character vector of alleles names}
     \item{\code{call}:}{the matched call}
     \item{\code{ind.names}:}{character vector containing the real names of the
-    individuals. Note that as Fstat does not store these names, objects
-    converted from .dat files will contain empty \code{ind.names}.}
+      individuals. Note that as Fstat does not store these names, objects
+      converted from .dat files will contain empty \code{ind.names}.}
+    \item{\code{ploidy}:}{ an integer indicating the degree of ploidy of
+      the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
     \item{\code{pop}:}{(optional) factor giving the population of each individual}
     \item{\code{pop.names}:}{(optional) vector giving the real names of the
-    populations}
+      populations}
     \item{\code{other}:}{(optional) a list containing other information}
   }
 }
@@ -49,10 +53,11 @@ Class \code{"\linkS4class{indInfo}"}, directly.
       object (same as print)}
     \item{summary}{\code{signature(object = "genind")}: summarizes a
       genind object, invisibly returning its content}
+    \item{nLoc}{\code{signature(object = "genind")}: returns the number
+      of loci of the object}
+    
   }
 }
-
-\references{}
 \seealso{\code{\link{as.genind}}, \code{\link{is.genind}}, \code{\link{genind2genpop}},
   \code{\link{genpop}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.genepop}},

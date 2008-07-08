@@ -20,8 +20,8 @@
 }
 
 \usage{
-genind(tab,pop=NULL,prevcall=NULL)
-as.genind(tab,pop=NULL,prevcall=NULL)
+genind(tab,pop=NULL,prevcall=NULL, ploidy=2)
+as.genind(tab,pop=NULL,prevcall=NULL, ploidy=2)
 is.genind(x)
 }
 
@@ -30,6 +30,8 @@ is.genind(x)
     allelic frequencies, i.e. like in a genind object}
   \item{pop}{a factor giving the population of each genotype in 'x'}
   \item{prevcall}{call of an object}
+  \item{ploidy}{an integer indicating the degree of ploidy of
+    the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
   \item{x}{an object}
 }
 \value{

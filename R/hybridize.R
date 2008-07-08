@@ -8,6 +8,9 @@ hybridize <- function(x1, x2, n, pop=NULL, res.type=c("genind","df","STRUCTURE")
     ## checks
     if(!is.genind(x1)) stop("x1 is not a valid genind object")
     if(!is.genind(x2)) stop("x2 is not a valid genind object")
+    if(x1@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
+    if(x2@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
+    
     n <- as.integer(n)
     res.type <- match.arg(res.type)
     if(!all(x1@loc.names==x2@loc.names)) stop("names of markers in x1 and x2 do not correspond")

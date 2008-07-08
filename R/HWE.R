@@ -5,7 +5,8 @@
 HWE.test.genind <- function(x,pop=NULL,permut=FALSE,nsim=1999,hide.NA=TRUE,res.type=c("full","matrix")){
   
   if(!is.genind(x)) stop("x is not a valid genind object")
-
+  if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
+  
   if(!require(genetics)) stop("genetics package is required. Please install it.")
   if(is.null(pop)) pop <- x@pop
   if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))

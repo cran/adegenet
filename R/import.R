@@ -39,19 +39,24 @@
 #####################
 # Function df2genind
 #####################
-df2genind <- function(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA){
+df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, missing=NA, ploidy=2){
 
     if(is.data.frame(X)) X <- as.matrix(X)
     if (!inherits(X, "matrix")) stop ("X is not a matrix")
 
     res <- list()
 
+    ## make sure X is in character mode
+    mode(X) <- "character"
+    
     n <- nrow(X)
     nloc <- ncol(X)
-    
+    ploidy <- as.integer(ploidy)
+    if(ploidy < as.integer(1)) stop("ploidy cannot be less than 1")
+
     if(is.null(ind.names)) {ind.names <- rownames(X)}
     if(is.null(loc.names)) {loc.names <- colnames(X)}
-    
+
     ## pop optionnelle
     if(!is.null(pop)){
       if(length(pop)!= n) stop("length of factor pop differs from nrow(X)")
@@ -59,91 +64,155 @@ df2genind <- function(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, m
     }
 
     ## find or check the number of coding characters, 'ncode'
-    if(!is.null(ncode)) {if(ncode <  max(nchar(X)) ) stop("some character strings exceed the provided ncode.")}
-    if(is.null(ncode)) { ncode <- max(nchar(X)) }
-    if((ncode %% 2)>0) stop("Invalid number of coding characters (should be 2, 4, or 6)")
-    
-    
-    ## now check all strings and make sure they all have 'ncode' characters
-    ## NA are temporarily coded as "00", "000" or "000000" to fit the check
-    keepCheck <- any(nchar(X) < ncode)
-    missAll <- paste(rep("0",ncode/2),collapse="")
-    missTyp <- paste(rep("0",ncode),collapse="")
-    X[is.na(X)] <- missTyp
-    
-    while(keepCheck){
-        mat0 <- matrix("", ncol=ncol(X), nrow=nrow(X))
-        mat0[nchar(X) < ncode] <- "0"
-        X <-  matrix(paste(mat0, X, sep=""), nrow=nrow(mat0))
-        keepCheck <- any(nchar(X) < ncode)
+    if(is.null(sep)){
+        if(!is.null(ncode)) {if(ncode <  max(nchar(X)) ) stop("some character strings exceed the provided ncode.")}
+        if(is.null(ncode)) { ncode <- max(nchar(X)) }
+        if((ncode %% ploidy)>0) stop(paste(ploidy,"alleles cannot be coded by a total of",
+                                           ncode,"characters", sep=" "))
     }
-        
-    ## X now only contains valid strings with ncode characters
 
+    ## ERASE ENTIRELY NON-TYPE LOCI AND INDIVIDUALS
+    tempX <- X
+    if(!is.null(sep)) tempX <- gsub(sep,"",X)
+    ## turn NANANA, 00000, ... into NA
+    tempX <- gsub("^0*$",NA,X)
+    tempX <- gsub("(NA)+",NA,tempX)
+    
     ## Erase entierely non-typed loci
-    temp <- apply(X,2,function(c) all(c==missTyp))
+    temp <- apply(tempX,2,function(c) all(is.na(c)))
     if(any(temp)){
         X <- X[,!temp]
         loc.names <- loc.names[!temp]
         nloc <- ncol(X)
         warning("entirely non-type marker(s) deleted")
     }
-    
+
     ## Erase entierely non-type individuals
-    temp <- apply(X,1,function(c) all(c==missTyp))
+    temp <- apply(tempX,1,function(r) all(is.na(r)))
     if(any(temp)){
         X <- X[!temp,]
         pop <- pop[!temp]
         ind.names <- ind.names[!temp]
         n <- nrow(X)
-        warning("entirely non-type individual(s) deleted")        
+        warning("entirely non-type individual(s) deleted")
     }
-    
+
     n <- nrow(X)
+    X <- gsub("^.*NA.*$",NA,X) # set correct NAs in X
+    
     # ind.names <- rownames(X) this erases the real labels
     # note: if X is kept as a matrix, duplicate row names are no problem
-    
-    enumallel <- function (x) {
-        w <- as.character(x)
-        w1 <- substr(w,1,ncode/2)
-        w2 <- substr(w,(ncode/2)+1,ncode)
-        w3 <- sort(unique (c(w1,w2)))
-        return(w3[w3!=missAll])
+ 
+
+    ## function to fill a matrix of char 'M' with the required
+    ## number of zero, targetN being the total number of char required
+    fillWithZero <- function(M, targetN){
+        naIdx <- is.na(M)
+        keepCheck <- any(nchar(M) < targetN)
+        while(keepCheck){
+            mat0 <- matrix("", ncol=ncol(M), nrow=nrow(M))
+            mat0[nchar(M) < targetN] <- "0"
+            M <-  matrix(paste(mat0, M, sep=""), nrow=nrow(mat0))
+            keepCheck <- any(nchar(M) < targetN)
+        }
+
+        ## restore NA (otherwise we're left with "NA")
+        M[naIdx] <- NA
+        return(M)
     }
 
-    loc.all <- lapply(1:ncol(X),function(i) enumallel(X[,i]))
+    ## CHECK STRING LENGTH IF NO SEPARATOR PROVIDED
+    if(is.null(sep) | ploidy==as.integer(1)){
+        ##     ## now check all strings and make sure they all have 'ncode' characters
+        ##         ## NA are temporarily coded as "00", "000" or "000000" to fit the check
+        ##         keepCheck <- any(nchar(X) < ncode)
+        ##         missAll <- paste(rep("0",ncode/ploidy),collapse="")
+        ##         missTyp <- paste(rep("0",ncode),collapse="")
+        ##         X[is.na(X)] <- missTyp
+
+        ##         while(keepCheck){
+        ##             mat0 <- matrix("", ncol=ncol(X), nrow=nrow(X))
+        ##             mat0[nchar(X) < ncode] <- "0"
+        ##             X <-  matrix(paste(mat0, X, sep=""), nrow=nrow(mat0))
+        ##             keepCheck <- any(nchar(X) < ncode)
+        ##         }
+
+        X <- fillWithZero(X,targetN=ncode)
+
+        ## now split X by allele
+        splitX <- list()
+        for(i in 1:ploidy){
+            splitX[[i]] <- substr(X,1,ncode/ploidy)
+            X <- sub(paste("^.{",ncode/ploidy,"}",sep=""),"",X)
+        }
+
+    } # END CHECK STRING LENGTH WITHOUT SEP
+
+
+    ## CHECK STRING LENGTH WITH SEPARATOR PROVIDED
+    if(!is.null(sep)){
+        if(ploidy > 1){
+            temp <- t(as.matrix(as.data.frame(strsplit(X,sep))))
+            splitX <- list()
+            for(i in 1:ncol(temp)){
+                splitX[[i]] <- matrix(temp[,i], nrow=n)
+            } # each matrix of splitX contains typing for 1 allele
+        } else {
+            splitX <- list()
+            splitX[[1]] <- X
+        }
+
+        ## get the right ncode
+        temp <- unlist(splitX)
+        temp <- temp[!is.na(temp)]
+        ncode <- max(nchar(temp))*ploidy
+        splitX <- lapply(splitX, function(Y) fillWithZero(Y,targetN=ncode/ploidy))
+    } # END CHECK STRING LENGTH WITH SEP
+
+
+    ## AT THIS STAGE, splitX IS A LIST OF MATRICES,
+    ## EACH GIVING TYPING FOR AN ALLELE
+
+    ## fetch all possible alleles per locus
+    loc.all <- list()
+    for(i in 1:nloc){
+        temp <- unlist(lapply(splitX,function(e) e[,i]))
+        loc.all[[i]] <- sort(unique(temp[!is.na(temp)]))
+    }
+
     names(loc.all) <- loc.names
-    # loc.all est une liste dont chaque element est un vecteur des alleles (ordonnes) d'un marqueur
+    ## loc.all is a list whose element are vectors of sorted possible alleles at a locus
     temp <- lapply(1:nloc, function(i) matrix(0,nrow=n,ncol=length(loc.all[[i]]),
        dimnames=list(NULL,loc.all[[i]])) )
-    # note: keep rownames as NULL in case of duplicates
-    
-    names(temp) <- loc.names
-    # temp est une liste dont chaque element est un tableau-marqueur (indiv x alleles)
 
-    # remplissage des tableaux
+    names(temp) <- loc.names
+    # note: keep rownames as NULL in case of duplicates
+    ## temp is a list whose elements are one matrix (indiv x alleles) for each marker
+
+    ## now tables in 'temp' are filled up
     findall <- function(cha,loc.all){
-        if(cha==missAll) return(NULL)
+        if(is.na(cha)) return(NULL)
         return(which(cha==loc.all))
     }
 
-    for(i in 1:n){
-      for(j in 1:nloc){
-        all1pos <- findall(substr(X[i,j],1,ncode/2),loc.all[[j]])
-        temp[[j]][i,all1pos] <- temp[[j]][i,all1pos] + 0.5
-        all2pos <- findall(substr(X[i,j],(ncode/2)+1,ncode),loc.all[[j]])
-        temp[[j]][i,all2pos] <- temp[[j]][i,all2pos] + 0.5
-        if(is.null(c(all1pos,all2pos))) {temp[[j]][i,] <- NA}
-      }
+    for(k in 1:ploidy){
+        for(i in 1:n){
+            for(j in 1:nloc){
+                allIdx <- findall(splitX[[k]][i,j],loc.all[[j]])
+                temp[[j]][i,allIdx] <- temp[[j]][i,allIdx] + 1
+                if(is.null(allIdx)) {temp[[j]][i,] <- NA}
+            }
+        }
     }
 
-    # beware: colnames are wrong when there is only one allele in a locus
-    # right colnames are first generated
+    ## beware: colnames are wrong when there is only one allele in a locus
+    ## right colnames are first generated
     nall <- unlist(lapply(temp,ncol))
     loc.rep <- rep(names(nall),nall)
     col.lab <- paste(loc.rep,unlist(loc.all,use.names=FALSE),sep=".")
 
     mat <- as.matrix(cbind.data.frame(temp))
+    mat <- mat/ploidy
     colnames(mat) <- col.lab
     rownames(mat) <- ind.names
     
@@ -157,7 +226,7 @@ df2genind <- function(X, ncode=NULL, ind.names=NULL, loc.names=NULL, pop=NULL, m
      
     prevcall <- match.call()
 
-    res <- genind( tab=mat, pop=pop, prevcall=prevcall )
+    res <- genind( tab=mat, pop=pop, prevcall=prevcall, ploidy=ploidy )
     
     return(res)
 } # end df2genind
@@ -216,7 +285,7 @@ read.genetix <- function(file=NULL,missing=NA,quiet=FALSE) {
     pop <- factor(rep(pop.names,pop.nind))
     
     ## pass X to df2genind
-    res <- df2genind(X=X, ncode=6, pop=pop, missing=missing)
+    res <- df2genind(X=X, ncode=6, pop=pop, missing=missing, ploidy=2)
     res@call <- match.call()
     
     if(!quiet) cat("\n...done.\n\n")
@@ -258,7 +327,7 @@ read.fstat <- function(file,missing=NA,quiet=FALSE){
   colnames(X) <- loc.names
   rownames(X) <- 1:nrow(X)
 
-  res <- df2genind(X=X,pop=pop,missing=missing)
+  res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
   # beware : fstat files do not yield ind names
   res@ind.names <- rep("",length(res@ind.names))
   names(res@ind.names) <- rownames(res@tab)
@@ -389,7 +458,7 @@ read.genepop <- function(file,missing=NA,quiet=FALSE){
   pop.names <- ind.names[pop.names.idx]
   levels(pop) <- pop.names
   
-  res <- df2genind(X=X,pop=pop,missing=missing)
+  res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
   res@call <- prevcall
   
   if(!quiet) cat("\n...done.\n\n")
@@ -555,7 +624,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=FALSE, co
   rownames(X) <- ind.names
   colnames(X) <- loc.names
 
-  res <- df2genind(X=X,pop=pop,missing=missing)
+  res <- df2genind(X=X,pop=pop,missing=missing, ploidy=2)
 
   res@call <- match.call()
 
