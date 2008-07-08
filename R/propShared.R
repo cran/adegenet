@@ -7,33 +7,59 @@
 ######################
 propShared <- function(obj){
     x <- obj
+    
     ## check that this is a valid genind
     if(!inherits(x,"genind")) stop("obj must be a genind object.")
     invisible(validObject(x))
+
+    ## check ploidy level
+    if(x$ploidy > 2) stop("not implemented for ploidy > 2")
+
     
-    ## build a matrix of genotypes (in rows) coded by integers
-    ## NAs are coded by 0
-    ## The matrix is a cbind of two matrices, storing respectively the
-    ## first and the second allele.
-    temp <- genind2df(x,usepop=FALSE)
-    alleleSize <- max(apply(temp,1:2,nchar))/2
-    mat1 <- apply(temp, 1:2, substr, 1, alleleSize)
-    mat2 <- apply(temp, 1:2, substr, alleleSize+1, alleleSize*2)
-    matAll <- cbind(mat1,mat2)
-    matAll <- apply(matAll,1:2,as.integer)
-    matAll[is.na(matAll)] <- 0
+    ## if ploidy = 1
+    if(x$ploidy == as.integer(1)){
+        stop("not implemented for ploidy = 1")
+        #### have to think how AFLP should be handled here.
+        #### maybe dist would do the job..
+        ## compute numbers of common alleles
+        ##   X <- x@tab
+        ##         X[is.na(X)] <- 0
+        ##         M <- X %*% t(X)
+        
+        ##         ## compute numbers of alleles used in each comparison
+        ##         nAllByInd <- propTyped(x,by="ind")*x@ploidy
+        ##         idx <- expand.grid(1:nrow(x$tab), 1:nrow(x$tab))
+        ##         temp <- cbind(nAllByInd[idx[,1]] , nAllByInd[idx[,2]])
+        ##         N <- matrix(apply(temp, 1, min), ncol=nrow(x$tab))
+        
+    }
 
-    n <- nrow(matAll)
-    resVec <- double(n*(n-1)/2)
-    res <- .C("sharedAll", as.integer(as.matrix(matAll)),
-              n, ncol(matAll), resVec, PACKAGE="adegenet")[[4]]
-
-    attr(res,"Size") <- n
-    attr(res,"Diag") <- FALSE
-    attr(res,"Upper") <- FALSE
-    class(res) <- "dist"
-    res <- as.matrix(res)
-
+    ## if ploidy = 2
+    if(x$ploidy == as.integer(2)){
+        ## build a matrix of genotypes (in rows) coded by integers
+        ## NAs are coded by 0
+        ## The matrix is a cbind of two matrices, storing respectively the
+        ## first and the second allele.
+        temp <- genind2df(x,usepop=FALSE)
+        alleleSize <- max(apply(temp,1:2,nchar))/2
+        mat1 <- apply(temp, 1:2, substr, 1, alleleSize)
+        mat2 <- apply(temp, 1:2, substr, alleleSize+1, alleleSize*2)
+        matAll <- cbind(mat1,mat2)
+        matAll <- apply(matAll,1:2,as.integer)
+        matAll[is.na(matAll)] <- 0
+        
+        n <- nrow(matAll)
+        resVec <- double(n*(n-1)/2)
+        res <- .C("sharedAll", as.integer(as.matrix(matAll)),
+                  n, ncol(matAll), resVec, PACKAGE="adegenet")[[4]]
+        
+        attr(res,"Size") <- n
+        attr(res,"Diag") <- FALSE
+        attr(res,"Upper") <- FALSE
+        class(res) <- "dist"
+        res <- as.matrix(res)
+    } # end if ploidy = 2
+    
     diag(res) <- 1
     rownames(res) <- x@ind.names
     colnames(res) <- x@ind.names

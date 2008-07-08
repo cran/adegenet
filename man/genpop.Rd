@@ -5,6 +5,7 @@
 \alias{names,genpop-method}
 \alias{show,genpop-method}
 \alias{summary,genpop-method}
+\alias{nLoc,genpop-method}
 \title{adegenet formal class (S4) for allele counts in populations}
 \description{An object of class \code{genpop} contain alleles counts
   for several loci.\cr
@@ -35,10 +36,15 @@ Class \code{"\linkS4class{popInfo}"}, directly.
 }
 \section{Methods}{
   \describe{
-    \item{dist}{\code{signature(x = "genpop", method = "ANY", diag = "ANY", upper = "ANY", p = "missing")}: ... }
-    \item{names}{\code{signature(x = "genpop")}: ... }
-    \item{show}{\code{signature(object = "genpop")}: ... }
-    \item{summary}{\code{signature(object = "genpop")}: ... }
+    \item{names}{\code{signature(x = "genpop")}: give the names of the
+      components of a genpop object}
+    \item{print}{\code{signature(x = "genpop")}: prints a genpop object}
+    \item{show}{\code{signature(object = "genpop")}: shows a genpop
+      object (same as print)}
+    \item{summary}{\code{signature(object = "genpop")}: summarizes a
+      genpop object, invisibly returning its content}
+    \item{nLoc}{\code{signature(object = "genpop")}: returns the number
+      of loci of the object}
   }
 }
 \references{}

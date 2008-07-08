@@ -144,9 +144,9 @@ print.spca <- function(x, ...){
   print(sumry)
   cat("\n")
   sumry <- array("", c(4, 4), list(1:4, c("data.frame", "nrow", "ncol", "content")))
-  sumry[1, ] <- c("$c1", nrow(x$c1), ncol(x$c1), "scaled vectors of columns (alleles) loadings")
-  sumry[2, ] <- c("$li", nrow(x$li), ncol(x$li), "row coordinates")
-  sumry[3, ] <- c("$ls", nrow(x$ls), ncol(x$ls), 'lag vector of row coordinates')
+  sumry[1, ] <- c("$c1", nrow(x$c1), ncol(x$c1), "principal axes: scaled vectors of alleles loadings")
+  sumry[2, ] <- c("$li", nrow(x$li), ncol(x$li), "principal components: coordinates of entities")
+  sumry[3, ] <- c("$ls", nrow(x$ls), ncol(x$ls), 'lag vector of principal components')
   sumry[4, ] <- c("$as", nrow(x$as), ncol(x$as), 'pca axes onto spca axes')
   
   class(sumry) <- "table"

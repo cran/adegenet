@@ -5,7 +5,7 @@ gstat.randtest <- function(x,pop=NULL, method=c("global","within","between"),
                            sup.pop=NULL, sub.pop=NULL, nsim=499){
   
   if(!is.genind(x)) stop("x is not a valid genind object")
-
+  if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
   if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
   if(!require(ade4)) stop("ade4 package is required. Please install it.")
   
