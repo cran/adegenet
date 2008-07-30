@@ -32,7 +32,8 @@
   function \code{\link{import2genind}}.\cr
   It is also possible to read genotypes coded by character strings from
   a data.frame in which genotypes are in rows, markers in columns. For
-  this, use \code{\link{df2genind}}.\cr
+  this, use \code{\link{df2genind}}. Note that \code{\link{df2genind}}
+  can be used for any level of ploidy.\cr
 
   
    === EXPORTING DATA ===\cr
@@ -66,7 +67,7 @@
    - \code{\link{repool}} merges genoptypes from different
    genetic pools into one single \linkS4class{genind} object.\cr
 
-   
+
    === ANALYZING DATA ===\cr
    Several functions allow to use usual, and less usual analyses:\cr
    - \code{\link{HWE.test.genind}}: performs HWE test for all
@@ -78,7 +79,7 @@
    used to seek genetic boundaries among individuals or populations. Optimized boundaries can be obtained using
    \code{\link{optimize.monmonier}}. Object of the class
    \code{monmonier} can be plotted and printed using the corresponding
-   methods. \cr   
+   methods. \cr
    - \code{\link{hybridize}}: implements hybridization between two populations. \cr
    - \code{\link{spca}}: implements Jombart et al. (in revision) spatial
    Principal Component Analysis \cr
@@ -86,6 +87,13 @@
    test for global spatial structures \cr
    - \code{\link{local.rtest}}: implements Jombart et al. (2008)
    test for local spatial structures \cr
+   - \code{\link{propShared}}: computes the proportion of shared
+   alleles in a set of genotypes (i.e. from a genind object)\cr
+   - \code{\link{propTyped}}: function to investigate missing data in
+   several ways \cr
+   - \code{\link{scaleGen}}: generic method to scale
+   \linkS4class{genind} or \linkS4class{genpop} before a principal
+   component analysis \cr
 
    Adegenet also proposes several real or simulated datasets.\cr
 
@@ -99,8 +107,8 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.2-0\cr
-    Date: \tab 2008-07-08\cr
+    Version: \tab 1.2-1\cr
+    Date: \tab 2008-07-30 \cr
     License: \tab GPL (>=2)
   }  
 }
@@ -108,7 +116,7 @@
 with contributions of Peter Solymos}
 \references{
 Jombart T. (2008) adegenet: a R package for the multivariate analysis of genetic markers
-\emph{Bioinformatics}. doi: 10.1093/bioinformatics/btn129\cr
+\emph{Bioinformatics} 24: 1403-1405. doi: 10.1093/bioinformatics/btn129\cr
   
 See adegenet website: \url{http://adegenet.r-forge.r-project.org/}\cr
 

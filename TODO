@@ -26,19 +26,16 @@
 
 # CODE ISSUES:
 ==============
-* fix missing data indication in summaries -- done (TJ)
+
 
 # DOCUMENTATION ISSUES:
 =======================
 *
 
+
 # NEW IMPLEMENTATIONS:
 =====================
-* implement different levels of ploidy in genind / genpop objects.
-  - put some stop where needed when ploidy!=2 is not handled -- done (TJ)
-  - adapt intput functions to different degree of ploidy -- done (TJ)
-  - adapt genind2df -- done (TJ)
-  - look for other functions to adapt -- done (TJ)
+* 
 
 
 # TESTING:
@@ -53,7 +50,6 @@
 * in spca, when nfposi=0, the returned object actually contains what corresponds to nfposi=1. Comes from multispati in ade4. To correct in ade4.
 * use spcaIllus to illustrate global.rtest and local.rtest
 * check all examples and look for possible improvements
-* Implement "sep" argument in df2genind -- done(TJ)
 * Implement a method to merge different markers for the same individuals
 * Build accessors for marker names, indiv names, pop names, spatial coords, ... -- done in part (nLoc) (TJ)
 * Return a spatial object from monmonier (class sp?)
@@ -71,8 +67,9 @@
 * export to geneticsBase -- same thing
 * see where code needs tuning, and use C/C++
 * implement global.rtest and local.rtest for genind/genpop objects
-* Implement method "scale" for genind / genpop objects -- done (TJ)
 * Implement dudi wrappers for genind / genpop objects -- one step (automatic coercion as data.frames) (TJ)
 * Check the formulae provided for Reynolds (consistent with Felsenstein's
 formulae, not straightforward reading the original article)
 * Implement wrappers for spatial function (Moran's I, Mantel's correlogram, etc.).
+
+

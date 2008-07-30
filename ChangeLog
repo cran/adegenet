@@ -1,3 +1,50 @@
+			CHANGES IN ADEGENET VERSION 1.2-1
+
+
+NEW FEATURES
+
+	o documentation of scaleGen provides an example of usefulness of
+	an appropriate scaling in PCA
+
+BUG FIXES
+
+	o fixed the recognition of NAs in df2genind
+
+	o fixed the call to inherits in spca (returned value changes in R-devel)
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-0
+
+
+NEW FEATURES
+
+	o implement different levels of ploidy in genind / genpop
+	objects. Make necessary adaptations throughout the package.
+
+	o put some stop where needed when ploidy!=2 is not handled.
+
+	o implement a "sep" argument in df2genind.
+
+	o implement accessor for genind/genpop: nLoc.
+
+	o implement "scaleGen" for genind/genpop, which allows for
+	different types of scaling.
+
+	o added several coercion methods, from genind/genpop to
+	data.frame, matrix and ktab objects.
+
+	o implemented propTyped, a function giving the proportion of
+	non-missing data in different ways.
+
+BUG FIXES
+
+	o missing data indicated in summary corrected (loci with more
+	alleles had more weight in the computations).
+
+
+
+
 			CHANGES IN ADEGENET VERSION 1.1-3
 
 
