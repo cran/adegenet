@@ -44,20 +44,6 @@ BUG FIXES
 
 
 
-
-			CHANGES IN ADEGENET VERSION 1.1-3
-
-
-NEW FEATURES
-
-	o 'as' methods for genind/genpop objects to matrix, data.frame,
-	and ktab objects. Now, ordination implemented as dudi functions in
-	ade4 (like dudi.pca) can be performed directly using genind/genpop
-	as inputs.
-
-
-
-
 			CHANGES IN ADEGENET VERSION 1.1-2
 
 
@@ -74,6 +60,8 @@ NEW FEATURES
 	o improvement of the validity checking for genind/genpop:
 	validObject now detects duplicates in any kind of names (ind.names,
 	pop.names, etc.) and prints the corresponding items.
+
+
 
 BUG FIXES
 

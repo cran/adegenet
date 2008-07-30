@@ -12,19 +12,24 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   if(!require(spdep, quiet=TRUE)) stop("spdep library is required.")
 
   res <- list()
+  
+  if(!is.null(d2)){
+      if(d2=="dmin"){
+          tempmat <- as.matrix(dist(xy))
+          d2min <- max(apply(tempmat, 1, function(r) min(r[r>1e-12])))
+          d2min <- d2min * 1.0001 # to avoid exact number problem
+          d2 <- d2min
+      } else if(d2=="dmax"){
+          d2max <- max(dist(xy))
+          d2max <- d2max * 1.0001 # to avoid exact number problem
+          d2 <- d2max
+      }
+  } # end handle d2
+  
   d1.first <- d1
   d2.first <- d2
   k.first <- k
-  
-  ## check for uniqueness of coordinates
-  x <- xy[,1]
-  y <- xy[,2]
-  temp <- table(x,y)
-  if(any(temp>1) & (!is.null(type) && type!=7)){ # coords need not be unique if type==7 (inverse distances)
-    xy <- jitter(xy)
-    warning("Random noise was added to xy as duplicated coordinates existed.")
-  }
-  
+
   ## handle type argument
   if(!is.null(type)){
       type <- as.integer(type)
@@ -32,6 +37,16 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
       ask <- FALSE
   }
 
+  ## check for uniqueness of coordinates
+  x <- xy[,1]
+  y <- xy[,2]
+  temp <- table(x,y)
+  if(any(temp>1) & (!is.null(type) && !type %in% c(5,7))){ # coords need not be unique if type==5 or 7
+      xy <- jitter(xy)
+      warning("Random noise was added to xy as duplicated coordinates existed.")
+  }
+
+  
   if(is.null(type) & !ask) { type <- 1 }
   
   ### begin large while ###
@@ -94,13 +109,24 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
       if(is.null(d1) |is.null(d2)){
         tempmat <- as.matrix(dist(xy))
         d2min <- max(apply(tempmat, 1, function(r) min(r[r>1e-12])))
+        d2min <- d2min * 1.0001 # to avoid exact number problem
         d2max <- max(dist(xy))
+        d2max <- d2max * 1.0001 # to avoid exact number problem
         dig <- options("digits")
         options("digits=5")
         cat("\n Enter minimum distance: ")
         d1 <- as.numeric(readLines(n = 1))
         cat("\n Enter maximum distance \n(dmin=", d2min, ", dmax=", d2max, "): ")
-        d2 <- as.numeric(readLines(n = 1))
+        d2 <- readLines(n = 1)
+        ## handle character
+        if(d2=="dmin") {
+            d2 <- d2min
+        } else if(d2=="dmax") {
+            d2 <- d2max
+        } else {
+            d2 <- as.numeric(d2)
+        }
+        ## restore initial digit option
         options(dig)
       }
     # avoid that a point is its neighbour

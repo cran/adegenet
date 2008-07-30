@@ -1,0 +1,18 @@
+>  obj1 <- read.structure(file='project_data.stru', missing=NA )
+
+ How many genotypes are there? 50
+
+ How many markers are there? 15
+
+ Which column contains labels for genotypes ('0' if absent)? 1
+
+ Which column contains the population factor ('0' if absent)? 2
+
+ Which other optional columns should be read (press 'return' when done)? 1: 
+
+ Which row contains the marker names ('0' if absent)? 1
+
+ Converting data from a STRUCTURE .stru file to a genind object... 
+
+Erreur dans txt[(lastline - n + 1):lastline] : 
+  les indices négatifs ne peuvent être mélangés qu'à des 0

@@ -34,7 +34,9 @@
  \item{missing}{a character giving the treatment for missing values. Can be "NA", "0" or "mean"}
  }
  \value{
-   A \linkS4class{genind} and \linkS4class{genpop} object.
+   A matrix of scaled allele frequencies with genotypes
+  (\linkS4class{genind}) or populations in (\linkS4class{genpop}) in
+  rows and alleles in columns.
 }
 \details{
   The argument \code{method} is used as follows:\cr

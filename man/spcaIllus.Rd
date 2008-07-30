@@ -25,7 +25,7 @@
 \source{
    Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.
 Revealing cryptic spatial patterns in genetic variability by a new
-multivariate method. Submitted to \emph{Heredity}.
+multivariate method. \emph{Heredity}, \bold{101}, 92--103.
 }
 \author{
   Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}
@@ -44,6 +44,7 @@ if(require(spdep) & require(ade4)){
 
 data(spcaIllus)
 attach(spcaIllus)
+opar <- par(no.readonly=TRUE)
 ## comparison PCA vs sPCA
 
 # PCA
@@ -102,6 +103,14 @@ plotaux(dat4,pca4,lab=dat4$other$sup.pop,sub="dat4 - PCA axis1",pos="bottomleft"
 plotaux(dat4,spca4,lab=dat4$other$sup.pop,sub="dat4 - sPCA glob1",pos="bottomleft",csub=2)
 plotaux(dat4,pca4,lab=dat4$other$sup.pop,sub="dat4 - PCA axis2",pos="bottomleft",csub=2,axis=2)
 plotaux(dat4,spca4,lab=dat4$other$sup.pop,sub="dat4 - sPCA loc1",pos="bottomleft",csub=2,axis=2)
+
+# color plot
+par(opar)
+colorplot(spca3, cex=4, main="colorplot sPCA dat3")
+text(spca3$xy[,1], spca3$xy[,2], dat3$pop)
+
+colorplot(spca4, cex=4, main="colorplot sPCA dat4")
+text(spca4$xy[,1], spca4$xy[,2], dat4$other$sup.pop)
 
 # detach data
 detach(spcaIllus)

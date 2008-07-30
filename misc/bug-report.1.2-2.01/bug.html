@@ -1,0 +1,364 @@
+<html>
+<head>
+<title>Re: fichiers pour adegenet</title>
+<link rel="important stylesheet" href="chrome://messenger/skin/messageBody.css">
+</head>
+<body>
+<table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part1"><tr><td><b>Subject: </b>Re: fichiers pour adegenet</td></tr><tr><td><b>From: </b>Didier Bouchel <didier.bouchel@wanadoo.fr></td></tr><tr><td><b>Date: </b>Tue, 02 Sep 2008 20:31:58 +0200</td></tr></table><table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part2"><tr><td><b>To: </b>Thibaut Jombart <jombart@biomserv.univ-lyon1.fr></td></tr></table><br>
+<div class="moz-text-flowed">Bonjour Thibaut
+<br>
+<br>Merci beaucoup pour cette prompte réponse !
+<br>A toutes fins utiles je vous envoie en fichiers joints un extrait de ma 
+base de données sous deux formes : texte (15305adegenetextrait.txt) et 
+structure (project_data.stru) qui en est issu. J'ai vérifié sur cet 
+extrait que structure fonctionne normalement, et que la lecture avec 
+read.structure avec adegenet n'est pas possible : voir copie de la 
+console R (erreur_stru.txt).
+<br>
+<br>J'ai repris l'importation avec le format genetix en ajoutant les xy à 
+partir d'un fichier txt, et read.table, ce qui semble avoir donné le 
+résultat escompté :
+<br>
+<br>&gt; obj1 &lt;- read.genetix(file='2pop15305.gtx', missing=NA )
+<br>Converting data from GENETIX to a genind object...
+<br>...done.
+<br>&gt; xycoord &lt;- read.table(file("15305txy.txt"),header=TRUE)
+<br>&gt; obj1$other$xy &lt;- xycoord
+<br>&gt; D &lt;- dist(obj1$tab)
+<br>
+<br>, mais&nbsp; chooseCN me renvoie un message d'erreur :
+<br>
+<br>&gt; gab &lt;- chooseCN(obj1$other$xy, ask = FALSE, type = 2)
+<br>Erreur dans gabrielneigh(xy) :
+<br>&nbsp;NA/NaN/Inf dans un appel à une fonction externe (argument 5)
+<br>De plus : Warning messages:
+<br>1: In gabrielneigh(xy) : NAs introduits lors de la conversion automatique
+<br>2: In gabrielneigh(xy) : NAs introduits lors de la conversion automatique
+<br>
+<br>et l'objet gab n'existe pas, je suis donc bloqué dans l'analyse.
+<br>*** remarques :
+<br>obj1$other$xy est de la forme :
+<br>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y
+<br>300&nbsp; -15.9667&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14.65
+<br>301&nbsp; -16.3679&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13.198
+<br>302&nbsp; -13.1167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13.2167
+<br>303&nbsp; -12.8167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14.3833
+<br>304&nbsp; -14.9333&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14.2833
+<br>305&nbsp;&nbsp;&nbsp;&nbsp; -16.3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16.15
+<br>
+<br>j'ai contrôlé que NA/NaN/Inf ne se rapporte pas aux coordonnées :
+<br>
+<br>&gt; any(is.finite(obj1$other$xy$x))
+<br>[1] TRUE
+<br>&gt; sum(is.finite(obj1$other$xy$x))
+<br>[1] 305
+<br>&gt; any(is.finite(obj1$other$xy$y))
+<br>[1] TRUE
+<br>&gt; sum(is.finite(obj1$other$xy$y))
+<br>[1] 305
+<br>
+<br>(il y a bien 305 génotypes et donc 305 coordonnées xy)
+<br>
+<br>- si je remplace missing=NA par missing=0 ou missing="mean" comme 
+argument dans read.genetix, le message d'erreur reste le même.
+<br>
+<br>Les messages du forum sont-ils accessibles par une adresse URL ? Cela me 
+permettrait peut-être d'appréhender déjà certains aspects plus 
+facilement et plus rapidement.
+<br>Je suis supposé rendre mon manuscrit mi octobre, je n'ai plus beaucoup 
+de temps pour me lancer dans de nouveaux traitements de données !!!...
+<br>
+<br>A bientôt, encore merci
+<br>
+<br>Didier
+<br>
+<br>Thibaut Jombart a écrit :
+<br><blockquote type=cite>
+<br>Bonjour Didier,
+<br><blockquote type=cite>Bonjour
+<br>
+<br>Je suis actuellement en thèse à l'AgroParisTech, en génétique 
+animale. Je voudrais réaliser des ACPs telles que décrites dans vos 
+articles et dans le manuel de adegenet avec des données moléculaires 
+qui présentent des gradients géographiques réguliers apparemment sans 
+frontière détectable avec d'autres méthodes. Toutefois je me heurte à 
+un problème dès que je souhaite prendre en compte les données 
+spatiales et je souhaiterais avoir quelques précisions sur la façon 
+de procéder. En effet, pour une ACP classique je fais l'importation 
+des données à partir d'un fichier genetix ce qui se fait 
+correctement, mais avec ce format de fichier on ne peut pas insérer 
+les coordonnées spatiales. 
+</blockquote>Je pense que la meilleure solution est de lire les données génétiques 
+depuis le format GENETIX, puis d'ajouter les coordonnées spatiales à 
+l'objet créé.
+<br>Par exemple, en reprenant la doc de read.genetix:
+<br>## lecture d'un fichier de données
+<br>&gt; obj &lt;- 
+read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
+<br>
+<br>Converting data from GENETIX to a genind object...
+<br>
+<br>...done.
+<br>
+<br>&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; obj
+<br>
+<br>&nbsp; #####################
+<br>&nbsp; ### Genind object ###
+<br>&nbsp; #####################
+<br>- genotypes of individuals -
+<br>
+<br>S4 class:&nbsp; genind
+<br>@call: read.genetix(file = system.file("files/nancycats.gtx", package 
+= "adegenet"))
+<br>
+<br>@tab:&nbsp; 237 x 108 matrix of genotypes
+<br>
+<br>@ind.names: vector of&nbsp; 237 individual names
+<br>@loc.names: vector of&nbsp; 9 locus names
+<br>@loc.nall: number of alleles per locus
+<br>@loc.fac: locus factor for the&nbsp; 108 columns of @tab
+<br>@all.names: list of&nbsp; 9 components yielding allele names for each locus
+<br>@ploidy:&nbsp; 2
+<br>
+<br>Optionnal contents:
+<br>@pop:&nbsp; factor giving the population of each individual
+<br>@pop.names:&nbsp; factor giving the population of each individual
+<br>
+<br>*@other: - empty -
+<br>*## l'objet 'obj' ne contient pas de données spatiales
+<br>
+<br>On peut ajouter tout type d'info dans le slot @other, qui est une 
+liste. Par exemple:
+<br>&gt; obj@other$toto = "toto"
+<br>&gt; obj
+<br>
+<br>&nbsp; #####################
+<br>&nbsp; ### Genind object ###
+<br>&nbsp; #####################
+<br>- genotypes of individuals -
+<br>
+<br>S4 class:&nbsp; genind
+<br>@call: read.genetix(file = system.file("files/nancycats.gtx", package 
+= "adegenet"))
+<br>
+<br>@tab:&nbsp; 237 x 108 matrix of genotypes
+<br>
+<br>@ind.names: vector of&nbsp; 237 individual names
+<br>@loc.names: vector of&nbsp; 9 locus names
+<br>@loc.nall: number of alleles per locus
+<br>@loc.fac: locus factor for the&nbsp; 108 columns of @tab
+<br>@all.names: list of&nbsp; 9 components yielding allele names for each locus
+<br>@ploidy:&nbsp; 2
+<br>
+<br>Optionnal contents:
+<br>@pop:&nbsp; factor giving the population of each individual
+<br>@pop.names:&nbsp; factor giving the population of each individual
+<br>
+<br>*@other: a list containing: toto *
+<br>
+<br>On peut faire de même pour ajouter des coords spatiales. Dans 
+l'absolue, on peut leur donner n'importe quel nom, mais certaines 
+méthodes (e.g. la sPCA) cherchent les coords spatiales dans le 
+@other$xy. La seule difficulté, c'est que les coordonnées doivent être 
+dans le même ordre que les génotypes, qui est donné par <a class="moz-txt-link-abbreviated" href="mailto:obj@ind.names">obj@ind.names</a>.
+<br>
+<br>Ici, je simule des coordonnées spatiales dans une loi uniforme et je 
+les attribue à l'objet 'obj':
+<br>&gt; xycoord &lt;- matrix(runif(237*2),ncol=2)
+<br>&gt; obj$other$xy &lt;- xycoord
+<br>&gt; obj
+<br>
+<br>&nbsp; #####################
+<br>&nbsp; ### Genind object ###
+<br>&nbsp; #####################
+<br>- genotypes of individuals -
+<br>
+<br>S4 class:&nbsp; genind
+<br>@call: read.genetix(file = system.file("files/nancycats.gtx", package 
+= "adegenet"))
+<br>
+<br>@tab:&nbsp; 237 x 108 matrix of genotypes
+<br>
+<br>@ind.names: vector of&nbsp; 237 individual names
+<br>@loc.names: vector of&nbsp; 9 locus names
+<br>@loc.nall: number of alleles per locus
+<br>@loc.fac: locus factor for the&nbsp; 108 columns of @tab
+<br>@all.names: list of&nbsp; 9 components yielding allele names for each locus
+<br>@ploidy:&nbsp; 2
+<br>
+<br>Optionnal contents:
+<br>@pop:&nbsp; factor giving the population of each individual
+<br>@pop.names:&nbsp; factor giving the population of each individual
+<br>
+<br>@other: a list containing: toto&nbsp; *xy *
+<br>
+<br>Par la suite, on peut faire une ACP, et des représentations des scores 
+dans l'espace, et tout ce qu'on veut. Par exemple:
+<br>&gt; X=scaleGen(obj,method="binom",missing='mean') # X est une matrice de 
+données alléliques centrée et normée pour la variance théorique des 
+allèles
+<br>
+<br>Replaced 617 missing values
+<br>
+<br>&gt; library(ade4)
+<br>&gt; pcaX = dudi.pca(X,cent=FALSE,scale=FALSE,scannf=FALSE) # analyse en 
+composantes principales sur X (ne pas recentrer et renormer, donc 
+"cent=FALSE,scale=FALSE")
+<br>&gt; s.value(obj$other$xy,pcaX$li[,1],include.ori=FALSE,addaxes=FALSE) # 
+représentation de la première composante principale dans l'espace.
+<br>
+<br><blockquote type=cite>J'ai essayé avec le format structure (fichier project_data auquel 
+j'ai dû ajouter l'extension .stru pour que adegenet puisse le lire), 
+en mettant les coordonnées x et y en colonnes optionnelles. J'ai 
+obtenu un message d'erreur à la suite de la procédure d'importation. 
+Pour vérification, j'ai repris la procédure avec le même fichier sans 
+coordonnées x y, mais j'ai obtenu le même message que vous pourrez 
+lire dans la pièce jointe .txt qui est un "copier coller" de R.
+<br>Les fichiers d'origine ont été utilisés sans problème avec Genetix et 
+Structure.
+<br></blockquote>D'accord. Il est possible qu'il y ait un bug dans read.structure. Si 
+c'est le cas, il me faut un échantillon de données pour reproduire le 
+bug et le corriger.
+<br><blockquote type=cite>Je précise que je ne suis pas familier avec R, loin s'en faut !
+<br></blockquote>Alors bienvenu ! Mais quoiqu'il arrive, ça ne sera pas un 
+investissement à perte.
+<br><blockquote type=cite>Pouvez-vous m'indiquer comment importer un fichier avec les 
+coordonnées x y ? Est-il possible d'importer des fichiers en format 
+txt ?
+<br>
+<br>Merci
+<br>
+<br>Meilleures salutations
+<br>
+<br>Didier Bouchel
+<br>
+<br></blockquote>Si vous avez d'autres questions, n'hésitez pas à les poser sur le 
+forum adegenet (en anglais):
+<br><a class="moz-txt-link-abbreviated" href="mailto:adegenet-forum@lists.r-forge.r-project.org">adegenet-forum@lists.r-forge.r-project.org</a>
+<br>
+<br>
+<br>A bientôt,
+<br>
+<br>Thibaut.
+<br></blockquote>
+<br></div><div class="moz-text-plain"><pre wrap><BR><HR WIDTH="90%" SIZE=4><BR>35221	2	233	233	284	286	180	180	278	278	153	176	101	103	120	120	154	164	99	101	-9	-9	147	151	154	160	150	141	164	172	109	117
+35222	2	220	233	272	286	180	180	278	270	163	151	101	101	133	122	154	164	99	101	136	139	147	154	152	158	148	141	172	172	109	119
+35223	2	231	233	284	272	180	182	278	278	163	163	101	101	120	120	164	169	101	101	136	136	149	151	152	158	148	141	172	172	109	119
+35224	2	241	243	287	276	180	180	275	278	153	168	101	103	120	133	154	166	101	105	136	139	154	156	150	152	144	141	167	167	119	119
+35225	2	243	245	282	288	180	180	278	278	168	176	99	101	120	133	164	164	99	99	146	146	151	151	154	158	150	141	172	172	109	117
+35226	2	233	241	291	276	180	180	278	280	153	166	101	103	133	137	166	166	99	101	136	136	151	154	150	158	141	141	164	167	119	119
+35227	2	220	243	-9	-9	180	180	280	268	159	176	99	101	120	133	154	164	-9	-9	136	139	156	156	150	154	141	141	164	164	109	109
+35228	2	231	233	276	282	180	180	278	280	153	165	101	101	120	133	154	166	101	103	136	139	151	151	154	158	141	141	172	172	109	109
+35230	2	235	237	291	291	180	180	278	280	153	151	103	103	120	120	156	164	107	107	139	139	151	154	160	160	141	141	172	172	109	117
+35231	2	233	245	287	292	180	180	280	282	161	170	101	101	120	124	164	169	99	101	136	136	142	151	160	160	141	141	166	167	109	119
+35232	2	241	237	-9	-9	180	180	275	278	153	151	-9	-9	135	126	164	169	99	99	136	141	154	154	152	160	154	141	167	172	119	119
+35233	2	243	243	284	297	182	176	278	280	151	151	101	103	120	133	164	164	99	107	135	146	154	154	160	166	144	148	166	167	109	119
+35571	2	233	235	292	282	180	180	-9	-9	-9	-9	101	101	120	131	166	166	99	105	136	136	149	154	152	162	144	141	-9	-9	-9	-9
+35572	2	241	241	297	282	180	180	-9	-9	-9	-9	101	101	122	118	166	166	99	101	136	144	142	151	154	156	141	141	-9	-9	-9	-9
+35573	2	241	243	284	291	180	180	-9	-9	-9	-9	101	103	120	120	-9	-9	101	107	146	146	142	154	154	160	144	141	-9	-9	-9	-9
+35574	2	233	243	284	276	180	180	278	278	-9	-9	101	103	131	133	-9	-9	99	99	136	136	147	154	154	160	144	141	167	167	-9	-9
+35575	2	220	235	276	286	180	176	-9	-9	-9	-9	101	101	133	118	-9	-9	99	99	136	139	144	144	160	160	141	141	167	172	-9	-9
+35576	2	233	235	290	276	180	180	278	270	-9	-9	101	101	120	133	171	171	99	99	136	136	151	154	150	160	141	141	167	167	-9	-9
+35583	2	220	235	272	276	180	180	272	278	166	166	101	101	120	124	166	166	107	103	136	136	142	151	152	156	154	141	-9	-9	-9	-9
+35584	2	235	241	276	282	180	182	278	266	163	151	99	101	131	133	166	166	96	103	136	139	151	154	152	154	141	141	-9	-9	109	109
+35585	2	245	245	278	297	180	176	278	280	166	166	101	101	120	120	166	166	99	107	136	139	142	151	154	154	148	141	164	172	109	119
+35586	2	233	245	297	282	180	180	278	278	166	176	101	103	120	120	156	156	99	99	136	136	144	151	160	160	141	141	167	167	109	119
+35587	2	233	235	276	282	180	180	280	268	166	170	101	101	120	133	154	169	99	99	136	136	151	154	160	160	141	141	172	172	119	119
+35588	2	220	220	276	282	180	180	280	280	153	176	101	101	120	133	154	164	-9	-9	136	139	142	151	158	160	148	141	172	172	109	117
+35589	2	233	235	297	297	180	180	280	280	166	166	101	103	120	131	166	166	99	107	136	136	142	154	154	158	141	141	172	172	119	119
+35590	2	241	245	284	288	180	176	278	280	159	168	101	103	131	131	166	166	99	101	139	139	149	151	152	158	139	141	167	167	109	109
+35591	2	233	235	297	282	180	176	278	278	153	166	101	101	120	133	154	166	99	99	139	146	147	156	160	160	141	141	-9	-9	119	117
+35592	2	-9	-9	276	282	180	176	280	280	166	166	101	101	-9	-9	166	166	99	99	136	136	151	154	156	160	-9	-9	-9	-9	-9	-9
+35593	2	220	241	287	276	180	180	278	280	153	165	103	103	120	120	166	166	99	107	136	146	149	151	150	158	141	141	-9	-9	-9	-9
+35596	2	235	245	-9	-9	-9	-9	278	280	-9	-9	101	101	120	122	164	164	-9	-9	136	139	144	154	150	158	148	148	-9	-9	109	119
+35597	2	243	245	-9	-9	-9	-9	278	268	-9	-9	101	101	120	128	166	166	-9	-9	-9	-9	-9	-9	-9	-9	141	141	167	167	119	119
+35599	2	241	243	-9	-9	-9	-9	278	278	161	163	101	101	120	133	164	166	-9	-9	136	150	149	149	150	160	144	141	172	172	117	117
+35600	2	241	243	-9	-9	-9	-9	278	282	159	165	101	101	120	120	166	166	-9	-9	-9	-9	-9	-9	-9	-9	144	139	-9	-9	119	119
+35601	2	235	241	-9	-9	-9	-9	278	278	163	151	101	103	120	131	156	166	-9	-9	-9	-9	-9	-9	-9	-9	141	141	167	172	119	119
+35602	2	-9	-9	-9	-9	-9	-9	273	278	159	176	101	101	-9	-9	154	156	-9	-9	136	139	144	154	152	152	-9	-9	-9	-9	119	119
+35605	1	235	243	278	286	180	180	280	280	151	176	101	103	120	133	156	166	99	99	136	136	-9	-9	158	160	148	141	-9	-9	-9	-9
+35606	1	233	233	291	297	180	180	278	280	153	176	101	101	120	133	154	154	99	99	136	146	151	151	158	160	141	141	172	172	119	117
+35607	1	233	241	297	286	180	176	278	280	161	176	101	103	120	120	154	154	99	105	139	139	151	154	158	158	144	141	164	164	109	117
+35608	1	243	245	286	286	180	180	278	280	182	176	101	101	120	131	154	166	99	99	139	146	151	154	158	160	144	148	166	167	109	109
+35609	1	233	245	291	282	180	180	278	278	166	176	101	101	120	133	154	164	101	107	136	139	154	154	158	160	144	141	172	172	109	117
+35610	1	233	243	287	297	180	180	278	280	153	166	103	103	133	139	154	154	99	107	136	136	147	151	160	160	141	141	164	172	109	119
+35611	1	233	243	278	302	180	180	278	280	153	176	101	103	131	133	154	154	99	99	136	146	151	154	158	160	148	141	172	172	119	119
+35612	1	233	235	291	272	180	180	278	280	163	166	101	103	120	120	154	154	99	99	136	136	151	154	158	160	141	141	172	172	109	121
+35613	2	235	243	297	289	176	176	278	278	163	165	101	101	120	133	166	166	96	105	136	146	144	151	154	160	144	141	167	167	109	117
+35614	2	233	245	284	282	180	180	275	278	151	176	101	101	120	120	154	156	101	107	136	146	144	151	154	160	144	144	172	172	109	119
+35615	2	241	245	278	291	180	180	278	278	159	159	99	103	120	120	154	164	99	107	136	136	147	147	152	158	141	141	166	167	119	117
+35616	2	233	241	-9	-9	-9	-9	278	268	159	165	101	103	120	133	164	164	-9	-9	136	139	151	151	150	160	141	141	167	167	109	119
+35618	2	233	243	284	286	180	180	275	278	153	163	103	103	120	120	166	166	105	107	-9	-9	-9	-9	-9	-9	150	141	167	172	109	109
+35621	2	220	235	284	276	180	176	278	278	163	151	101	101	120	120	166	166	96	99	-9	-9	-9	-9	-9	-9	141	141	166	172	119	117
+35622	2	235	243	297	286	180	182	278	278	161	163	101	101	133	128	166	166	101	103	-9	-9	-9	-9	-9	-9	148	141	172	172	109	119
+</pre></div><div class="moz-text-plain"><pre wrap><BR><HR WIDTH="90%" SIZE=4><BR>35221	2	233	233	284	286	180	180	278	278	153	176	101	103	120	120	154	164	99	101	-9	-9	147	151	154	160	150	141	164	172	109	117
+35222	2	220	233	272	286	180	180	278	270	163	151	101	101	133	122	154	164	99	101	136	139	147	154	152	158	148	141	172	172	109	119
+35223	2	231	233	284	272	180	182	278	278	163	163	101	101	120	120	164	169	101	101	136	136	149	151	152	158	148	141	172	172	109	119
+35224	2	241	243	287	276	180	180	275	278	153	168	101	103	120	133	154	166	101	105	136	139	154	156	150	152	144	141	167	167	119	119
+35225	2	243	245	282	288	180	180	278	278	168	176	99	101	120	133	164	164	99	99	146	146	151	151	154	158	150	141	172	172	109	117
+35226	2	233	241	291	276	180	180	278	280	153	166	101	103	133	137	166	166	99	101	136	136	151	154	150	158	141	141	164	167	119	119
+35227	2	220	243	-9	-9	180	180	280	268	159	176	99	101	120	133	154	164	-9	-9	136	139	156	156	150	154	141	141	164	164	109	109
+35228	2	231	233	276	282	180	180	278	280	153	165	101	101	120	133	154	166	101	103	136	139	151	151	154	158	141	141	172	172	109	109
+35230	2	235	237	291	291	180	180	278	280	153	151	103	103	120	120	156	164	107	107	139	139	151	154	160	160	141	141	172	172	109	117
+35231	2	233	245	287	292	180	180	280	282	161	170	101	101	120	124	164	169	99	101	136	136	142	151	160	160	141	141	166	167	109	119
+35232	2	241	237	-9	-9	180	180	275	278	153	151	-9	-9	135	126	164	169	99	99	136	141	154	154	152	160	154	141	167	172	119	119
+35233	2	243	243	284	297	182	176	278	280	151	151	101	103	120	133	164	164	99	107	135	146	154	154	160	166	144	148	166	167	109	119
+35571	2	233	235	292	282	180	180	-9	-9	-9	-9	101	101	120	131	166	166	99	105	136	136	149	154	152	162	144	141	-9	-9	-9	-9
+35572	2	241	241	297	282	180	180	-9	-9	-9	-9	101	101	122	118	166	166	99	101	136	144	142	151	154	156	141	141	-9	-9	-9	-9
+35573	2	241	243	284	291	180	180	-9	-9	-9	-9	101	103	120	120	-9	-9	101	107	146	146	142	154	154	160	144	141	-9	-9	-9	-9
+35574	2	233	243	284	276	180	180	278	278	-9	-9	101	103	131	133	-9	-9	99	99	136	136	147	154	154	160	144	141	167	167	-9	-9
+35575	2	220	235	276	286	180	176	-9	-9	-9	-9	101	101	133	118	-9	-9	99	99	136	139	144	144	160	160	141	141	167	172	-9	-9
+35576	2	233	235	290	276	180	180	278	270	-9	-9	101	101	120	133	171	171	99	99	136	136	151	154	150	160	141	141	167	167	-9	-9
+35583	2	220	235	272	276	180	180	272	278	166	166	101	101	120	124	166	166	107	103	136	136	142	151	152	156	154	141	-9	-9	-9	-9
+35584	2	235	241	276	282	180	182	278	266	163	151	99	101	131	133	166	166	96	103	136	139	151	154	152	154	141	141	-9	-9	109	109
+35585	2	245	245	278	297	180	176	278	280	166	166	101	101	120	120	166	166	99	107	136	139	142	151	154	154	148	141	164	172	109	119
+35586	2	233	245	297	282	180	180	278	278	166	176	101	103	120	120	156	156	99	99	136	136	144	151	160	160	141	141	167	167	109	119
+35587	2	233	235	276	282	180	180	280	268	166	170	101	101	120	133	154	169	99	99	136	136	151	154	160	160	141	141	172	172	119	119
+35588	2	220	220	276	282	180	180	280	280	153	176	101	101	120	133	154	164	-9	-9	136	139	142	151	158	160	148	141	172	172	109	117
+35589	2	233	235	297	297	180	180	280	280	166	166	101	103	120	131	166	166	99	107	136	136	142	154	154	158	141	141	172	172	119	119
+35590	2	241	245	284	288	180	176	278	280	159	168	101	103	131	131	166	166	99	101	139	139	149	151	152	158	139	141	167	167	109	109
+35591	2	233	235	297	282	180	176	278	278	153	166	101	101	120	133	154	166	99	99	139	146	147	156	160	160	141	141	-9	-9	119	117
+35592	2	-9	-9	276	282	180	176	280	280	166	166	101	101	-9	-9	166	166	99	99	136	136	151	154	156	160	-9	-9	-9	-9	-9	-9
+35593	2	220	241	287	276	180	180	278	280	153	165	103	103	120	120	166	166	99	107	136	146	149	151	150	158	141	141	-9	-9	-9	-9
+35596	2	235	245	-9	-9	-9	-9	278	280	-9	-9	101	101	120	122	164	164	-9	-9	136	139	144	154	150	158	148	148	-9	-9	109	119
+35597	2	243	245	-9	-9	-9	-9	278	268	-9	-9	101	101	120	128	166	166	-9	-9	-9	-9	-9	-9	-9	-9	141	141	167	167	119	119
+35599	2	241	243	-9	-9	-9	-9	278	278	161	163	101	101	120	133	164	166	-9	-9	136	150	149	149	150	160	144	141	172	172	117	117
+35600	2	241	243	-9	-9	-9	-9	278	282	159	165	101	101	120	120	166	166	-9	-9	-9	-9	-9	-9	-9	-9	144	139	-9	-9	119	119
+35601	2	235	241	-9	-9	-9	-9	278	278	163	151	101	103	120	131	156	166	-9	-9	-9	-9	-9	-9	-9	-9	141	141	167	172	119	119
+35602	2	-9	-9	-9	-9	-9	-9	273	278	159	176	101	101	-9	-9	154	156	-9	-9	136	139	144	154	152	152	-9	-9	-9	-9	119	119
+35605	1	235	243	278	286	180	180	280	280	151	176	101	103	120	133	156	166	99	99	136	136	-9	-9	158	160	148	141	-9	-9	-9	-9
+35606	1	233	233	291	297	180	180	278	280	153	176	101	101	120	133	154	154	99	99	136	146	151	151	158	160	141	141	172	172	119	117
+35607	1	233	241	297	286	180	176	278	280	161	176	101	103	120	120	154	154	99	105	139	139	151	154	158	158	144	141	164	164	109	117
+35608	1	243	245	286	286	180	180	278	280	182	176	101	101	120	131	154	166	99	99	139	146	151	154	158	160	144	148	166	167	109	109
+35609	1	233	245	291	282	180	180	278	278	166	176	101	101	120	133	154	164	101	107	136	139	154	154	158	160	144	141	172	172	109	117
+35610	1	233	243	287	297	180	180	278	280	153	166	103	103	133	139	154	154	99	107	136	136	147	151	160	160	141	141	164	172	109	119
+35611	1	233	243	278	302	180	180	278	280	153	176	101	103	131	133	154	154	99	99	136	146	151	154	158	160	148	141	172	172	119	119
+35612	1	233	235	291	272	180	180	278	280	163	166	101	103	120	120	154	154	99	99	136	136	151	154	158	160	141	141	172	172	109	121
+35613	2	235	243	297	289	176	176	278	278	163	165	101	101	120	133	166	166	96	105	136	146	144	151	154	160	144	141	167	167	109	117
+35614	2	233	245	284	282	180	180	275	278	151	176	101	101	120	120	154	156	101	107	136	146	144	151	154	160	144	144	172	172	109	119
+35615	2	241	245	278	291	180	180	278	278	159	159	99	103	120	120	154	164	99	107	136	136	147	147	152	158	141	141	166	167	119	117
+35616	2	233	241	-9	-9	-9	-9	278	268	159	165	101	103	120	133	164	164	-9	-9	136	139	151	151	150	160	141	141	167	167	109	119
+35618	2	233	243	284	286	180	180	275	278	153	163	103	103	120	120	166	166	105	107	-9	-9	-9	-9	-9	-9	150	141	167	172	109	109
+35621	2	220	235	284	276	180	176	278	278	163	151	101	101	120	120	166	166	96	99	-9	-9	-9	-9	-9	-9	141	141	166	172	119	117
+35622	2	235	243	297	286	180	182	278	278	161	163	101	101	133	128	166	166	101	103	-9	-9	-9	-9	-9	-9	148	141	172	172	109	119
+</pre></div><div class="moz-text-plain"><pre wrap><BR><HR WIDTH="90%" SIZE=4><BR></pre><blockquote type=cite><pre wrap> obj1 &lt;- read.structure(file='project_data.stru', missing=NA )
+</pre></blockquote><pre wrap><!---->
+ How many genotypes are there? 50
+
+ How many markers are there? 15
+
+ Which column contains labels for genotypes ('0' if absent)? 1
+
+ Which column contains the population factor ('0' if absent)? 2
+
+ Which other optional columns should be read (press 'return' when done)? 1: 
+
+ Which row contains the marker names ('0' if absent)? 1
+
+ Converting data from a STRUCTURE .stru file to a genind object... 
+
+Erreur dans txt[(lastline - n + 1):lastline] : 
+  les indices négatifs ne peuvent être mélangés qu'à des 0
+</pre></div></body>
+</html>

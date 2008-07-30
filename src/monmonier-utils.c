@@ -139,8 +139,8 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
    double num, denom;  /* Numerator and denoninator of equations. */
    int code = 10; /* returned value, default 10 is a failure */
 
-   /* For debugging
-   printf("\n!!! SegSeg: code initialized at %d\n",code);*/
+   /* For debugging */
+   /*printf("\n!!! SegSeg: code initialized at %d\n",code);*/
 
    /* Initialization of the intersection point 'p' */
    tPointd p;
@@ -157,8 +157,8 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
       as well as ...==... */
    if (dAbs(denom) < NEARZERO) {
      code =  Parallel(a, b, c, d, p);
-     /* For debugging 
-     printf("\n!!! SegSeg: call to Parallel (denom=%f)\n",denom);*/
+     /* For debugging */
+     /*printf("\n!!! SegSeg: call to Parallel (denom=%f)\n",denom);*/
    }
    else{
      num =    a[X] * (double)( d[Y] - c[Y] ) +
@@ -168,8 +168,8 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
      /*if ( ((num < NEARZERO) && (num > -NEARZERO)) || (num == denom) ) code = 2;*/
      if ( (dAbs(num) < NEARZERO) || (dEqual(num,denom)) ) code = 2;
      
-     /* Debugging step 1
-     printf("\n!!! SegSeg step1: dAbs(num)=%f, dEqual(num,denom)=%d), code=%d\n",dAbs(num),dEqual(num,denom),code);
+     /* Debugging step 1*/
+     /*printf("\n!!! SegSeg step1: dAbs(num)=%f, dEqual(num,denom)=%d), code=%d\n",dAbs(num),dEqual(num,denom),code);
      printf("\nNEARZERO=%f\n",NEARZERO);*/
 
      s = num / denom;
@@ -182,8 +182,8 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
      
      /* if ( ((num < NEARZERO) && (num > -NEARZERO)) || (num == denom) ) code = 2;*/
      if ( (dAbs(num) < NEARZERO) || (dEqual(num,denom)) ) code = 2;
-     /* Debugging step 2
-     printf("\n!!! SegSeg step2: dAbs(num)=%f, dEqual(num,denom)=%d), code=%d\n",dAbs(num),dEqual(num,denom),code);
+     /* Debugging step 2*/
+     /*printf("\n!!! SegSeg step2: dAbs(num)=%f, dEqual(num,denom)=%d), code=%d\n",dAbs(num),dEqual(num,denom),code);
      printf("\nNEARZERO=%f\n",NEARZERO);*/
      
      if ( (NEARZERO < s) && (s < 1.0) &&
@@ -197,8 +197,8 @@ int	SegSeg( tPointd a, tPointd b, tPointd c, tPointd d)
      p[Y] = a[Y] + s * ( b[Y] - a[Y] );
    }
    
-   /* Debugging step 3
-   printf("\n!!! SegSeg step3: final value of code=%d\n",code);*/
+   /* Debugging step 3*/
+   /*printf("\n!!! SegSeg step3: final value of code=%d\n",code);*/
    return code;
 }
 

@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>adegenet: monmonier bug</title>
+<link rel="important stylesheet" href="chrome://messenger/skin/messageBody.css">
+</head>
+<body>
+<table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part1"><tr><td><b>Subject: </b>adegenet: monmonier bug</td></tr><tr><td><b>From: </b>Yi-Hsin Erica Tsai <erica.tsai@duke.edu></td></tr><tr><td><b>Date: </b>Thu, 09 Oct 2008 16:24:21 -0400</td></tr></table><table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part2"><tr><td><b>To: </b>jombart@biomserv.univ-lyon1.fr</td></tr></table><br>
+<div class="moz-text-flowed">Hi,
+<br>
+<br>I have been using your adegenet R package to compute some Monmonier 
+boundaries.&nbsp; For the most part, the package behaves excellently and does 
+what I need it to do.&nbsp; However, in many of my runs I encounter these 
+same errors:
+<br>
+<br>&gt; orig_mon &lt;- optimize.monmonier(coords, Da, cn, threshold=0)
+<br>Boundaries computed (required: 10)
+<br>1&nbsp; Error in 
+checkNext(result[[run]]$dir1[[length(result[[run]]$dir1)]]$M,&nbsp; :
+<br>&nbsp; CheckAllSeg failure (returned value=10, i.e. unchanged, not 
+computed). Please report the bug.
+<br>
+<br>or
+<br>
+<br>&gt; mon &lt;- monmonier(coords, Da, cn, threshold=0, nrun=1, skip.local.diff 
+= rep(1, 1))
+<br>Error in checkNext(result[[run]]$dir1[[length(result[[run]]$dir1)]]$M,&nbsp; :
+<br>&nbsp; CheckAllSeg failure (returned value=10, i.e. unchanged, not 
+computed). Please report the bug.
+<br>
+<br>Do you have any idea what is causing this?&nbsp; Or how can I fix this 
+problem?&nbsp; I can send you my input data and code if that is helpful.
+<br>
+<br>Best,
+<br>--Erica Tsai
+<br>
+<br><div class="moz-txt-sig"><span class="moz-txt-tag">--&nbsp;<br></span>Yi-Hsin Erica Tsai
+<br>Ph.D. Candidate
+<br>Department of Biology (Manos Lab)
+<br>Duke University
+<br>
+<br><a class="moz-txt-link-freetext" href="http://www.duke.edu/~yet2/">http://www.duke.edu/~yet2/</a>
+<br><a class="moz-txt-link-abbreviated" href="mailto:erica.tsai@duke.edu">erica.tsai@duke.edu</a>
+<br>
+<br>
+<br></div></div></body>
+</html>

@@ -23,7 +23,7 @@ setMethod("old2new", "genind", function(object){
       theoLength <- theoLength + 1
   }
   res@call <- match.call()
-  res@ploidy <- 2
+  res@ploidy <- as.integer(2)
 
   if(length(object) > theoLength) warning("optional content else than pop and pop.names was not converted")
 

@@ -173,7 +173,7 @@ legend("topright",leg=c("Pop A", "Pop B"),pch=c(17,19))
 
 ### interactive example
 
-# est-west separation
+# north-south separation
 xy <- matrix(runif(120,0,10), ncol=2)
 x1 <- rnorm(60)
 x1[xy[,2] > 5] <- x1[xy[,2] > 5]+3
@@ -183,7 +183,7 @@ mon1 <- optimize.monmonier(xy,dist(x1)^2,cn1,ntry=10)
 # graphics
 plot(mon1,x1,met="greylevel",csize=.6)
 
-# square in the middle
+# island in the middle
 x2 <- rnorm(60)
 sel <- (xy[,1]>3.5 & xy[,2]>3.5 & xy[,1]<6.5 & xy[,2]<6.5)
 x2[sel] <- x2[sel]+4
