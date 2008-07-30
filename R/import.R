@@ -75,13 +75,14 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     tempX <- X
     if(!is.null(sep)) tempX <- gsub(sep,"",X)
     ## turn NANANA, 00000, ... into NA
-    tempX <- gsub("^0*$",NA,X)
+    tempX <- gsub("^0*$",NA,tempX)
     tempX <- gsub("(NA)+",NA,tempX)
-    
+
     ## Erase entierely non-typed loci
     temp <- apply(tempX,2,function(c) all(is.na(c)))
     if(any(temp)){
         X <- X[,!temp]
+        tempX <- tempX[,!temp]
         loc.names <- loc.names[!temp]
         nloc <- ncol(X)
         warning("entirely non-type marker(s) deleted")
@@ -91,6 +92,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     temp <- apply(tempX,1,function(r) all(is.na(r)))
     if(any(temp)){
         X <- X[!temp,]
+        tempX <- tempX[!temp,]
         pop <- pop[!temp]
         ind.names <- ind.names[!temp]
         n <- nrow(X)
@@ -98,7 +100,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     }
 
     n <- nrow(X)
-    X <- gsub("^.*NA.*$",NA,X) # set correct NAs in X
+    ## SET NAs IN X
+    X[is.na(tempX)] <- NA
     
     # ind.names <- rownames(X) this erases the real labels
     # note: if X is kept as a matrix, duplicate row names are no problem

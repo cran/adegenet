@@ -31,7 +31,9 @@ read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=FALSE, col.lab=NULL, 
     created object.}
  \item{row.marknames}{an integer giving the index of the row containing
     the names of the markers. '0' if absent.}
-  \item{NA.char}{the character string coding missing data. "-9" by default.}
+  \item{NA.char}{the character string coding missing data. "-9" by
+    default. Note that in any case, series of zero (like "000") are
+    interpreted as NA too.}
   \item{pop}{an optional factor giving the population of each individual.}
   \item{ask}{a logical specifying if the function should ask for
     optional informations about the dataset (TRUE, default), or try to

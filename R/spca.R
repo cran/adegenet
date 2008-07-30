@@ -20,7 +20,7 @@ spca <- function(obj, xy=NULL, cn=NULL, scale=FALSE, scannf=TRUE, nfposi=1, nfne
                  ask=TRUE, plot.nb=TRUE, edit.nb=FALSE ,truenames=TRUE, d1=NULL, d2=NULL, k=NULL,
                  a=NULL, dmin=NULL) {
   
-  if(!inherits(obj,c("genind","genpop"))) stop("obj must be a genind or genpop object.")
+  if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
   invisible(validObject(obj))
 
   ## spatial coordinates
