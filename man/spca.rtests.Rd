@@ -41,7 +41,7 @@ An object of class \code{randtest}.
 \references{
   Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.
   Revealing cryptic spatial patterns in genetic variability by a new
-  multivariate method. Submitted to \emph{Heredity}.
+  multivariate method. \emph{Heredity}, \bold{101}, 92--103.
 }
 \author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}}
 \seealso{ \code{\link{chooseCN}}, \code{\link{spca}}, \code{\link{monmonier}}}

@@ -28,8 +28,8 @@ Jouy-en-Josas, France)
 \references{
   Lalo\"e D., Jombart T., Dufour A.-B. and Moazami-Goudarzi K. (2007)
   Consensus genetic structuring and typological value of markers using
-  Multiple Co-Inertia Analysis. accepted in \emph{Genetics Selection
-    Evolution}. 
+  Multiple Co-Inertia Analysis. \emph{Genetics Selection Evolution}.
+  \bold{39}: 545--567.
 }
 \examples{
 data(microbov)

@@ -1,5 +1,5 @@
 # Algorithm to detect boundaries, based on Monmonier's algorithm
-# Extended to any connection network 
+# Extended to any connection network
 # Thibaut Jombart 2006-2008 (jombart@biomserv.univ-lyon1.fr)
 
 
@@ -21,8 +21,10 @@ if(nrow(xy) != nrow(as.matrix(dist))) stop('Number of sites and number of observ
 
 ## if(DEBUG) {
 ##     plot.nb(cn, xy, col="grey", points=FALSE)
-##     x1 <<- x1
-##     s.value(xy,x1,add.p=TRUE)
+##     if(exists("x1")) {
+##         x1 <<- x1
+##         s.value(xy,x1,add.p=TRUE)
+##     }
 ##     text(xy,lab=1:nrow(xy),font=2,col="darkgreen")
 ## }
 
@@ -111,7 +113,7 @@ getNext <- function(rang){
     ## 	xM <- (xA + xB)/2
     ##     yM <- (yA + yB)/2
     ## ## ## END OLD VERSION ## ## ##
-    
+
     #### Must take into account that the some local distances occur for different segments
     #### Create a table with columns A, B and val
 
@@ -125,7 +127,7 @@ getNext <- function(rang){
     yB <- xy[B,2]
     xM <- mean(c(xA,xB))
     yM <- mean(c(yA,yB))
- 
+
     return( list(A=c(A,xA,yA), B=c(B,xB,yB), M=c(xM,yM), val=val) )
 }
 
@@ -138,18 +140,29 @@ getNext <- function(rang){
 ## -AB is the edge whose middle is M ; given to avoid checking MN vs AB
 ## -CD is the edge whose middle is N ; given to avoid checking MN vs CD
 ## - toRemove: a vector of characters naming other edges in segMat to be removed before checking
-checkNext <- function(M,N,A,B,C,D,segMat=allSeg,toRemove=NULL){
+checkNext <- function(M,N,A,B,C,D,segMat=allSeg,toRemove=NULL,curDir=NULL){
     ## orientation of the segment MN
     xmin <- min(M[1],N[1])
     xmax <- max(M[1],N[1])
     ymin <- min(M[2],N[2])
     ymax <- max(M[2],N[2])
-    
+
 ### From here segment that would be difficult to check for crossing are removed
 ### If MN is the segment of interest, with M middle of AB and N middle of CD,
 
-    ## The segment that was just drawn before is removed from the checks for crossing
-    subsetSeg <- segMat[-nrow(segMat),,drop=FALSE] # make sure subsetSeg is always a matrix
+    subsetSeg <- segMat
+    ## The segment that was just drawn before is removed from the checks for crossing (messy code 2)
+    if(!is.null(curDir)){
+        prevSeg <- grep(paste("dir",curDir,sep=""),rownames(subsetSeg))
+        if(length(prevSeg)>0){ # this is not the 1st seg. in this dir
+            prevSeg <- prevSeg[length(prevSeg)]
+            subsetSeg <- segMat[-prevSeg,,drop=FALSE]
+        } else { # this is the 1st seg. in this direction -> rm 1st seg of other dir
+            otherDir <- ifelse(curDir==1L, 2, 1)
+            prevSeg <- grep(paste("dir",otherDir,"-1-2",sep=""),rownames(subsetSeg))
+            if(length(prevSeg)>0) { subsetSeg <- segMat[-prevSeg,,drop=FALSE] }
+        }
+    }
 
     ## AB and CD are now taken out (doubtful code 2 returned by the C procedure CheckAllSeg)
     AB.name <- paste(sort(c(A,B)),collapse="-")
@@ -176,7 +189,7 @@ checkNext <- function(M,N,A,B,C,D,segMat=allSeg,toRemove=NULL){
     ## temp is used for the output of CheckAllSeg
     ## initialized at 10, which is never returned by CheckAllSeg
     temp <- as.integer(10)
-    
+
     ## call to CheckAllSeg
     ## =======================
     ## output code for CheckAllSeg:
@@ -193,17 +206,17 @@ checkNext <- function(M,N,A,B,C,D,segMat=allSeg,toRemove=NULL){
 
     ## round down coordinates in subsetSeg
     subsetSeg <- round(subsetSeg, digits=PRECISION)
-    
+
     if(nrow(subsetSeg)>0) {
         temp <- .C("CheckAllSeg",as.integer(nrow(subsetSeg)),as.integer(ncol(subsetSeg)),
                    as.double(as.matrix(subsetSeg)), as.double(M), as.double(N), temp,PACKAGE="adegenet")[[6]]
     } else {temp <- 0}
-    
+
     ## for debugging
-    ##    if(DEBUG) {
-    ##         if(temp==1)  cat("\n can't go there (code",temp,")") else cat("\n new segment ok (code",temp,")")
-    ##     }
-    
+    ##  if(DEBUG) {
+    ##                 if(temp==1)  cat("\n can't go there (code",temp,")") else cat("\n new segment ok (code",temp,")")
+    ##             }
+
     ## if a code 1 or 3 is returned, CheckAllSeg returns FALSE
     ## else it returns TRUE
     ## additional control used (code 10, CheckAllSeg failed)
@@ -212,7 +225,7 @@ checkNext <- function(M,N,A,B,C,D,segMat=allSeg,toRemove=NULL){
 } # end of checkNext
 
 ## result object is created
-## this is a list with one component per run (a run = a boundary) 
+## this is a list with one component per run (a run = a boundary)
 result <-list()
 for(run in 1:nrun){
     result[[run]] <- list(dir1=list(),dir2=list())
@@ -223,7 +236,7 @@ for(run in 1:nrun){
 #### a for loop is used to handle several runs
 ## each boundary seeks one starting point, and then expands both sides (dir1 / dir2)
 for(run in 1:nrun){
-  
+
     ## handle skip.local.diff here
     ## the corresponding values of distance are set definitely to -1
     ##   if(skip.local.diff[run] >0)
@@ -233,7 +246,7 @@ for(run in 1:nrun){
     ##             ## D[temp$B[1],temp$A[1] ] <- -1
     ##             rmFromMatSegVal(temp$A[1],temp$B[1])
     ##         }
-    
+
     ## starting point: find the highest distance among neighbours
     ## then expand
     currentDir1 <- getNext(1 + skip.local.diff[run])
@@ -245,7 +258,7 @@ for(run in 1:nrun){
     ## D[result[[run]]$dir1[[1]]$A[1],result[[run]]$dir1[[1]]$B[1]] <- -1 # update D matrix
     ## D[result[[run]]$dir1[[1]]$B[1],result[[run]]$dir1[[1]]$A[1]] <- -1 # update D matrix
     rmFromMatSegVal(result[[run]]$dir1[[1]]$A[1], result[[run]]$dir1[[1]]$B[1]) # update matSegVal
-    
+
     ## dir1 => i1: result index; s1: index for the rank of the distance between neighbours (decreasing order)
     ## dir2 => i2: result index; s2: index for the rank of the distance between neighbours (decreasing order)
     i1 <- 1
@@ -253,14 +266,14 @@ for(run in 1:nrun){
     i2 <- 1
     s2 <- 2
     n <- nrow(D)
-    
+
     ## logical handling the expansion of a boundary
     keepExpanding <- ((current.bd.length < bd.length)
                       && ((currentDir1$val>Dlim)|(currentDir2$val>Dlim))
                       && (s1 < nrow(matSegVal) | s2 < nrow(matSegVal)) )
 
     #### This while loop has the following behavior:
-    ## as long as the keepExpanding is true, we try to expand the boundary by 
+    ## as long as the keepExpanding is true, we try to expand the boundary by
     ## 1) finding the highest next distance among neighbours
     ## 2) test if we can draw the corresponding segment
     ## 3) - if we can, store the result, increment i1 or i2, reset s1 and s2, erase the edge
@@ -268,18 +281,18 @@ for(run in 1:nrun){
     ## 4) get back to 1)
     while(keepExpanding){
         hasExpanded <- FALSE # used to test if it is relevant to check for looping
-       ##  if(DEBUG){
-        ##             points(currentDir1$M[1],currentDir1$M[2],col="white",pch=20)
-        ##             points(currentDir2$M[1],currentDir2$M[2],col="white",pch=20)
-        ##         }
+        ##  if(DEBUG){
+        ##                             points(currentDir1$M[1],currentDir1$M[2],col="white",pch=20)
+        ##                             points(currentDir2$M[1],currentDir2$M[2],col="white",pch=20)
+        ##                         }
         if(s1 <= nrow(matSegVal)) { currentDir1 <- getNext(s1) }
         if(s2 <= nrow(matSegVal)) { currentDir2 <- getNext(s2) }
-        ## if(DEBUG){
-        ##             cat("\n dir1: trying edge",currentDir1$A[1],"-",currentDir1$B[1])
-        ##             points(currentDir1$M[1],currentDir1$M[2],col="blue",pch=20)
-        ##             readline("\npress enter")
-        ##         }
-        
+        ##  if(DEBUG){
+        ##                             cat("\n\n ## dir1: trying edge",currentDir1$A[1],"-",currentDir1$B[1])
+        ##                             points(currentDir1$M[1],currentDir1$M[2],col="blue",pch=20)
+        ##                             readline("\npress enter")
+        ##                         }
+
         ## first direction (dir1)
         if( currentDir1$val > Dlim && s1 <= nrow(matSegVal)) {
             if(checkNext(result[[run]]$dir1[[length(result[[run]]$dir1)]]$M,
@@ -287,7 +300,7 @@ for(run in 1:nrun){
                          result[[run]]$dir1[[length(result[[run]]$dir1)]]$A[1],
                          result[[run]]$dir1[[length(result[[run]]$dir1)]]$B[1],
                          currentDir1$A[1],
-                         currentDir1$B[1])) {
+                         currentDir1$B[1], curDir=as.integer(1))) {
                 i1 <- i1+1
                 result[[run]]$dir1[[i1]] <- currentDir1
                 ## update the matrix of diff. between neighbours
@@ -302,20 +315,20 @@ for(run in 1:nrun){
                 ## add 1 to the boundary length
                 current.bd.length <- current.bd.length + 1
                 hasExpanded <- TRUE
-                ## if(DEBUG){
-                ##                     arrows(result[[run]]$dir1[[i1-1]]$M[1], result[[run]]$dir1[[i1-1]]$M[2],
-                ##                            result[[run]]$dir1[[i1]]$M[1], result[[run]]$dir1[[i1]]$M[2],col="blue")
-                ##                 }
-                
+               ##  if(DEBUG) {
+                ##                                                     arrows(result[[run]]$dir1[[i1-1]]$M[1], result[[run]]$dir1[[i1-1]]$M[2],
+                ##                                                            result[[run]]$dir1[[i1]]$M[1], result[[run]]$dir1[[i1]]$M[2],col="blue")
+                ##                                                 }
+
             } else{ s1 <- s1+1 }
         } # end "if( currentDir1$val>Dlim)"
 
-        ## if(DEBUG){
-        ##             cat("\n dir2: trying edge",currentDir2$A[1],"-",currentDir2$B[1])
-        ##             points(currentDir2$M[1],currentDir2$M[2],col="red",pch=20)
-        ##             readline("\npress enter")
-        ##         }
-       
+          ## if(DEBUG){
+        ##                             cat("\n\n ## dir2: trying edge",currentDir2$A[1],"-",currentDir2$B[1])
+        ##                             points(currentDir2$M[1],currentDir2$M[2],col="red",pch=20)
+        ##                             readline("\npress enter")
+        ##                         }
+
         ## second direction (dir2)
         if( currentDir2$val > Dlim  && s2 <= nrow(matSegVal)) {
             if(checkNext(result[[run]]$dir2[[length(result[[run]]$dir2)]]$M,
@@ -323,7 +336,7 @@ for(run in 1:nrun){
                          result[[run]]$dir2[[length(result[[run]]$dir2)]]$A[1],
                          result[[run]]$dir2[[length(result[[run]]$dir2)]]$B[1],
                          currentDir2$A[1],
-                         currentDir2$B[1])) {
+                         currentDir2$B[1], curDir=as.integer(2))) {
                 i2 <- i2+1
                 result[[run]]$dir2[[i2]] <- currentDir2
                 ## update the matrix of diff. between neighbours
@@ -337,26 +350,26 @@ for(run in 1:nrun){
                 ## add 1 to the boundary length
                 current.bd.length <- current.bd.length + 1
                 hasExpanded <- TRUE
-                ## if(DEBUG){
-                ##                     arrows(result[[run]]$dir2[[i2-1]]$M[1], result[[run]]$dir2[[i2-1]]$M[2],
-                ##                            result[[run]]$dir2[[i2]]$M[1], result[[run]]$dir2[[i2]]$M[2],col="red",cex=2)
-                ##                 }
-               
+                 ## if(DEBUG){
+                ##                                                     arrows(result[[run]]$dir2[[i2-1]]$M[1], result[[run]]$dir2[[i2-1]]$M[2],
+                ##                                                            result[[run]]$dir2[[i2]]$M[1], result[[run]]$dir2[[i2]]$M[2],col="red",cex=2)
+                ##                                                 }
+
             } else{ s2 <- s2+1 }
         } # end "if( currentDir2$val>Dlim)"
-        
+
         ## update the logical for the while loop
         keepExpanding <- ((current.bd.length < bd.length)
                           && ((currentDir1$val>Dlim)|(currentDir2$val>Dlim))
                           && (s1 <= nrow(matSegVal) | s2 <= nrow(matSegVal)) )
-        
+
         ## handle the looping of a boundary
         if(hasExpanded && (current.bd.length>3) && allowLoop){
             ## check if the two ends of the boundary can be joined
             ## remove segments ending each direction (to avoid messy code 2 in checkNext)
             terminalEdges <- c(paste("dir1",i1-1,i1,sep="-"),
                                paste("dir2",i2-1,i2,sep="-"))
-            
+
             canLoop <- checkNext(result[[run]]$dir1[[length(result[[run]]$dir1)]]$M,
                                  result[[run]]$dir2[[length(result[[run]]$dir2)]]$M,
                                  result[[run]]$dir1[[length(result[[run]]$dir1)]]$A[1],
@@ -379,15 +392,15 @@ for(run in 1:nrun){
         }
 
         ## output for debugging
-        ## if(DEBUG) {
-        ##        ##     cat("\n","s1:",s1,"s2:",s2,"i1:",i1,"i2:",i2,"D1:",
-        ##        ##     currentDir1$val,"D2:",currentDir2$val,"Dlim:",Dlim,
-        ##        ##     "nrow(matSegVal)",nrow(matSegVal),"\n")
-        ##             cat("\n","D1:",currentDir1$val,"D2:",currentDir2$val,"Dlim:",Dlim,
-        ##                 "cur.bd.le:", current.bd.length,"max length:", bd.length,"\n",
-        ##                 "s1:",s1,"s2:",s2,"maxS:",nrow(matSegVal))
-        ##         }
-        
+        ##  if(DEBUG) {
+        ##                     cat("\n","s1:",s1,"s2:",s2,"i1:",i1,"i2:",i2,"D1:",
+        ##                         currentDir1$val,"D2:",currentDir2$val,"Dlim:",Dlim,
+        ##                         "nrow(matSegVal)",nrow(matSegVal),"\n")
+        ##                     cat("\n","D1:",currentDir1$val,"D2:",currentDir2$val,"Dlim:",Dlim,
+        ##                         "cur.bd.le:", current.bd.length,"max length:", bd.length,"\n",
+        ##                         "s1:",s1,"s2:",s2,"maxS:",nrow(matSegVal))
+        ##                 }
+
     } # end of one given run
 
 } # end for all run
@@ -418,7 +431,7 @@ for(run in 1:nrun){
 		output[[runname]]$dir2$path[i,] <- result[[run]]$dir2[[i]]$M
 		output[[runname]]$dir2$values[i] <- result[[run]]$dir2[[i]]$val
 	}
-        
+
 }
 
 output$nrun <- nrun
@@ -434,7 +447,7 @@ return(output)
 
 
 ##########################
-# function plot.monmonier 
+# function plot.monmonier
 ##########################
 plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
                            add.arrows=TRUE, col='blue',lty=1,bwd=4, clegend=1,csize=0.7,
@@ -447,7 +460,7 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
 
     xy <- x$xy
     cpoint <- 0
-    
+
     if(cneig>0) {neig <- nb2neig(x$cn)} else {neig <- NULL}
     if(is.null(variable)){
 	variable <- rep(1,nrow(xy))
@@ -461,13 +474,13 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
     opar <- par(no.readonly=TRUE)
     on.exit(par(mar=opar$mar))
     par(mar=c(0,0,0,0))
-    
+
     for(run in displayed.runs){
         obj <- x[[run]]
         if(length(col)!=x$nrun) col <- rep(col,x$nrun)
         if(length(lty)!=x$nrun) lty <- rep(lty,x$nrun)
         if(length(obj$dir1$values) == 0) stop(paste('Monmonier object of run', run, 'is empty (no point in the path)\n'))
-        
+
         if(length(obj$dir1$values) == 1 && length(obj$dir2$values) == 1) {
             points(obj$dir1$path[1],obj$dir1$path[2],pch=20,col=col[run],...)
         } else{
@@ -479,21 +492,21 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
             n2 <- length(val.2)
             cex.bwd.1 <- ( val.1[1:(n1-1)] + val.1[2:n1] )/2
             cex.bwd.2 <- ( val.2[1:(n2-1)] + val.2[2:n2] )/2
-            cex.bwd.max <- max(c(cex.bwd.1,cex.bwd.2))
+            cex.bwd.max <- max(c(cex.bwd.1,cex.bwd.2), na.rm=TRUE)
             cex.bwd.1 <- cex.bwd.1/max(cex.bwd.max)
             cex.bwd.2 <- cex.bwd.2/max(cex.bwd.max)
             ## amplify the differences
             ## cex.bwd.1 <- cex.bwd.1^1.5
             ## cex.bwd.2 <- cex.bwd.2^1.5
-            
-            
+
+
             if(add.arrows) {
                 if(n1>1) arrows(obj$dir1$path[1:(nrow(obj$dir1$path)-1),1],
                                 obj$dir1$path[1:(nrow(obj$dir1$path)-1),2],
                                 obj$dir1$path[2:nrow(obj$dir1$path),1],
                                 obj$dir1$path[2:nrow(obj$dir1$path),2],
                                 lwd=bwd*cex.bwd.1,angle=20,length=0.2,col=col[run],lty=lty[run],...)
-                
+
                 if(n2>1) arrows(obj$dir2$path[1:(nrow(obj$dir2$path)-1),1],
                                 obj$dir2$path[1:(nrow(obj$dir2$path)-1),2],
                                 obj$dir2$path[2:nrow(obj$dir2$path),1],
@@ -505,7 +518,7 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
                                   obj$dir1$path[2:nrow(obj$dir1$path),1],
                                   obj$dir1$path[2:nrow(obj$dir1$path),2],
                                   lwd=bwd*cex.bwd.1,col=col[run],lty=lty[run],...)
-                
+
                 if(n2>1)segments(obj$dir2$path[1:(nrow(obj$dir2$path)-1),1],
                                  obj$dir2$path[1:(nrow(obj$dir2$path)-1),2],
                                  obj$dir2$path[2:nrow(obj$dir2$path),1],
@@ -514,13 +527,13 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
             }
         } # end else
     } # end for
-    
+
 } # end function
 
 
 
 #####################
-# print function 
+# print function
 #####################
 print.monmonier <- function(x, ...){
 cat("\t\n###########################################################")
@@ -561,7 +574,7 @@ for(i in 1:x$nrun){
 	if(nrow(x[[i]]$dir2$path) >3) cat('...\n')
 	cat('\n$values:\n',head(x[[i]]$dir2$values,n=3))
 	if(length(x[[i]]$dir2$values)>3) cat(' ...')
-        
+
 	cat('\n')
 	lenTheo <- x$nrun + 5
 	if(length(names(x))> lenTheo) {
@@ -575,7 +588,7 @@ for(i in 1:x$nrun){
 
 
 ##############################
-# function optimize.monmonier 
+# function optimize.monmonier
 ##############################
 optimize.monmonier <- function(xy,dist,cn,ntry=10, bd.length=NULL, return.best=TRUE,
                                display.graph=TRUE,threshold=NULL,scanthres=is.null(threshold),allowLoop=TRUE){
@@ -630,7 +643,7 @@ for(i in 0:(ntry-1)){
 
 ## remove the first value (-1) in bdr.value
 bdr.values <- bdr.values[-1]
-  
+
 ## graphical display
 if(display.graph) barplot(bdr.values,xlab="Local differences skipped",ylab="Sum of all local differences",names.arg=0:(ntry-1))
 
@@ -646,7 +659,7 @@ if(!return.best) {
 
     ## assign the appropriate call to the result
     bdr.best$call <- newcall
-                             
+
     ## exp <- bquote( monmonier(xy=.(prevcall$xy),dist=.(prevcall$dist),cn=.(prevcall$cn),skip=.(bdr.skip),
     ##                          ,scan=FALSE,thres=.(Dlim),bd.length=.(bd.length),allowLoop=.(allowLoop)) )
     return(bdr.best)

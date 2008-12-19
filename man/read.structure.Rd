@@ -12,7 +12,7 @@
    single or on two rows before importing data.
  }
 \usage{
-read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=FALSE, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE)
+read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE)
 }
 \arguments{
   \item{file}{ a character string giving the path to the file to
