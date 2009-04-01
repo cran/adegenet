@@ -8,7 +8,7 @@ The arguments are:
 - nCol: the number of columns of matAll, i.e. twice the number of loci
 - resVec: a vector of length (n(n-1)/2) storing the proportion of shared alleles for each couple of genotypes.
 
-Thibaut Jombart (jombart@biomserv.univ-lyon1.fr), 2008.
+Thibaut Jombart (t.jombart@imperial.ac.uk), 2008.
 */ 
 
 #include <stdio.h>

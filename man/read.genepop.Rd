@@ -37,7 +37,7 @@ read.genepop(file,missing=NA,quiet=FALSE)
   \code{\link{read.fstat}}, \code{\link{read.structure}},
   \code{\link{read.genetix}}
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 obj <- read.genepop(system.file("files/nancycats.gen",package="adegenet"))
 obj

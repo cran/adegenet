@@ -24,7 +24,7 @@
   converted. These are to be coerced into a list and set in the
   \code{@other} slot of the new object.  
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \keyword{methods}
 \keyword{classes}
 \keyword{manip}

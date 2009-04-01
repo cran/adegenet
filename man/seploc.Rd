@@ -28,7 +28,7 @@
   same class as the initial object, or a list of matrices similar to
   x\$tab.\cr
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \seealso{\code{\link{seppop}}, \code{\link{repool}}}
 \examples{
 data(microbov)

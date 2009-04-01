@@ -1,6 +1,6 @@
 # Algorithm to detect boundaries, based on Monmonier's algorithm
 # Extended to any connection network
-# Thibaut Jombart 2006-2008 (jombart@biomserv.univ-lyon1.fr)
+# Thibaut Jombart 2006-2008 (t.jombart@imperial.ac.uk)
 
 
 

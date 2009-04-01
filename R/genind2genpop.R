@@ -1,17 +1,19 @@
 #########################
 # Function genind2genpop
 #########################
-genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE){
+genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
+                          process.other=FALSE, other.action=mean){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
-  
+  checkType(x)
+
   if(is.null(x@pop) && is.null(pop)) stop("pop is not provided either in x or in pop")
 
   missing <- match.arg(missing)
 
   if(!quiet) cat("\n Converting data from a genind to a genpop object... \n")
-  
-  # choose pop argument over x@pop
+
+  ## choose pop argument over x@pop
    if(!is.null(pop)) {
     if(length(pop) != nrow(x@tab)) stop("inconsistent length for factor pop")
     # keep levels in order of appearance
@@ -47,46 +49,42 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE){
     tabcount <- matrix(tabcount,nrow=1)
     colnames(tabcount) <- lab.col
   }
-##   #meancol <- apply(tabcount,2,function(c) mean(c,na.rm=TRUE)) ## no longer used
 
-##   # NA treatment
-##   # Treatment when missing='REPLACE':
-##   # if allele 'j' of locus 'k' in pop 'i' is missing, replace the NA by a number 'x' so that
-##   # the frequency 'x/s' ('s' being the number of observations in 'k' ) equals the frequency 'f'
-##   # computed on the whole data (i.e. considering all pop as one)
-##   # Then x must verify:
-##   # x/s = f(1-f) => x=f(1-f)s
-##   #
-##   # - eff.pop is a pop x locus matrix giving the corresponding sum of observations (i.e., 's')
-##   # - temp is the same table but duplicated for all alleles
-##   # - odd.vec is the vector of 'f(1-f)'
-##   # - count.replace is a pop x alleles table yielding appropriate replacement numbers (i.e., 'x')
-
-##   if(!is.na(missing) && any(is.na(tabcount))){
-##     if(missing==0) tabcount[is.na(tabcount)] <- 0
-##     if(toupper(missing)=="REPLACE") {
-##     eff.pop <- t(apply(tabcount,1,function(r) tapply(r,x@loc.fac,sum,na.rm=TRUE)))
-##     temp <- t(apply(eff.pop,1,function(r) rep(r,table(x@loc.fac))))
-
-##     freq.allpop <- apply(tabcount,2,sum,na.rm=TRUE)
-##     freq.allpop <- unlist(tapply(freq.allpop,x@loc.fac,f2))
-##     odd.vec <- freq.allpop/(1-freq.allpop)
-  
-##     count.replace <- t(apply(temp,1,function(r) r*odd.vec))
-
-##     tabcount[is.na(tabcount)] <- count.replace[is.na(tabcount)]
-##     }
-##   } # end of NA treatment
-
-  
   ## make final object
-  temp <- paste(rep(x@loc.names,x@loc.nall),unlist(x@all.names),sep=".")
+  if(x@type=="codom"){
+      temp <- paste(rep(x@loc.names,x@loc.nall),unlist(x@all.names),sep=".")
+  } else{
+      temp <- x@loc.names
+  }
   colnames(tabcount) <- temp
 
   prevcall <- match.call()
-  
-  res <- genpop(tab=tabcount, prevcall=prevcall)
+
+  res <- genpop(tab=tabcount, prevcall=prevcall, ploidy=x@ploidy, type=x@type)
+
+  ## handle @other here
   res@other <- x@other
+  if(process.other){
+      ## auxiliary function doing the job
+      fOther <- function(e){
+          N <- nrow(x@tab)
+          if(is.vector(e) && is.numeric(e) && length(e)==N){ # numeric vector
+              res <- tapply(e, pop, other.action)
+              return(res)
+          } else if(is.matrix(e) && is.numeric(e) && nrow(e)==N){ # numeric matrix
+              res <- apply(e, 2, function(vec) tapply(vec, pop, other.action))
+              colnames(res) <- colnames(e)
+              return(res)
+          } else if(is.data.frame(e) && nrow(e)==N && all(sapply(e,is.numeric)) ){ # df of numeric vectors
+              res <- lapply(e, function(vec) tapply(vec, pop, other.action))
+              res <- data.frame(res)
+              names(res) <- names(e)
+              return(res)
+          } else return(e)
+      } # end fOther
+
+      res@other <- lapply(res@other, fOther)
+  } # end if(process.other)
 
   if(missing != "NA"){
       res <- na.replace(res, method=missing, quiet=quiet)
@@ -95,5 +93,5 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE){
   if(!quiet) cat("\n...done.\n\n")
 
   return(res)
-  
+
 } # end genind2genpop

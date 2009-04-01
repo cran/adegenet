@@ -28,7 +28,7 @@ Revealing cryptic spatial patterns in genetic variability by a new
 multivariate method. \emph{Heredity}, \bold{101}, 92--103.
 }
 \author{
-  Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}
+  Thibaut Jombart \email{t.jombart@imperial.ac.uk}
 }
 \seealso{ \code{\link{spca}} }
 \references{

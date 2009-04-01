@@ -21,7 +21,7 @@ propShared(obj)
 \value{Returns a matrix of proportions}
 \seealso{\code{\link{dist.genpop}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 ## make a small object
 data(microbov)

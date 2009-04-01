@@ -36,7 +36,7 @@
   with entities in rows (individuals or populations) and markers in
   columns. The values of the matrix are 1 for typed data, and 0 for NA.
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 data(nancycats)
 propTyped(nancycats,by="loc")

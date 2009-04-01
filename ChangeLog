@@ -1,3 +1,95 @@
+			CHANGES IN ADEGENET VERSION 1.2-3
+
+
+NEW FEATURES
+
+	o implement handling of presence/absence markers. genind and
+	genpop object now have a 'type' attribute to differentiate between
+	codominant markers (e.g. microsatellite), which is the default
+	type, and presence/absence data (e.g. AFLP). Functions in adegenet
+	now behave according to the type of markers being used.
+
+	o SNP can now be obtained from sequence data, stored as DNAbin
+	(see E. Paradis's package 'ape'). They can be selected to verify
+	any given degree of polymorphism.
+
+	o 'hybridize' can now be used for genotypes having any even degree
+	of ploidy (e.g. tetraploid genotypes).
+
+	o the new function 'isPoly' checks which loci are polymorphic, or
+	which alleles contribute to polymorphism.
+
+	o the new function 'pop' can be used to retrieve and set the pop
+	slot of genind object.
+
+	o the new function 'selPopSize' allows one to select a subset of
+	genotypes belonging to well-sampled populations, as defined by a
+	threshold sample size.
+
+	o the new accessor 'locNames' can be used to retrieve real labels
+	of markers and/or alleles.
+
+	o the loadingplot has been modified to allow specifying x axis, so
+	that scoring SNPs along their sequence is now possible. 
+
+
+BUG FIXES
+
+	o no bug to fix this version!
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-2
+
+
+NEW FEATURES
+
+	o implement different levels of ploidy in genind / genpop objects
+	(new slot @ploidy). Now, any level of ploidy can be handled by
+	input function df2genind, which has been recoded almost
+	entierely. Different levels of ploidy are now handled by different
+	functions.
+	
+	o a "sep" argument is now handled by df2genind: this allows
+	reading many data formats.
+
+	o implemented a method "scaleGen" for genind / genpop objects,
+	which scales allelic data using different methods.
+
+	o  colorplot: a generic function, with a method for spca
+	objects. Represents up to three principal components based on RGB
+	representation of Cavalli-Sforza.
+
+	o loadingplot for plotting loadings of one axis
+
+	o adegenetTutorial function which opens the online tutorials
+
+	o allow for the use of na.replace and scaleGen in spca function
+
+	o added rupica dataset
+
+	o enable reading data from URL (import2genind, read.[...])
+
+	o permit specification of a matrix of spatial weights in spca 
+	
+
+BUG FIXES
+
+	o fixed bug 1.2-2.01 (read.structure issue): was due to the
+	default of "onerowperind" argument.
+	
+	o fixed bug 1.2-2.02 (read.genetix issue): was due to an
+	error in the data file (wrong nloc); now read.genetix corrects
+	that automatically and issues a warning.
+	
+	o fixed bug 1.2-2.03 (monmonier issue): was a non-detected
+	code 2 due to intersection check with previously drawn segment
+	(was not always removed).
+	
+	o fixed bug 1.2-2.05 (a few fixes/improvement for monmonier)
+
+
+
 			CHANGES IN ADEGENET VERSION 1.2-1
 
 
@@ -44,6 +136,20 @@ BUG FIXES
 
 
 
+
+			CHANGES IN ADEGENET VERSION 1.1-3
+
+
+NEW FEATURES
+
+	o 'as' methods for genind/genpop objects to matrix, data.frame,
+	and ktab objects. Now, ordination implemented as dudi functions in
+	ade4 (like dudi.pca) can be performed directly using genind/genpop
+	as inputs.
+
+
+
+
 			CHANGES IN ADEGENET VERSION 1.1-2
 
 
@@ -60,8 +166,6 @@ NEW FEATURES
 	o improvement of the validity checking for genind/genpop:
 	validObject now detects duplicates in any kind of names (ind.names,
 	pop.names, etc.) and prints the corresponding items.
-
-
 
 BUG FIXES
 

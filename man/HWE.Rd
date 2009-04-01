@@ -50,7 +50,7 @@
 }
 \seealso{\code{\link[pkg:genetics]{HWE.test}},\code{\link[pkg:stats]{chisq.test}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 data(nancycats)
 obj <- nancycats

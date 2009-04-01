@@ -4,6 +4,8 @@
 makefreq <- function(x,quiet=FALSE,missing=NA,truenames=TRUE){
 
   if(!is.genpop(x)) stop("x is not a valid genpop object")
+  ##if(x@type=="PA") stop("frequencies not computable for presence/asbence data")
+  checkType(x)
 
   if(!quiet) cat("\n Finding allelic frequencies from a genpop object... \n")
 

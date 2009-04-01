@@ -61,7 +61,7 @@ chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL,
 }
 \seealso{\code{\link{spca}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 data(nancycats)
 if(require(spdep) & require(ade4)){

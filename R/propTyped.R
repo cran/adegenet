@@ -9,7 +9,31 @@ setGeneric("propTyped", function(x,...){
 
 setMethod("propTyped","genind", function(x, by=c("ind","loc","both")){
 
+    ## checkType(x)
     by <- match.arg(by)
+
+    ## PA case ##
+    if(x@type=="PA"){
+        temp <- as.matrix(x)
+
+        if(by=="ind"){
+            res <- apply(temp,1,function(r) mean(is.na(r)))
+            return(1-res)
+        }
+
+        if(by=="loc"){
+            res <- apply(temp,2,function(c) mean(is.na(c)))
+            return(1-res)
+        }
+
+        if(by=="both"){
+            res <- !is.na(temp)
+            return(res*1)
+        }
+    } # end PA case
+
+
+    ## codom case ##
 
     ## auxil function f1
     f1 <- function(vec){
@@ -44,9 +68,36 @@ setMethod("propTyped","genind", function(x, by=c("ind","loc","both")){
 
 
 
+
 setMethod("propTyped","genpop", function(x, by=c("pop","loc","both")){
 
+    ## checkType(x)
     by <- match.arg(by)
+
+
+    ## PA case ##
+    if(x@type=="PA"){
+        temp <- as.matrix(x)
+
+        if(by=="pop"){
+            res <- apply(temp,1,function(r) mean(is.na(r)))
+            return(1-res)
+        }
+
+        if(by=="loc"){
+            res <- apply(temp,2,function(c) mean(is.na(c)))
+            return(1-res)
+        }
+
+        if(by=="both"){
+            res <- !is.na(temp)
+            return(res*1)
+        }
+    } # end PA case
+
+
+    ## codom case ##
+
 
     ## auxil function f1
     f1 <- function(vec){

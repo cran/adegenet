@@ -53,7 +53,7 @@ hybridize(x1, x2, n, pop=NULL, res.type=c("genind","df","STRUCTURE"), file=NULL,
   - one row = one genotype (onerowperind will be true)\cr
   - missing values coded by "-9" (the software's default)\cr
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 ## Let's make some cattle hybrids
 ##

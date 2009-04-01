@@ -9,7 +9,8 @@ fstat <- function(x, pop=NULL, fstonly=FALSE){
     if(!is.genind(x)) stop("x is not a valid genind object")
     if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
     if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
-    
+    checkType(x)
+
     if(is.null(pop)) pop <- x@pop
     if(is.null(pop)) stop("no pop factor provided")
     if(length(pop)!=nrow(x@tab)) stop("pop has a wrong length.")
@@ -34,12 +35,12 @@ fstat <- function(x, pop=NULL, fstonly=FALSE){
 ##     ## misc checks
 ##     if(!is.genind(x)) stop("x is not a valid genind object")
 ##     if(!require(hierfstat)) stop("hierfstat package is required. Please install it.")
-    
+
 ##     if(is.null(pop)) pop <- x@pop
 ##     if(is.null(pop)) stop("no pop factor provided")
 ##     if(length(pop)!=nrow(x@tab)) stop("pop has a wrong length.")
 
 ##     ## computations
-    
+
 ##     return(res)
 ## }

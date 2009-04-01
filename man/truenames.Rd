@@ -27,7 +27,7 @@
   vector with true names (\$pop).\cr
   
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 data(microbov)
 microbov

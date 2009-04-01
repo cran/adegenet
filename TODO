@@ -11,6 +11,7 @@
 # you achieved something
 # '*' indicates stuff to do
 # 'o' indicates done stuff
+# '*o*' indicates partly done stuff
 #
 # Inside a given section, priority goes decreasing.
 #
@@ -28,32 +29,20 @@
 
 # CODE ISSUES:
 ==============
-o fix bug 1.2-2.01 (read.structure issue) -- fixed: was due to the default of "onerowperind" argument.
-o fix bug 1.2-2.02 (read.genetix issue) -- fixed: was due to an error in the data file (wrong nloc); now read.genetix corrects that automatically and issues a warning. (TJ)
-o fix bug 1.2-2.03 (monmonier issue) -- fixed: was a non-detected code 2 due to intersection check with previously drawn segment (was not always removed). (TJ)
 * fix request 1.2-2.04 (implement adjusted heretozygosity in summary)
-o fix bug 1.2-2.05 (monmonier is such a pain is the ass) -- fixed, done and done (TJ)
-o !! comment the if(DEBUG) in monmonier when it is fixed -- done
-* make the package work after all changes (pass the check)
 
 
 # DOCUMENTATION ISSUES:
 =======================
-* make a tutorial for the sPCA -- done (TJ)
 * explain new changes inside the tutorial (handling of AFLP/RAPD...)
 
 
 # NEW IMPLEMENTATIONS:
 =====================
-o color plot for the sPCA results, based on RGB representation of Cavalli-Sforza -- done(TJ)
-o loadingplot for plotting loadings of one axis -- done (TJ)
-o adegenetTutorial function which opens the online tutorials -- done (TJ)
-o allow for the use of na.replace and scaleGen in spca function -- done (TJ)
-o add rupica dataset -- done (TJ)
-o enable reading data from URL (import2genind, read.[...]).
-* implement handling of presence/absence data
-* add a type argument to genind/genpop objects
-* make all the required subsequent changes in the package:
+
+o implement handling of presence/absence data -- done (TJ)
+o add a type argument to genind/genpop objects -- done (TJ)
+o make all the required subsequent changes in the package: -- all done, some checks cannot harm (TJ)
 - class definition and checks
 - constructors
 - basic methods
@@ -70,12 +59,22 @@ o enable reading data from URL (import2genind, read.[...]).
 - propTyped
 - hybridize
 - repool
+o select genotypes by population sample size -- done <selPopSize> (TJ)
+o import SNPs from sequence data -- done <DNAbin2genind> (TJ)
 
 
 # TESTING:
 ==========
-* test reading from url files.
-
+o test reading from url files. 
+o MANDATORY: run some decent testing of AFLP data management: -- done
+- df2genind
+- genind
+- genind2genpop
+- summary
+- na.replace
+- scaleGen
+- propTyped
+- ...
 
 
 # LOW PRIORITY / MINOR ISSUES
@@ -85,15 +84,19 @@ o enable reading data from URL (import2genind, read.[...]).
 * use spcaIllus to illustrate global.rtest and local.rtest
 * check all examples and look for possible improvements
 * Implement a method to merge different markers for the same individuals
-* Build accessors for marker names, indiv names, pop names, spatial coords, ... -- done in part (nLoc) (TJ)
+*o* Build accessors for:
+- marker names -- done <locNames> (TJ)
+- indiv names
+- pop names/factor -- done <pop> (TJ) 
+- spatial coords
+- nb of loci -- done <nLoc> (TJ) 
 * Return a spatial object from monmonier (class sp?)
 * implement classical Fst sensu Weir 1996 ? Or wait for EP to do it...
 * Implement different levels of ploidy in:
-- hybridize
+- hybridize - done (TJ)
 - read.structure
 - propShared
-o Permit specification of a matrix of spatial weights in spca (email A. Piotti) -- done (TJ)
-*
+
 
 
 # LONG TERM
@@ -103,7 +106,6 @@ o Permit specification of a matrix of spatial weights in spca (email A. Piotti) 
 * export to geneticsBase -- same thing
 * see where code needs tuning, and use C/C++
 * implement global.rtest and local.rtest for genind/genpop objects
-o Implement dudi wrappers for genind / genpop objects -- one step (automatic coercion as data.frames) (TJ)
 * Check the formulae provided for Reynolds (consistent with Felsenstein's
 formulae, not straightforward reading the original article)
 * Implement wrappers for spatial function (Moran's I, Mantel's correlogram, etc.).

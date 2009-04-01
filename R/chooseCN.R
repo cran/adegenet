@@ -3,16 +3,16 @@
 #####################
 chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL, k=NULL,
                      a=NULL, dmin=NULL, plot.nb=TRUE, edit.nb=FALSE){
-  
+
   if(is.data.frame(xy)) xy <- as.matrix(xy)
   if(ncol(xy) != 2) stop("xy does not have two columns.")
   if(any(is.na(xy))) stop("NA entries in xy.")
   result.type <- tolower(result.type)
-  
+
   if(!require(spdep, quiet=TRUE)) stop("spdep library is required.")
 
   res <- list()
-  
+
   if(!is.null(d2)){
       if(d2=="dmin"){
           tempmat <- as.matrix(dist(xy))
@@ -25,7 +25,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
           d2 <- d2max
       }
   } # end handle d2
-  
+
   d1.first <- d1
   d2.first <- d2
   k.first <- k
@@ -46,17 +46,17 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
       warning("Random noise was added to xy as duplicated coordinates existed.")
   }
 
-  
+
   if(is.null(type) & !ask) { type <- 1 }
-  
+
   ### begin large while ###
   chooseAgain <- TRUE
   while(chooseAgain){
     # re-initialisation of some variables
     d1 <- d1.first
     d2 <- d2.first
-    k <- k.first    
-    
+    k <- k.first
+
   ## read type from console
     if(ask){
       temp <- TRUE
@@ -70,40 +70,40 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         cat("\t K nearest neighbours (type 6)\n")
         cat("\t Inverse distances (type 7)\n")
         cat("Answer: ")
-        
+
         type <- as.integer(readLines(n = 1))
         temp <- type < 1 |type > 7
         if(temp) cat("\nWrong answer\n")
       } # end while
     }
-    ## 
-    
+    ##
+
     ## graph types
     ## type 1: Delaunay
     if(type==1){
       if(!require(tripack, quiet=TRUE)) stop("tripack library is required.")
       cn <- tri2nb(xy)
     }
-    
+
     # type 2: Gabriel
     if(type==2){
       cn <- gabrielneigh(xy)
       cn <- graph2nb(cn, sym=TRUE)
     }
-    
+
     ## type 3: Relative neighbours
     if(type==3){
       cn <- relativeneigh(xy)
       cn <- graph2nb(cn, sym=TRUE)
     }
-  
+
     ## type 4: Minimum spanning tree
     if(type==4){
       if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-      cn <- mstree(dist(xy))
+      cn <- ade4::mstree(dist(xy)) # there is also a spdep::mstree
       cn <- neig2nb(cn)
     }
-  
+
     ## type 5: Neighbourhood by distance
     if(type==5){
       if(is.null(d1) |is.null(d2)){
@@ -135,7 +135,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
       if(d2<d1) stop("d2 < d1")
       cn <- dnearneigh(x=xy, d1=d1, d2=d2)
     }
-  
+
     ## type 6: K nearests
     if(type==6){
       if(is.null(k)) {
@@ -145,7 +145,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
       cn <- knearneigh(x=xy, k=k)
       cn <- knn2nb(cn, sym=TRUE)
     }
-    
+
     ## type 7: inverse distances
     if(type==7){
         if(is.null(a)) {
@@ -168,7 +168,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         edit.nb <- FALSE
         result.type <- "listw"
     } # end type 7
- 
+
 ## end graph types
 
     if(ask & plot.nb) {
@@ -182,12 +182,12 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
       chooseAgain <- FALSE
     }
   else {chooseAgain <- FALSE}
-    
+
   }
 ### end large while
-  
+
   if(edit.nb) {cn <- edit(cn,xy)}
-  
+
   if(result.type == "listw") {
       if(type!=7) {
           cn <- nb2listw(cn, style="W", zero.policy=TRUE)
@@ -200,8 +200,8 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   res <- cn
 
   attr(res,"xy") <- xy
-  
+
   return(res)
-  
+
 } # end chooseCN
 

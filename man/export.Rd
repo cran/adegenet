@@ -48,7 +48,7 @@ genind2hierfstat(x,pop=NULL)
   Goudet. http://www2.unil.ch/popgen/softwares/fstat.htm\cr
 }
 \seealso{\code{\link{import2genind}}}
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 if(require(hierfstat)){
 
