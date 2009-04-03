@@ -6,7 +6,9 @@
 \title{The adegenet package}
 
 \description{This package is devoted to the multivariate analysis of
-  molecular markers data. It defines two formal (S4) classes:
+  genetic markers data. These data can be codominant markers (e.g. microsatellites) or
+  presence/absence data (e.g. AFLP), and have any level of ploidy.
+  'adegenet' defines two formal (S4) classes:\cr
   - \linkS4class{genind}: a class for data of individuals ("genind" stands for genotypes-individuals).\cr
   - \linkS4class{genpop}: a class for data of groups of individuals ("genpop" stands for genotypes-populations)\cr
   For more information about these classes, type "class ? genind" or
@@ -66,6 +68,11 @@
    a \linkS4class{genpop} object.\cr
    - \code{\link{repool}} merges genoptypes from different
    genetic pools into one single \linkS4class{genind} object.\cr
+   - \code{\link{propTyped}} returns the proportion of available (typed)
+   data, by individual, population, and/or locus.\cr
+   - \code{\link{selPopSize}} subsets data, retaining only genotypes
+   from a population whose sample size is above a given level.\cr
+   - \code{\link{pop}} sets the population of a set of genotypes.\cr
 
 
    === ANALYZING DATA ===\cr
@@ -107,12 +114,12 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.2-2\cr
-    Date: \tab 2008-07-30 \cr
+    Version: \tab 1.2-3\cr
+    Date: \tab 2009-04-01 \cr
     License: \tab GPL (>=2)
   }  
 }
-\author{Thibaut Jombart <jombart@biomserv.univ-lyon1.fr>\cr
+\author{Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
 with contributions of Peter Solymos}
 \references{
 Jombart T. (2008) adegenet: a R package for the multivariate analysis of genetic markers

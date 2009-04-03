@@ -4,7 +4,7 @@ The original code was modified in order to handle double coordinates instead of 
 A part of the code is new and devoted to some monmonier algorithm computations
 To compile : R CMD SHLIB monmonier-utils.c
 
-Thibaut Jombart (jombart@biomserv.univ-lyon1.fr), 2006, to fit his egocentric needs.
+Thibaut Jombart (t.jombart@imperial.ac.uk), 2006, to fit his egocentric needs.
 
 The original copyright follows.
 */ 

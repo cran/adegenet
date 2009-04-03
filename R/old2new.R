@@ -7,7 +7,7 @@ setMethod("old2new", "genind", function(object){
   x <- object
   res <- new("genind")
   theoLength <- 7
-  
+
   res@tab <- as.matrix(x$tab)
   res@ind.names <- as.character(x$ind.names)
   res@loc.names <- as.character(x$loc.names)
@@ -24,6 +24,7 @@ setMethod("old2new", "genind", function(object){
   }
   res@call <- match.call()
   res@ploidy <- as.integer(2)
+  res@type <- "codom"
 
   if(length(object) > theoLength) warning("optional content else than pop and pop.names was not converted")
 
@@ -41,8 +42,11 @@ setMethod("old2new", "genpop", function(object){
   res@loc.nall <- as.integer(x$loc.nall)
   res@loc.fac <- as.factor(x$loc.fac)
   res@all.names <- as.list(x$all.names)
+  res@ploidy <- as.integer(2)
+  res@type <- "codom"
+
   res@call <- match.call()
-  
+
   if(length(object)>7) warning("optional content was not converted")
 
   return(res)

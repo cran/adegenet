@@ -41,7 +41,7 @@
     Chi-squared test. This is obtained by the product of the sums of
     both margins divided by the total number of alleles.
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 data(nancycats)
 

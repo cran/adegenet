@@ -180,7 +180,7 @@ of Moran's I and Geary's c. \emph{Geographical Analysis}, \bold{16}, 17--24.
   \code{\link[pkg:PBSmapping]{convUL}} to convert longitude/latitude to
   UTM coordinates.
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 ## data(spcaIllus) illustrates the sPCA
 ## see ?spcaIllus

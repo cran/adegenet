@@ -9,19 +9,25 @@ setMethod("scaleGen", "genind", function(x, center=TRUE, scale=TRUE,
     THRES <- 1e-10
     method <- match.arg(method)
     missing <- match.arg(missing)
+    ## checkType(x)
+    if(method=="binom" & x@type=="PA") stop("This scaling is not available for presence/absence markers.")
 
     ## handle "missing" arg
     if(missing %in% c("0","mean")){
         x <- na.replace(x, method=missing, quiet=TRUE)
     }
-    
+
     ## handle specific cases
     if(scale & tolower(method)=="binom"){
         ## get allele freq
         temp <- apply(x$tab,2,mean,na.rm=TRUE)
-        ## coerce sum of alleles freq to one (in case of missing data)
-        temp <- tapply(temp, x$loc.fac, function(vec) return(vec/sum(vec)))
-        pbar <- unlist(temp)
+        if(x@type=="codom"){
+            ## coerce sum of alleles freq to one (in case of missing data)
+            temp <- tapply(temp, x$loc.fac, function(vec) return(vec/sum(vec)))
+            pbar <- unlist(temp)
+        } else {
+            pbar <- temp
+        }
 
         scale <- sqrt(pbar*(1-pbar))
     }
@@ -32,10 +38,10 @@ setMethod("scaleGen", "genind", function(x, center=TRUE, scale=TRUE,
         X <- truenames(x)
         if(is.list(X)) { X <- X$tab }
     }
-    
+
     ## return result
     res <- scale(X, center=center, scale=scale)
-    
+
     ## issue a warning if some variances are null
     temp <- attr(res,"scaled:scale") < THRES
     if(any(temp)) {
@@ -58,17 +64,27 @@ setMethod("scaleGen", "genpop", function(x, center=TRUE, scale=TRUE,
     THRES <- 1e-10
     method <- match.arg(method)
     missing <- match.arg(missing)
-    
+    ## checkType(x)
+    if(method=="binom" & x@type=="PA") stop("This scaling is not available for presence/absence markers.")
+
     ## make allele frequencies here
-    X <- makefreq(x,quiet=TRUE,missing=missing,truenames=truenames)$tab
+    if(x@type=="codom"){
+        X <- makefreq(x,quiet=TRUE,missing=missing,truenames=truenames)$tab
+    } else{
+        X <- truenames(x) # keep binary data if type is PA
+    }
 
     ## handle specific cases
     if(scale & tolower(method)=="binom"){
         ## get allele freq
         temp <- apply(X,2,mean,na.rm=TRUE)
-        ## coerce sum of alleles freq to one (in case of missing data)
-        temp <- tapply(temp, x$loc.fac, function(vec) return(vec/sum(vec)))
-        pbar <- unlist(temp)
+        if(x@type=="codom"){
+            ## coerce sum of alleles freq to one (in case of missing data)
+            temp <- tapply(temp, x$loc.fac, function(vec) return(vec/sum(vec)))
+            pbar <- unlist(temp)
+        } else{
+            pbar <- temp
+        }
 
         scale <- sqrt(pbar*(1-pbar))
     }
@@ -76,7 +92,7 @@ setMethod("scaleGen", "genpop", function(x, center=TRUE, scale=TRUE,
     ## return result
 
     res <- scale(X, center=center, scale=scale)
-    
+
     ## issue a warning if some variances are null
     temp <- attr(res,"scaled:scale") < THRES
     if(any(temp)) {

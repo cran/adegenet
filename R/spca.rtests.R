@@ -3,7 +3,7 @@
 # Tests for global and local structures
 #
 # Thibaut Jombart 2007
-# jombart@biomserv.univ-lyon1.fr
+# t.jombart@imperial.ac.uk
 #
 ########################################
 

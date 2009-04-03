@@ -19,20 +19,25 @@
   'class ? genpop'.
 }
 \usage{
-genpop(tab,prevcall=NULL)
-as.genpop(tab,prevcall=NULL)
+genpop(tab,prevcall=NULL, ploidy=as.integer(2), type=c("codom","PA"))
+as.genpop(tab, prevcall=NULL, ploidy=as.integer(2), type=c("codom","PA"))
 is.genpop(x)
 }
 \arguments{
   \item{tab}{a pop x alleles matrix which terms are numbers of alleles,
     i.e. like in a genpop object}  
   \item{prevcall}{call of an object}
+  \item{ploidy}{an integer indicating the degree of ploidy of
+    the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
+  \item{type}{a character string indicating the type of
+    marker: 'codom' stands for 'codominant' (e.g. microstallites,
+    allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP, RAPD).}
   \item{x}{an object}
 }
 \value{
   For \code{genpop} and \code{as.genpop}, a genpop object. For \code{is.genpop}, a logical.
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}}
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \seealso{
   \code{"\linkS4class{genpop}"}, and \code{\link{genind2genpop}} for
   conversion from a genind to a genpop object.

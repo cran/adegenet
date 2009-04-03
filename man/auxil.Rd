@@ -3,6 +3,7 @@
 \name{Auxiliary functions}
 \alias{adegenetWeb}
 \alias{adegenetTutorial}
+\alias{checkType}
 \alias{.rmspaces}
 \alias{.genlab}
 \alias{.readExt}
@@ -14,9 +15,11 @@
   opens online tutorials for adegenet.\cr
 
   The other functions are:\cr
-  - \code{.rmspaces}: remove peripheric spaces in a character string \cr
-  - \code{.genlab}: generate labels in a correct alphanumeric ordering \cr
-  - \code{.readExt}: read the extension of a given file \cr
+  - \code{checkType}: checks the type of markers being used in a
+  function and issues an error if appropriate.\cr
+  - \code{.rmspaces}: remove peripheric spaces in a character string. \cr
+  - \code{.genlab}: generate labels in a correct alphanumeric ordering. \cr
+  - \code{.readExt}: read the extension of a given file. \cr
  
 }
 \usage{
@@ -33,7 +36,7 @@ adegenetTutorial(which=c("general","spca"))
 \value{
   For \code{.genlab}, a character vector of size "n".
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 \dontrun{
 ## this opens the adegenet website

@@ -31,7 +31,7 @@ makefreq(x,quiet=FALSE,missing=NA,truenames=TRUE)
 }
 \seealso{\code{\link{genpop}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 data(microbov)
 obj1 <- microbov

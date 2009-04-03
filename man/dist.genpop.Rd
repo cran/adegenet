@@ -98,7 +98,7 @@ dissimilarity coefficients. \emph{Journal of Classification}, \bold{3},
 Legendre P. and Legendre L. (1998) \emph{Numerical Ecology}, Elsevier
 Science B.V. 20, pp274--288.\cr 
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}\cr
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}\cr
 Former dist.genet code by Daniel Chessel \email{chessel@biomserv.univ-lyon1.fr}\cr
 and documentation by Anne B. Dufour \email{dufour@biomserv.univ-lyon1.fr}
 }

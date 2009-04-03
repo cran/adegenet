@@ -61,10 +61,10 @@ read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, c
   \code{\link{import2genind}}, \code{\link{df2genind}},
   \code{\link{read.fstat}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 obj <- read.structure(system.file("files/nancycats.str",package="adegenet"),
-  n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
+  onerowperind=FALSE, n.ind=237, n.loc=9, col.lab=1, col.pop=2, ask=FALSE)
 
 obj
 }

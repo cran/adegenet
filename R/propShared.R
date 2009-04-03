@@ -7,31 +7,29 @@
 ######################
 propShared <- function(obj){
     x <- obj
-    
+
     ## check that this is a valid genind
     if(!inherits(x,"genind")) stop("obj must be a genind object.")
     invisible(validObject(x))
 
     ## check ploidy level
     if(x$ploidy > 2) stop("not implemented for ploidy > 2")
+    checkType(x)
 
-    
+
     ## if ploidy = 1
     if(x$ploidy == as.integer(1)){
         stop("not implemented for ploidy = 1")
-        #### have to think how AFLP should be handled here.
-        #### maybe dist would do the job..
         ## compute numbers of common alleles
-        ##   X <- x@tab
-        ##         X[is.na(X)] <- 0
-        ##         M <- X %*% t(X)
-        
-        ##         ## compute numbers of alleles used in each comparison
-        ##         nAllByInd <- propTyped(x,by="ind")*x@ploidy
+        ## X <- x@tab
+        ## X[is.na(X)] <- 0
+        ## M <- X %*% t(X)
+
+        ## compute numbers of alleles used in each comparison
+        ## nAllByInd <- propTyped(x,by="ind") * nLoc(x)
         ##         idx <- expand.grid(1:nrow(x$tab), 1:nrow(x$tab))
         ##         temp <- cbind(nAllByInd[idx[,1]] , nAllByInd[idx[,2]])
         ##         N <- matrix(apply(temp, 1, min), ncol=nrow(x$tab))
-        
     }
 
     ## if ploidy = 2
@@ -47,19 +45,19 @@ propShared <- function(obj){
         matAll <- cbind(mat1,mat2)
         matAll <- apply(matAll,1:2,as.integer)
         matAll[is.na(matAll)] <- 0
-        
+
         n <- nrow(matAll)
         resVec <- double(n*(n-1)/2)
         res <- .C("sharedAll", as.integer(as.matrix(matAll)),
                   n, ncol(matAll), resVec, PACKAGE="adegenet")[[4]]
-        
+
         attr(res,"Size") <- n
         attr(res,"Diag") <- FALSE
         attr(res,"Upper") <- FALSE
         class(res) <- "dist"
         res <- as.matrix(res)
     } # end if ploidy = 2
-    
+
     diag(res) <- 1
     rownames(res) <- x@ind.names
     colnames(res) <- x@ind.names
@@ -78,20 +76,20 @@ propShared <- function(obj){
 ##     ## check that this is a valid genind
 ##     if(!inherits(x,"genind")) stop("obj must be a genind object.")
 ##     invisible(validObject(x))
-    
+
 ##     ## replace NAs
 ##     x <- na.replace(x, method="0")
-    
+
 ##     ## some useful variables
 ##     nloc <- length(x@loc.names)
-    
+
 ##     ## fnorm: auxiliary function for scaling
 ##     fnorm <- function(vec){
 ## 	norm <- sqrt(sum(vec*vec))
 ## 	if(length(norm) > 0 && norm > 0) {return(vec/norm)}
-## 	return(vec)	
+## 	return(vec)
 ##     }
-    
+
 ##     ## auxiliary function f1
 ##     ## computes the proportion of shared alleles in one locus
 ##     f1 <- function(X){
@@ -100,11 +98,11 @@ propShared <- function(obj){
 ## 	res[res>0.51 & res<0.9] <- 0.5 # remap case one heteroZ shares the allele of on homoZ
 ## 	return(res)
 ##     }
-    
+
 ##     ## separate data per locus
 ##     temp <- seploc(x)
 ##     listProp <- lapply(temp, function(e) f1(e@tab))
-    
+
 ##     ## produce the final result
 ##     res <- listProp[[1]]
 ##     if(nloc>2){
@@ -112,10 +110,10 @@ propShared <- function(obj){
 ##             res <- res + listProp[[i]]
 ## 	}
 ##     }
-    
+
 ##     res <- res/nloc
 ##     rownames(res) <- x@ind.names
 ##     colnames(res) <- x@ind.names
-    
+
 ##     return(res)
 ## }

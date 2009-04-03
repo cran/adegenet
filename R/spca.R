@@ -7,14 +7,13 @@
 # generic functions were derived from
 # those of multispati class (ade4)
 #
-# T. Jombart (jombart@biomserv.univ-lyon1.fr)
+# T. Jombart (t.jombart@imperial.ac.uk)
 # 31 may 2007
 ##############################################
 
 
-
 ################
-# Function spca
+# spca genind
 ################
 spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
                  scale=FALSE, scale.method=c("sigma","binom"),
@@ -25,8 +24,10 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     ## first checks
     if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
     invisible(validObject(obj))
+    ## checkType(obj)
     if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
     if(!require(spdep, quiet=TRUE)) stop("spdep library is required.")
+
 
     ## handle xy coordinates
     if(is.null(xy) & (inherits(cn,"nb") & !inherits(cn,"listw")) ){
@@ -84,7 +85,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
 
     ## handle NAs warning
     if(any(is.na(obj@tab))){
-        warning("NAs in data are automatically replaced (to mean allele frequency")
+        warning("NAs in data are automatically replaced (to mean allele frequency)")
     }
 
     ## handle NAs, centring and scaling

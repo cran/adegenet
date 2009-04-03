@@ -38,7 +38,7 @@ read.genetix(file=NULL,missing=NA,quiet=FALSE)
 \code{\link{import2genind}}, \code{\link{df2genind}},
   \code{\link{read.fstat}}, \code{\link{read.structure}}, \code{\link{read.genepop}}
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj

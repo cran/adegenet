@@ -21,7 +21,7 @@ fstat(x, pop=NULL, fstonly=FALSE)
 \seealso{\code{\link[pkg:hierfstat]{varcomp.glob}},
   \code{\link{gstat.randtest}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 if(require(hierfstat)){
 data(nancycats)

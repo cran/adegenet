@@ -37,7 +37,7 @@ colorplot(\dots)
 \value{
   Invisibly returns the matched call. 
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}}
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \examples{
 # a toy example
 xy <- expand.grid(1:10,1:10)

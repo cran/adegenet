@@ -43,13 +43,13 @@
 }
 }
 \section{Methods}{
+\describe{
   \item{coerce}{from one object class to another using
     \code{as(object,"Class")}, where the \code{object} is of the old
-    class and the returned object is of the new class \code{"Class"}.
-  }
+    class and the returned object is of the new class \code{"Class"}.}
 }
-
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}}
+}
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \examples{
 data(microbov)
 x <- na.replace(microbov,method="0")

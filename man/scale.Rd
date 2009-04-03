@@ -47,7 +47,7 @@
   allele frequency. This can be used to avoid that frequencies close to
   0.5 have a stronger variance that those close to 0 or 1.
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 ## load data
 data(microbov)

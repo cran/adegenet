@@ -118,7 +118,7 @@ Monmonier, M. (1973) Maximum-difference barriers: an alternative numerical regio
 Manni, F., Guerard, E. and Heyer, E. (2004) Geographic patterns of (genetic, morphologic, linguistic) variation: how barriers can be detected by "Monmonier's algorithm". \emph{Human Biology}, \bold{76}, 173--190
 }
 
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}}
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 
 \seealso{\code{\link{spca}},\code{\link[pkg:spdep]{nb}}}
 

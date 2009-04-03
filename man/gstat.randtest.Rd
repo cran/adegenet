@@ -49,7 +49,7 @@ sup.pop=NULL, sub.pop=NULL, nsim=499)
   \code{\link[pkg:hierfstat]{test.between}},\code{\link[pkg:ade4]{as.randtest}},
   \code{\link{genind2hierfstat}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 if(require(hierfstat)){
 # here the example of g.stats.glob is taken using gstat.randtest

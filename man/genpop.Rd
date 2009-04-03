@@ -5,7 +5,6 @@
 \alias{names,genpop-method}
 \alias{show,genpop-method}
 \alias{summary,genpop-method}
-\alias{nLoc,genpop-method}
 \title{adegenet formal class (S4) for allele counts in populations}
 \description{An object of class \code{genpop} contain alleles counts
   for several loci.\cr
@@ -27,6 +26,11 @@
     \item{\code{all.names}:}{list having one component per locus, each containing a character vector of alleles names}
     \item{\code{call}:}{the matched call}
     \item{\code{pop.names}:}{character vector containing the real names of the populations}
+    \item{\code{ploidy}:}{ an integer indicating the degree of ploidy of
+      the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
+    \item{\code{type}:}{ a character string indicating the type of
+      marker: 'codom' stands for 'codominant' (e.g. microstallites,
+      allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
     \item{\code{other}:}{(optional) a list containing other information}
   }
 }
@@ -43,14 +47,12 @@ Class \code{"\linkS4class{popInfo}"}, directly.
       object (same as print)}
     \item{summary}{\code{signature(object = "genpop")}: summarizes a
       genpop object, invisibly returning its content}
-    \item{nLoc}{\code{signature(object = "genpop")}: returns the number
-      of loci of the object}
   }
 }
 \references{}
-\seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}, \code{\link{na.replace}}
+\seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}, \code{\link{na.replace}}
 }
-\author{ Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr} }
+\author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
 obj1 <- import2genind(system.file("files/nancycats.gen",
 package="adegenet"))

@@ -20,24 +20,33 @@
 }
 
 \usage{
-genind(tab,pop=NULL,prevcall=NULL, ploidy=2)
-as.genind(tab,pop=NULL,prevcall=NULL, ploidy=2)
+genind(tab,pop=NULL,prevcall=NULL, ploidy=2, type=c("codom","PA"))
+as.genind(tab,pop=NULL,prevcall=NULL, ploidy=2, type=c("codom","PA"))
 is.genind(x)
 }
 
 \arguments{
-  \item{tab}{a individuals x alleles matrix of genotypes coded as
-    allelic frequencies, i.e. like in a genind object}
+  \item{tab}{A table corresponding to the @tab slot of a genind object,
+  with individuals in rows and alleles in columns.
+    Its content depends on \code{type} (type of marker).\cr
+    - 'codom': table contains allele frequencies (numeric values summing
+  to 1).\cr
+    - 'PA': table contains binary values, which indicate
+  presence(1)/absence(0) of alleles.\cr
+  }
   \item{pop}{a factor giving the population of each genotype in 'x'}
   \item{prevcall}{call of an object}
   \item{ploidy}{an integer indicating the degree of ploidy of
     the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
+  \item{type}{ a character string indicating the type of
+    marker: 'codom' stands for 'codominant' (e.g. microstallites,
+    allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
   \item{x}{an object}
 }
 \value{
   For \code{genind} and \code{as.genind}, a genind object. For \code{is.genind}, a logical.
 }
-\author{Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}}
+\author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \seealso{
   \code{"\linkS4class{genind}"}, and \code{\link{import2genind}} for
   importing from various types of file.

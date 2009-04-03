@@ -27,7 +27,7 @@
 
 }
 \author{
-  Thibaut Jombart \email{jombart@biomserv.univ-lyon1.fr}
+  Thibaut Jombart \email{t.jombart@imperial.ac.uk}
 }
 \references{
   Balloux F (2001) Easypop (version 1.7): a computer program for oppulation
