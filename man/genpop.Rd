@@ -1,5 +1,5 @@
 \encoding{UTF-8}
-\name{genpop}
+\name{genpop class}
 \alias{genpop-class}
 \alias{dist,genpop,ANY,ANY,ANY,missing-method}
 \alias{names,genpop-method}
@@ -49,7 +49,6 @@ Class \code{"\linkS4class{popInfo}"}, directly.
       genpop object, invisibly returning its content}
   }
 }
-\references{}
 \seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}, \code{\link{na.replace}}
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }

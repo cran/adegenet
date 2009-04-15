@@ -2,24 +2,32 @@
 \alias{coords.monmonier}
 \title{Returns original points in results paths of an object of class 'monmonier'}
 \description{
-The original implementation of \code{monmonier} in package \bold{adegenet} returns path coordinates, \code{coords.monmonier} additionally displays identities of the original points of the network, based on original coordinates.
+  The original implementation of \code{monmonier} in package
+  \bold{adegenet} returns path coordinates, \code{coords.monmonier}
+  additionally displays identities of the original points of the network,
+  based on original coordinates.
 }
 \usage{
 coords.monmonier(x)
 }
 \arguments{
-  \item{x}{an object of class \sQuote{monmonier}.}
+  \item{x}{an object of class \code{\link{monmonier}}.}
 }
 \value{
-Returns a list with elements according to the \code{x$nrun} result of the \sQuote{monmonier} object.
-Corresponding path points are in the same order as in the original object.
+  Returns a list with elements according to the \code{x$nrun} result of the \code{\link{monmonier}} object.
+  Corresponding path points are in the same order as in the original object.
 
-  \item{run1 (run2, ...)}{for each run, a list containing a matrix giving the original points in the network 
-  (\code{first} and \code{second}, indicating neighbouring pairs) which are divided by the path (path coordinates are stored in columns \code{x.hw} and \code{y.hw}. \code{first} and \code{second} are integers referring to the row numbers in the \code{x$xy} matrix of the original \sQuote{monmonier} object.}
-
+  run1 (run2, ...): for each run, a list containing a matrix giving the
+  original points in the network (\code{first} and \code{second},
+  indicating pairs of neighbours). Path coordinates are stored in
+  columns \code{x.hw} and \code{y.hw}. \code{first} and \code{second}
+  are integers referring to the row numbers in the \code{x$xy} matrix of
+  the original \code{\link{monmonier}} object.
 }
 \author{Peter Solymos, \email{Solymos.Peter@aotk.szie.hu}, \url{http://www.univet.hu/users/psolymos/personal/}}
-\seealso{\code{\link{monmonier}}}
+\seealso{
+  \code{\link{monmonier}}
+}
 \examples{
 
 \dontrun{

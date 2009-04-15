@@ -48,7 +48,7 @@ is.genind(x)
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \seealso{
-  \code{"\linkS4class{genind}"}, and \code{\link{import2genind}} for
+  \code{\linkS4class{genind} class}, and \code{\link{import2genind}} for
   importing from various types of file.
 }
 \examples{

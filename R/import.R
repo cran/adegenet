@@ -244,7 +244,8 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL, p
     loc.rep <- rep(names(nall),nall)
     col.lab <- paste(loc.rep,unlist(loc.all,use.names=FALSE),sep=".")
 
-    mat <- as.matrix(cbind.data.frame(temp))
+    ## mat <- as.matrix(cbind.data.frame(temp)) # ! does not work for huge numbers of alleles
+    mat <- matrix(unlist(temp), nrow=nrow(temp[[1]]))
     mat <- mat/ploidy
     colnames(mat) <- col.lab
     rownames(mat) <- ind.names

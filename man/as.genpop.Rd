@@ -39,7 +39,7 @@ is.genpop(x)
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \seealso{
-  \code{"\linkS4class{genpop}"}, and \code{\link{genind2genpop}} for
+  \code{\linkS4class{genpop} class}, and \code{\link{genind2genpop}} for
   conversion from a genind to a genpop object.
 }
 \examples{

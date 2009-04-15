@@ -4,7 +4,7 @@
 \title{Compute proportion of shared alleles}
 \description{The function \code{propShared} computes the proportion of
   shared alleles in a set of genotypes (i.e. from a \linkS4class{genind}
-  object).
+  object). Current implementation works for haploid and diploid genotypes.
 }
 \usage{
 propShared(obj)
@@ -13,7 +13,8 @@ propShared(obj)
   \item{obj}{a \linkS4class{genind} object.}
  }
  \details{
-   Computations of the proportion of shared alleles are computed in C.
+   Computations of the proportion of shared alleles are computed in C
+   for diploid individuals, and in efficient R code for haploid genotypes.
    Proportions are computed from all available data, i.e. proportion can
    be computed as far as there is at least one typed locus in common
    between two genotypes.
@@ -32,13 +33,13 @@ propShared(obj)
 genind2df(obj,sep="|")
 
 ## Use this similarity measure inside a PCoA
-## This is for illustration only:
+##  ! This is for illustration only !
 ## the distance should be rendered Euclidean before
-## (e.g. using quasieuclid from package ade4).
+## (e.g. using cailliez from package ade4).
 if(require(ade4)){
 matSimil <- propShared(microbov)
 matDist <- exp(-matSimil)
-D <- as.dist(matDist)
+D <- cailliez(as.dist(matDist))
 pcoa1 <- dudi.pco(D,scannf=FALSE,nf=3)
 s.class(pcoa1$li,microbov$pop,lab=microbov$pop.names)
 }

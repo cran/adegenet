@@ -16,14 +16,14 @@
   supplementary component.
 }
 \source{
-  Easypop version 2.0.1 was run with the following parameters:
-  - two diploid populations, one sex, random mating
-  - 1000 individuals per population
-  - proportion of migration: 0.002
-  - 20 loci
-  - mutation rate: 0.0001 (KAM model)
-  - maximum of 50 allelic states
-  - 1000 generations (last one taken)
+  Easypop version 2.0.1 was run with the following parameters:\cr
+  - two diploid populations, one sex, random mating\cr
+  - 1000 individuals per population\cr
+  - proportion of migration: 0.002\cr
+  - 20 loci\cr
+  - mutation rate: 0.0001 (KAM model)\cr
+  - maximum of 50 allelic states\cr
+  - 1000 generations (last one taken)\cr
 
 }
 \author{

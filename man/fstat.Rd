@@ -18,7 +18,7 @@ fstat(x, pop=NULL, fstonly=FALSE)
   returned (TRUE) instead of all F statistics (FALSE, default).}
   }
 \value{A matrix of F statistics.}
-\seealso{\code{\link[pkg:hierfstat]{varcomp.glob}},
+\seealso{\code{\link[hierfstat]{varcomp.glob}},
   \code{\link{gstat.randtest}}
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }

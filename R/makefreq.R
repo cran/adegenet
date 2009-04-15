@@ -19,6 +19,9 @@ makefreq <- function(x,quiet=FALSE,missing=NA,truenames=TRUE){
   tabcount <- x@tab
 
   eff.pop <- t(apply(tabcount,1,function(r) tapply(r,x@loc.fac,sum,na.rm=TRUE)))
+  if(nLoc(x)==1){ # fix for nloc==1
+      eff.pop <- t(eff.pop)
+  }
 
   # tabfreq is a pop x loci table of allelic frequencies
   tabfreq <- t(apply(tabcount,1,function(r) unlist(tapply(r,x@loc.fac,f1))))

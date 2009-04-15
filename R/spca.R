@@ -216,7 +216,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
   ## compute original pca
   # prepare data
   obj <- eval(appel$obj)
-  if(is.null(appel$truenames)) truenames <- FALSE
+  if(is.null(appel$truenames)) appel$truenames <- FALSE
 
   f1 <- function(vec){
     m <- mean(vec,na.rm=TRUE)
@@ -229,7 +229,7 @@ summary.spca <- function (object, ..., printres=TRUE) {
 
   X <- apply(X,2,f1)
 
-  if(truenames){
+  if(appel$truenames){
     rownames(X) <- rownames(truenames(obj))
     colnames(X) <- colnames(truenames(obj))
   }

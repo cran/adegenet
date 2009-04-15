@@ -1,0 +1,101 @@
+<html>
+<head>
+<title>RE: About propShared</title>
+<link rel="important stylesheet" href="chrome://messenger/skin/messageBody.css">
+</head>
+<body>
+<table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part1"><tr><td><b>Subject: </b>RE: About propShared</td></tr><tr><td><b>From: </b>Valeria Paccapelo <valeria.paccapelo@advantasemillas.com.ar></td></tr><tr><td><b>Date: </b>Tue, 13 Oct 2009 15:22:11 +0100</td></tr></table><table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part2"><tr><td><b>To: </b>"Jombart, Thibaut" <t.jombart@imperial.ac.uk></td></tr></table><br>
+<div class="moz-text-plain"><pre wrap>Dear Thibaut, 
+
+Thanks for answering soon. Your example is really clear and it is in
+concordance with what I thought the function does. 
+
+I attach a file with an example. It consists on 7 individuals and 87
+markers. In this example genotypes are homozygote only. 
+
+For individuals 1 and 2,
+- There are 4 markers which have NA for at least one of the individuals.
+Then we have 87-4=83 markers to compare. 
+- From these 83 markers, 56 are equal.
+- The proportion of shared alleles is 56/83= 0.674698795180723
+- but, propShared result is 0.6666667
+
+Maybe, in this case the difference is no so important but in other cases the
+difference is more important. Am I making any mistake when I calculate the
+value manually?
+
+Thanks, 
+
+Yours, 
+
+Valeria.
+
+-----Mensaje original-----
+De: Jombart, Thibaut [<a class="moz-txt-link-freetext" href="mailto:t.jombart@imperial.ac.uk">mailto:t.jombart@imperial.ac.uk</a>] 
+Enviado el: Martes, 13 de Octubre de 2009 10:59 a.m.
+Para: Valeria Paccapelo
+Asunto: RE: About propShared 
+
+Dear Valeria, 
+
+thanks for your interest in adegenet. Non-typed loci are discarded on a
+pairwise basis during computations. For instance, if we have the following
+genotypes:
+#1: a/a c/d NA
+#2: a/b d/d x/x
+#3: NA NA x/x
+
+propShared should give the following results:
+1-2: 0.5
+1-3: NA
+2-3: 1
+
+If you think your results are odd, can you please send me a reproducible
+example?
+
+Best,
+
+Thibaut.
+
+
+<div class="moz-txt-sig">-- 
+######################################
+Dr Thibaut JOMBART
+MRC Centre for Outbreak Analysis and Modelling
+Department of Infectious Disease Epidemiology
+Imperial College - Faculty of Medicine
+St Mary's Campus
+Norfolk Place
+London W2 1PG
+United Kingdom
+Tel. : 0044 (0)20 7594 3658
+<a class="moz-txt-link-abbreviated" href="mailto:t.jombart@imperial.ac.uk">t.jombart@imperial.ac.uk</a>
+<a class="moz-txt-link-freetext" href="http://www1.imperial.ac.uk/medicine/people/t.jombart/">http://www1.imperial.ac.uk/medicine/people/t.jombart/</a>
+<a class="moz-txt-link-freetext" href="http://adegenet.r-forge.r-project.org/">http://adegenet.r-forge.r-project.org/</a>
+
+  
+________________________________________
+From: Valeria Paccapelo [<a class="moz-txt-link-abbreviated" href="mailto:valeria.paccapelo@advantasemillas.com.ar">valeria.paccapelo@advantasemillas.com.ar</a>]
+Sent: 13 October 2009 14:32
+To: Jombart, Thibaut
+Subject: About propShared
+
+Dear Sir,
+
+I am using the function propShared of the R package adegenet which I found
+very useful. I am writing in order to ask you about how it works when there
+are non-typed loci for some individuals because I got some warnings and I do
+not find exactly the same values when I do it manually.
+
+Thanks in advance.
+
+Valeria Paccapelo.
+
+Advanta Semillas
+Balcarce Experimental Station
+CC 30 Ruta 226 Km. 60.5
+(7620) Balcarce, Buenos Aires
+Argentina
+
+</div></pre></div></body>
+</html>
