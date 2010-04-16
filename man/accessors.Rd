@@ -33,7 +33,7 @@
   "obj" is a \linkS4class{genpop}) of "obj" \cr
   - "obj[1:10, 5:10]" returns an object keeping the first 10 entities and
   the alleles 5 to 10.\cr
-  - "obj[nloc=c("L1","L3")]" returns an object keeping only the loci
+  - "obj[loc=c("L1","L3")]" returns an object keeping only the loci
   specified in the \code{loc} argument (using generic names, not true
   names; in this example, only the first and the third locus would be
   retained)\cr

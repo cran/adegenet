@@ -68,3 +68,63 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL
 
     return(res)
 } # end DNAbin2genind
+
+
+
+
+
+
+
+## ###############
+## ## transiProb
+## ###############
+## ##
+## ## proba/distance based on transition prob from one sequence to another
+## ## time is taken into account
+## ## output: matrix with term proba(rowIdx to colIdx)
+## ##
+## transiProb <- function(x, mu, dates, result=c("prob","dist")){
+##     ## MISC CHECKS ##
+##     if(!inherits(x,"DNAbin")) stop("x is not a DNAbin object")
+##     if(!require(ape)) stop("The package ape is required.")
+##     result <- match.arg(result)
+
+##     ## COMPUTATIONS ##
+
+##     ## get numbers of differing nucleotides between sequences
+##     seq.length <- ncol(as.matrix(x))
+##     D <- as.matrix(dist.dna(x, model="raw")) * seq.length
+##     ## if(sum(D-round(D)) > 1e-10){ # make sure we've got integers there
+##     ##         warning("Number of nucleotides are not all integers")
+##     ##     }
+##     D <- round(D)
+
+##     ## compute matrix T (time between sequences)
+##     if(inherits(dates,"POSIXct")){ # dates in POSIXct format
+##         temp <- outer(dates, dates, difftime, unit="days")
+##         T <- -matrix(as.numeric(temp),ncol=length(dates))
+##     } else { # dates are numeric
+##         T <- -outer(dates, dates, "-")
+##     }
+
+##     ## spot negative times
+##     toSetToNull <- T < 1e-15
+
+##     ## compute proba(no change @ a site) term
+##     mu <- mu/365 # express mu per day
+##     p1 <- exp(-T*mu) + (1-exp(-T*mu))/4
+##     p1[toSetToNull] <- 0
+##     res <- dbinom(D, size=seq.length, prob=(1-p1))
+
+##     ## PROCESS/RETURN RESULT
+##     if(result=="prob"){ # return probabilities
+##         res[toSetToNull] <- 0
+##         diag(res) <- 1
+##     } else { # return d = -log(proba)
+##         res <- -log(res)
+##         res[toSetToNull] <- 1e15
+##         diag(res) <- 0
+##     }
+
+##     return(res)
+## } # end transiProb

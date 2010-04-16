@@ -120,7 +120,7 @@ Manni, F., Guerard, E. and Heyer, E. (2004) Geographic patterns of (genetic, mor
 
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 
-\seealso{\code{\link{spca}},\code{\link[pkg:spdep]{nb}}}
+\seealso{\code{\link{spca}},\code{\link[spdep]{edit.nb}}}
 
 \examples{
 if(require(spdep) & require(ade4)){

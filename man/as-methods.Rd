@@ -28,7 +28,7 @@
  These S3 and S4 methods are used to coerce \linkS4class{genind} and
  \linkS4class{genpop} objects to matrix-like objects. In most cases,
  this is equivalent to calling the \code{@tab} slot. An exception to
- this is the convertion to \code{\link[pkg:ade4]{ktab}} objects used in the
+ this is the convertion to \code{\link[ade4]{ktab}} objects used in the
  ade4 package as inputs for K-tables methods (e.g. Multiple Coinertia
  Analysis).\cr
 }

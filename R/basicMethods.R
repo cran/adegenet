@@ -124,7 +124,7 @@ setMethod ("show", "genpop", function(object){
 ############################
 # Method summary for genind
 ############################
-setMethod ("summary", "genind", function(object, ...){
+setMethod ("summary", signature(object="genind"), function(object, ...){
   x <- object
   if(!is.genind(x)) stop("Provided object is not a valid genind.")
 
@@ -230,7 +230,7 @@ setMethod ("summary", "genind", function(object, ...){
 ############################
 # Method summary for genpop
 ############################
-setMethod ("summary", "genpop", function(object, ...){
+setMethod ("summary", signature(object="genpop"), function(object, ...){
   x <- object
   if(!inherits(x,"genpop")) stop("To be used with a genpop object")
 

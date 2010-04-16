@@ -40,41 +40,11 @@
 # NEW IMPLEMENTATIONS:
 =====================
 
-o implement handling of presence/absence data -- done (TJ)
-o add a type argument to genind/genpop objects -- done (TJ)
-o make all the required subsequent changes in the package: -- all done, some checks cannot harm (TJ)
-- class definition and checks
-- constructors
-- basic methods
-- spca
-- distances
-- propShared
-- input/output
-- HWE
-- Fstat
-- old2new
-- scaleGen
-- genind2genpop
-- gstat.randtest
-- propTyped
-- hybridize
-- repool
-o select genotypes by population sample size -- done <selPopSize> (TJ)
-o import SNPs from sequence data -- done <DNAbin2genind> (TJ)
+o allow genind2df to export alleles on separate columns -- done
 
 
 # TESTING:
 ==========
-o test reading from url files. 
-o MANDATORY: run some decent testing of AFLP data management: -- done
-- df2genind
-- genind
-- genind2genpop
-- summary
-- na.replace
-- scaleGen
-- propTyped
-- ...
 
 
 # LOW PRIORITY / MINOR ISSUES
@@ -82,7 +52,6 @@ o MANDATORY: run some decent testing of AFLP data management: -- done
 ===========================
 * in spca, when nfposi=0, the returned object actually contains what corresponds to nfposi=1. Comes from multispati in ade4. To correct in ade4.
 * use spcaIllus to illustrate global.rtest and local.rtest
-* check all examples and look for possible improvements
 * Implement a method to merge different markers for the same individuals
 *o* Build accessors for:
 - marker names -- done <locNames> (TJ)
@@ -95,13 +64,13 @@ o MANDATORY: run some decent testing of AFLP data management: -- done
 * Implement different levels of ploidy in:
 - hybridize - done (TJ)
 - read.structure
-- propShared
 
 
 
 # LONG TERM
 ==========================
 ==========================
+* import from pegas
 * import from geneticsBase -- wait for geneSet to be stable
 * export to geneticsBase -- same thing
 * see where code needs tuning, and use C/C++

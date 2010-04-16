@@ -18,7 +18,7 @@ setMethod("scaleGen", "genind", function(x, center=TRUE, scale=TRUE,
     }
 
     ## handle specific cases
-    if(scale & tolower(method)=="binom"){
+    if(scale[1] & tolower(method)=="binom"){
         ## get allele freq
         temp <- apply(x$tab,2,mean,na.rm=TRUE)
         if(x@type=="codom"){
@@ -75,7 +75,7 @@ setMethod("scaleGen", "genpop", function(x, center=TRUE, scale=TRUE,
     }
 
     ## handle specific cases
-    if(scale & tolower(method)=="binom"){
+    if(scale[1] & tolower(method)=="binom"){
         ## get allele freq
         temp <- apply(X,2,mean,na.rm=TRUE)
         if(x@type=="codom"){

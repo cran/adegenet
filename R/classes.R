@@ -274,7 +274,8 @@ genind <- function(tab,pop=NULL,prevcall=NULL,ploidy=2,type=c("codom","PA")){
 
     ## loc names is not type-dependent
     temp <- colnames(X)
-    temp <- gsub("[.].*$","",temp)
+    ## temp <- gsub("[.].*$","",temp)
+    temp <- gsub("[.][^.]*$", "", temp)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)
@@ -385,7 +386,8 @@ genpop <- function(tab,prevcall=NULL,ploidy=as.integer(2),type=c("codom","PA")){
 
     ## loc names is not type-dependent
     temp <- colnames(X)
-    temp <- gsub("[.].*$","",temp)
+    ## temp <- gsub("[.].*$","",temp)
+    temp <- gsub("[.][^.]*$", "", temp)
     temp <- .rmspaces(temp)
     loc.names <- unique(temp)
     nloc <- length(loc.names)

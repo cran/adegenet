@@ -125,7 +125,7 @@ genind2hierfstat <- function(x,pop=NULL){
 #####################
 # Function genind2df
 #####################
-genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
+genind2df <- function(x, pop=NULL, sep="", usepop=TRUE, oneColPerAll=FALSE){
 
   if(!is.genind(x)) stop("x is not a valid genind object")
   ## checkType(x)
@@ -133,6 +133,10 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
   if(is.null(pop)) {
       pop <- x@pop
       levels(pop) <- x@pop.names
+  }
+
+  if(oneColPerAll){
+      sep <- "/"
   }
 
   ## PA case ##
@@ -148,7 +152,7 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
           }
       }
 
-      return(res)
+      return(res) # exit here
   }
 
   ## codom case ##
@@ -169,10 +173,30 @@ genind2df <- function(x, pop=NULL, sep="", usepop=TRUE){
   kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,x@all.names[[i]]))
   names(kGen) <- x@loc.names
 
+  ## if use one column per allele
+  if(oneColPerAll){
+      f1 <- function(vec){ # to repeat NA with seperators
+          vec[is.na(vec)] <- paste(rep("NA",x@ploidy), collapse=sep)
+          return(vec)
+      }
+      temp <- lapply(kGen, f1)
+      temp <- lapply(temp, strsplit,sep)
+
+      res <- lapply(temp, function(e) matrix(unlist(e), ncol=x@ploidy, byrow=TRUE))
+      res <- data.frame(res,stringsAsFactors=FALSE)
+      names(res) <- paste(rep(locNames(x),each=x@ploidy), 1:x@ploidy, sep=".")
+
+      ## handle pop here
+      if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
+
+      return(res) # exit here
+  } # end if oneColPerAll
+
+  ## build the final data.frame
   res <- cbind.data.frame(kGen,stringsAsFactors=FALSE)
 
   ## handle pop here
-  if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res)
+  if(!is.null(pop) & usepop) res <- cbind.data.frame(pop,res,stringsAsFactors=FALSE)
 
   return(res)
 }

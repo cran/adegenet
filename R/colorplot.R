@@ -19,13 +19,16 @@ colorplot <- function(...){
 #################
 # default method
 #################
-colorplot.default <- function(xy, X, axes=1:ncol(X), add.plot=FALSE, defaultLevel=0, ...){
+colorplot.default <- function(xy, X, axes=NULL, add.plot=FALSE, defaultLevel=0, transp=FALSE, alpha=.5, ...){
 
     ## some checks
     if(any(is.na(xy))) stop("NAs exist in xy")
     xy <- as.matrix(xy)
     if(!is.numeric(xy)) stop("xy is not numeric")
     if(nrow(xy) != nrow(X)) stop("xy and X have different row numbers")
+    if(is.null(axes)) {
+        axes <- 1:min(ncol(X),3)
+    }
     X <- as.matrix(X[,axes,drop=FALSE])
     if(any(is.na(X))) stop("NAs exist in X")
     if(!is.numeric(X)) stop("X is not numeric")
@@ -47,7 +50,11 @@ colorplot.default <- function(xy, X, axes=1:ncol(X), add.plot=FALSE, defaultLeve
     if(ncol(X)>=3) {v3 <- X[,3]} else {v3 <- defaultLevel}
 
     ## make colors
-    col <- rgb(v1, v2, v3, maxColorValue=max(X))
+      if(transp){
+        col <- rgb(v1/max(X), v2/max(X), v3/max(X), alpha)
+    } else {
+        col <- rgb(v1, v2, v3, maxColorValue=max(X))
+    }
 
     ## handle ...
     listArgs <- list(...)
@@ -56,7 +63,7 @@ colorplot.default <- function(xy, X, axes=1:ncol(X), add.plot=FALSE, defaultLeve
     ## build list of arguments
     listArgs$x <- xy
     listArgs$col <- col
-    
+
     ## plot data
     if(!add.plot) {
         do.call(plot,listArgs)

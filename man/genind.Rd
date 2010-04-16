@@ -1,5 +1,5 @@
 \encoding{UTF-8}
-\name{genind}
+\name{genind class}
 \alias{genind-class}
 \alias{print,genind-method}
 \alias{show,genind-method}

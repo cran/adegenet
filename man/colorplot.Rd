@@ -17,19 +17,24 @@
 \usage{
 colorplot(\dots)
 
-\method{colorplot}{default}(xy, X, axes=1:ncol(X), add.plot=FALSE, defaultLevel=0, \dots)
+\method{colorplot}{default}(xy, X, axes=NULL, add.plot=FALSE, defaultLevel=0, transp=FALSE, alpha=.5, \dots)
 }
 \arguments{
   \item{xy}{a numeric matrix with two columns (e.g. a matrix of spatial coordinates.}
   \item{X}{a matrix-like containing numeric values that are translated
     into the RGB system. Variables are considered to be in columns.}
   \item{axes}{the index of the columns of X to be represented. Up to
-    three axes can be chosen.}
+    three axes can be chosen. If null, up to the first three columns of
+    X are used.}
   \item{add.plot}{a logical stating whether the colorplot should be
     added to the existing plot (defaults to FALSE).}
   \item{defaultLevel}{a numeric value between 0 and 1, giving the
     default level in a color for which values are not specified. Used
     whenever less than three axes are specified.}
+  \item{transp}{a logical stating whether the produced colors should be
+    transparent (TRUE) or not (FALSE, default).}
+  \item{alpha}{the alpha level for transparency, between 0 (fully
+    transparent) and 1 (not transparent); see \code{?rgb} for more details.}
   \item{\dots}{further arguments to be passed to other methods. In
     \code{colorplot.default}, these arguments are passed to plot/points
     functions. See \code{?plot.default} and \code{?points}.}

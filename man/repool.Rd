@@ -1,6 +1,6 @@
 \name{repool}
 \alias{repool}
-\title{Pool several genotypes into the same dataset}
+\title{Pool several genotypes into a single dataset}
 \description{
   The function \code{repool} allows to merge genotypes from different
   \linkS4class{genind} objects into a single 'pool' (i.e. a new \linkS4class{genind}).

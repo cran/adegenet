@@ -14,16 +14,16 @@
   many characters code each genotypes at a locus, but it is safer to state it
   (\code{ncode} argument). Uncomplete strings are filled with "0" at the
   begining. \cr
-  
-  
 
   The function \code{genind2df} converts a \linkS4class{genind} back to
- such a data.frame.
+ such a data.frame. Alleles of a given locus can be coded as a single
+ character string (with specified separators), or provided on different
+ columns (see \code{oneColPerAll} argument).
  }
 \usage{
 df2genind(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
  pop=NULL, missing=NA, ploidy=2, type=c("codom","PA"))
-genind2df(x,pop=NULL, sep="", usepop=TRUE)
+genind2df(x,pop=NULL, sep="", usepop=TRUE, oneColPerAll=FALSE)
 }
 \arguments{
   \item{X}{a matrix or a data.frame (see decription)}
@@ -42,7 +42,10 @@ genind2df(x,pop=NULL, sep="", usepop=TRUE)
       allozymes); 'PA' stands for 'presence/absence' markers (e.g. AFLP, RAPD).}
   \item{x}{a \linkS4class{genind} object}
   \item{usepop}{a logical stating whether the population (argument \code{pop}
-    or \code{x@pop} should be used (TRUE, default) or not (FALSE).}
+    or \code{x@pop} should be used (TRUE, default) or not (FALSE)).}
+  \item{oneColPerAll}{a logical stating whether alleles of one locus should be
+    provided on separate columns (TRUE) rather than as a single character
+    string (FALSE, default).}
 }
    
 \details{=== There are 3 treatments for missing values === \cr
@@ -66,14 +69,19 @@ genind2df(x,pop=NULL, sep="", usepop=TRUE)
   \code{\link{read.fstat}}, \code{\link{read.structure}}}
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
-df <- data.frame(loc1=c("11","11","12","32"),
-loc2=c(NA,"34","55","15"),loc3=c("22","22","21","22"))
-row.names(df) <- .genlab("geontype",4)
+## simple example
+df <- data.frame(locusA=c("11","11","12","32"),
+locusB=c(NA,"34","55","15"),locusC=c("22","22","21","22"))
+row.names(df) <- .genlab("genotype",4)
 df
 
-obj <- df2genind(df)
+obj <- df2genind(df, ploidy=2)
 obj
 truenames(obj)
+
+## converting a genind as data.frame 
 genind2df(obj)
+genind2df(obj, sep="/")
+genind2df(obj, oneColPerAll=TRUE)
 }
 \keyword{manip}

@@ -12,7 +12,8 @@
   - alignement (seqinr package): to come...
 }
 \usage{
-DNAbin2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL, polyThres=1/100)
+DNAbin2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL,
+                         polyThres=1/100)
 }
 \arguments{
  \item{x}{an object containing aligned sequences.}
@@ -29,7 +30,7 @@ DNAbin2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL, polyThres=
 
 \seealso{\code{\link{import2genind}}, \code{\link{read.genetix}},
   \code{\link{read.fstat}}, \code{\link{read.structure}},
-  \code{\link{read.genepop}}, \code{\link[pkg:ape]{DNAbin}}.
+  \code{\link{read.genepop}}, \code{\link[ape]{DNAbin}}.
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{

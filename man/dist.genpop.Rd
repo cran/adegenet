@@ -9,8 +9,8 @@
   (see details).\cr
   
   A non-euclidian distance can be transformed into an Euclidian one
-  using \code{\link[pkg:ade4]{quasieuclid}} in order to perform a
-  Principal Coordinate Analysis \code{\link[pkg:ade4]{dudi.pco}} (both
+  using \code{\link[ade4]{cailliez}} in order to perform a
+  Principal Coordinate Analysis \code{\link[ade4]{dudi.pco}} (both
   functions in \code{ade4}). \cr
   
   The function \code{dist.genpop} is based on former \code{dist.genet}
@@ -102,14 +102,14 @@ Science B.V. 20, pp274--288.\cr
 Former dist.genet code by Daniel Chessel \email{chessel@biomserv.univ-lyon1.fr}\cr
 and documentation by Anne B. Dufour \email{dufour@biomserv.univ-lyon1.fr}
 }
-\seealso{ \code{\link[pkg:ade4]{quasieuclid}},\code{\link[pkg:ade4]{dudi.pco}} 
+\seealso{ \code{\link[ade4]{cailliez}},\code{\link[ade4]{dudi.pco}} 
 }
 \examples{
 if(require(ade4)){
 data(microsatt)
 obj <- as.genpop(microsatt$tab)
 
-listDist <- lapply(1:5, function(i) quasieuclid(dist.genpop(obj,met=i)))
+listDist <- lapply(1:5, function(i) cailliez(dist.genpop(obj,met=i)))
 for(i in 1:5) {attr(listDist[[i]],"Labels") <- obj@pop.names}
 listPco <- lapply(listDist, dudi.pco,scannf=FALSE)
 

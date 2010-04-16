@@ -5,7 +5,7 @@
 \title{Simulated data illustrating the sPCA}
 \description{
   Datasets illustrating the spatial Principal Component Analysis
-  (Jombart et al. submitted).
+  (Jombart et al. 2009).
   These data were simulated using various models using Easypop (2.0.1).
   Spatial coordinates were defined so that different spatial patterns
   existed in the data. The \code{spca-illus} is a list containing the
@@ -32,9 +32,10 @@ multivariate method. \emph{Heredity}, \bold{101}, 92--103.
 }
 \seealso{ \code{\link{spca}} }
 \references{
-  Jombart T, Devillard S, Dufour A-B and Pontier D
+ Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.
 Revealing cryptic spatial patterns in genetic variability by a new
-multivariate method. Submitted to \emph{Heredity}.
+multivariate method. \emph{Heredity}, \bold{101}, 92--103.
+
  
   Balloux F (2001) Easypop (version 1.7): a computer program for oppulation
   genetics simulations \emph{Journal of Heredity}, \bold{92}: 301-302
