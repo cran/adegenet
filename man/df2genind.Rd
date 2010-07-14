@@ -7,7 +7,7 @@
   The function \code{df2genind} converts a data.frame (or a matrix) into
   a \linkS4class{genind} object. The data.frame must meet the following
   requirements:\cr
-  - genotypes are in row (on row per genotype)\cr
+  - genotypes are in row (one row per genotype)\cr
   - markers are in columns\cr
   - each element is a string of characters coding alleles with or without
   separator. If no separator is used, the function tries to find how

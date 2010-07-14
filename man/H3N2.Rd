@@ -29,7 +29,7 @@ available from Genbank (http://www.ncbi.nlm.nih.gov/Genbank/).
 \references{
 Jombart, T., Devillard, S. and Balloux, F.
 Discriminant analysis of principal components: a new method for the analysis of
-genetically structured populations. Submitted to \emph{Genetics}.
+genetically structured populations. Submitted to \emph{BMC genetics}.
 }
 \examples{
 ## LOAD DATA

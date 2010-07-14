@@ -51,7 +51,7 @@ Americans. \emph{PLoS Genetics} 3: e185.
 
 [5] Jombart, T., Devillard, S. and Balloux, F.  Discriminant analysis of
 principal components: a new method for the analysis of genetically
-structured populations. Submitted to \emph{Genetics}.
+structured populations. Submitted to \emph{BMC genetics}.
 }
 \examples{
 \dontrun{

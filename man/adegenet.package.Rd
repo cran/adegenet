@@ -110,10 +110,10 @@
    of genetic diversity.\cr
    - \code{\link{find.clusters}} and \code{\link{dapc}}: implements the
    Discriminant Analysis of Principal Component (DAPC, Jombart et al.,
-   submitted A).\cr
+   submitted).\cr
    - \code{\link{seqTrack}}: implements the SeqTrack algorithm for
    recontructing transmission trees of pathogens (Jombart et al.,
-   submitted B) .\cr
+   2010) .\cr
 
 
    === GRAPHICS ===\cr
@@ -128,7 +128,7 @@
    === SIMULATING DATA ===\cr
    - \code{\link{hybridize}}: implements hybridization between two populations. \cr
    - \code{\link{haploGen}}: simulates genealogies of haplotypes,
-   storing full genomes (under development). \cr
+   storing full genomes. \cr
    - \code{\link{haploPop}}: simulates populations of haplotypes, using
    different population dynamics, storing SNPs (under development). \cr
 
@@ -158,8 +158,8 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.2-4\cr
-    Date: \tab 2009-04-15 \cr
+    Version: \tab 1.2-5\cr
+    Date: \tab 2010-07-14 \cr
     License: \tab GPL (>=2)
   }  
 }
@@ -170,12 +170,20 @@
   Dominique Pontier, Daniel Maillard, Francois Balloux
 }
 \references{
-Jombart T. (2008) adegenet: a R package for the multivariate analysis of genetic markers
-\emph{Bioinformatics} 24: 1403-1405. doi: 10.1093/bioinformatics/btn129\cr
-  
-See adegenet website: \url{http://adegenet.r-forge.r-project.org/}\cr
+  Jombart T. (2008) adegenet: a R package for the multivariate analysis of
+  genetic markers \emph{Bioinformatics} 24: 1403-1405. doi: 10.1093/bioinformatics/btn129\cr
 
-Please post your questions on 'the adegenet forum': adegenet-forum@lists.r-forge.r-project.org
+  Jombart T, Eggo R, Dodd P, Balloux F (2010) Reconstructing disease
+  outbreaks from genetic data: a graph approach. \emph{Heredity}. doi:
+  10.1038/hdy.2010.78.\cr
+
+  Jombart, T., Devillard, S. and Balloux, F.
+  Discriminant analysis of principal components: a new method for the analysis of
+  genetically structured populations. Submitted to \emph{BMC genetics}.\cr
+
+  See adegenet website: \url{http://adegenet.r-forge.r-project.org/}\cr
+
+  Please post your questions on 'the adegenet forum': adegenet-forum@lists.r-forge.r-project.org
 
 }
 \keyword{manip}

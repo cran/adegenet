@@ -5,6 +5,11 @@ seqTrack <- function(...){
     UseMethod("seqTrack")
 }
 
+seqTrack.default <- function(x, ...){
+    cat("\nseqTrack not implemented for object of the class", class(x),"\n")
+    return(invisible(NULL))
+}
+
 ## seqTrackG <- function(...){
 ##     UseMethod("seqTrackG")
 ## }
@@ -19,176 +24,9 @@ get.likelihood <- function(...){
     UseMethod("get.likelihood")
 }
 
-get.likelihood.seqTrack.default <- function(...){
-    cat("Method not implemented.")
-    return()
-}
 
 
 
-
-
-
-#######################
-## auxiliary functions
-#######################
-#############
-## .dTimeSeq
-#############
-##
-## mu0 and L are vectors, having one value per segment/chromosome
-## mu0 is per nucleotide and per day
-.dTimeSeq <- function(mu, L, maxNbDays=100){
-    ##mu <- mu/365 # mutation rates / site / day
-    t <- 0:maxNbDays # in days added / substracted
-    temp <- sapply((1-mu)^L, function(x) x^t  )
-    Pt <- apply(temp,1,prod)
-    t <- c(-rev(t[-1]), t)
-    Pt <- c(rev(Pt[-1]), Pt)
-    return(list(t, Pt))
-}
-
-
-#############
-## .rTimeSeq
-#############
-##
-## mu and L are vectors, having one value per segment/chromosome
-##
-## this returns nb days
-.rTimeSeq <- function(n, mu, L, maxNbDays=100){
-    temp <- .dTimeSeq(mu, L, maxNbDays)
-    res <- sample(temp[[1]], size=n, replace=TRUE, prob= temp[[2]]/sum(temp[[2]]))
-    return(res)
-}
-
-
-
-#################
-## .rUnifDate
-#################
-##
-## this returns random uniform dates in a given range
-##
-.rUnifDate <- function(n, dateMin, dateMax, ...){
-    rangeSize <-  as.integer(difftime(dateMax,dateMin, units="days"))
-    nbDays <- round(runif(n, min=0, max=rangeSize))
-    res <- dateMin + nbDays*3600*24
-    res <- as.POSIXct(round.POSIXt(res, units="days"))
-    return(res)
-}
-
-
-
-#################
-## .rNormTimeSeq
-#################
-##
-## this returns nb of days
-.rNormTimeSeq <- function(n, mean, sd, ...){
-    res <- round(rnorm(n, mean=mean, sd=sd))
-    return(res)
-}
-
-
-
-#################
-## .rSampTimeSeq
-#################
-##
-## this returns nb of days
-.rSampTime <- function(n,...){
-    res <- round(rnorm(n*2, -2))
-    res <- res[res < 0 & res > -7][1:n]
-    return(res)
-}
-
-
-
-
-
-
-##############
-## .pAbeforeB
-##############
-##
-## allows for different distributions for both haplo
-.pAbeforeB <- function(dateA, dateB, muA, muB, LA, LB, maxNbDays=100){
-    ## proba dist for A
-    tempA <- .dTimeSeq(muA, LA, maxNbDays)
-    days <- tempA[[1]]
-    pA <- tempA[[2]]/sum(tempA[[2]]) # scale to proba mass function
-
-    ## proba dist for B
-    tempB <- .dTimeSeq(muB, LB, maxNbDays)
-    pB <- tempB[[2]]/sum(tempB[[2]]) # scale to proba mass function
-
-    ## days for A and B
-    nbDaysDiff <- as.integer(round(difftime(dateA,dateB,units="days"))) # dateA - dateB, in days
-    daysA <- days
-    daysB <- days - nbDaysDiff
-
-    f1 <- function(i){ # proba A before B for one day
-        idx <- daysB > daysA[i]
-        return(pA[i] * sum(pB[idx]))
-    }
-
-    res <- sapply(1:length(days), f1) # proba for all days
-    res <- sum(res) # sum
-    return(res)
-}
-
-.pAbeforeB <- Vectorize(.pAbeforeB,
-                        vectorize.args=c("dateA","dateB", "muA", "muB", "LA", "LB")) ## end .pAbeforeB
-
-
-##################
-## .pAbeforeBfast
-##################
-##
-## faster version, same mu and length for both sequences
-## already vectorised for dateA and dateB
-.pAbeforeBfast <- function(dateA, dateB, mu, L, maxNbDays=100){
-    ## proba dist for both haplo
-    temp <- .dTimeSeq(mu, L, maxNbDays)
-    days <- temp[[1]]
-    p <- temp[[2]]/sum(temp[[2]]) # scale to proba mass function
-
-    ## days for A and B
-    nbDays <- as.integer(round(difftime(dateB,dateA,units="days"))) # dateA - dateB, in days
-
-    ## function for one comparison
-    f1 <- function(Dt,max){ # does not work for Dt < 0 (have to reverse proba after)
-        if(is.na(Dt)) return(NA)
-        if(Dt>max) return(1)
-        if(round(Dt)==0){
-            temp <- sapply(1:(max-1), function(i) p[i]*sum(p[(i+1):max]))
-            return(sum(temp))
-        }
-        term1 <- sum(p[1:Dt])
-        idx <- seq(2,by=1,length=(max-Dt))
-        temp <- sapply(idx, function(i) sum(p[i:max]))
-        term2 <- sum( p[(Dt+1):max] * temp)
-
-        return(term1+term2)
-    }
-
-    ## computations
-    distribSize <- length(days)
-    res <- sapply(nbDays, f1, max=distribSize)
-    res[nbDays<0] <- 1-res[nbDays<0] # reverse proba for negative time diff
-
-    return(res)
-} # end .pAbeforeBfast
-
-
-
-
-
-
-
-#######################################################
-#######################################################
 
 ########################
 ## seqTrack - basic version
@@ -199,7 +37,7 @@ get.likelihood.seqTrack.default <- function(...){
 ## - prox.mat is a directed proximity measure, so that prox.mat[i,j] is
 ## the 'proximity when going from i to j'
 ##
-seqTrack.default <- function(x, x.names, x.dates, best=c("min","max"),
+seqTrack.matrix <- function(x, x.names, x.dates, best=c("min","max"),
                      prox.mat=NULL, mu=NULL, haplo.length=NULL, ...){
 
     ## CHECKS ##
@@ -247,7 +85,6 @@ seqTrack.default <- function(x, x.names, x.dates, best=c("min","max"),
     if(length(x.names) != nrow(x)){
         stop("inconsistent dimension for x")
     }
-
 
 
     ## AUXILIARY FUNCTIONS ##
@@ -312,16 +149,388 @@ seqTrack.default <- function(x, x.names, x.dates, best=c("min","max"),
     class(res) <- c("seqTrack","data.frame")
 
     return(res)
-} # end seqTrack.default
-
-#######################################################
-#######################################################
+} # end seqTrack.matrix
 
 
 
 
 
+################
+## plotSeqTrack
+################
+plotSeqTrack <- function(x, xy, use.arrows=TRUE, annot=TRUE, labels=NULL,
+                         col=NULL, bg="grey", add=FALSE, quiet=FALSE, date.range=NULL,
+                         jitter.arrows=0, plot=TRUE,...){
 
+    ## CHECKS ##
+    if(!inherits(x,"seqTrack")) stop("x is not a seqTrack object")
+    if(ncol(xy) != 2) stop("xy does not have two columns")
+    if(nrow(xy) != nrow(x)) stop("x and xy have inconsistent dimensions")
+
+
+    ## RECYCLE COL
+    if(!is.null(col)){
+        col <- rep(col,length=nrow(x))
+    } else {
+        col <- rep("black", nrow(x))
+    }
+
+
+    ## DEFAULT LABELS
+    if(is.null(labels)){
+        if(!is.null(rownames(x))){
+            labels <- rownames(x)
+        } else {
+            labels <- 1:nrow(x)
+        }
+    }
+
+
+    ## SUBSET DATA (REMOVE NAs) ##
+    isNA <- is.na(x[,2])
+    x <- x[!isNA,,drop=FALSE]
+    xy.all <- xy # used to retrieve all coordinates
+    xy <- xy[!isNA,,drop=FALSE]
+    if(!is.null(labels)){ # subset labels
+        labels <- labels[!isNA]
+    }
+    if(!is.null(col)){ # subset colors
+        col <- col[!isNA]
+    }
+
+
+    ## FIND SEGMENTS COORDS ##
+    from <- unlist(x[,2])
+    to <- unlist(x[,1])
+
+    x.from <- xy.all[from,1]
+    y.from <- xy.all[from,2]
+    x.to <- xy.all[to,1]
+    y.to <- xy.all[to,2]
+
+
+    ## HANDLE RANGE OF DATES ##
+    if(!is.null(date.range)){
+
+        if(is.character(date.range)){
+            msg <- paste("date.range is a character vector; " ,
+                         "please convert it as dates using 'as.POSIXct'" ,
+                         "\n(making sure dates are given as 'YYYY/MM/DD' or 'YYYY-MM-DD').", sep="")
+            stop(msg)
+        }
+
+        if(any(is.na(date.range))){
+            stop("NA in date.range")
+        }
+
+        dates <- x$date
+        toKeep <- (dates > min(date.range)) & (dates < max(date.range))
+        if(sum(toKeep)==0) {
+            if(!quiet) cat("\nNo item in the specified date range.\n")
+            return(NULL)
+        }
+
+
+        ## SUBSETTING
+        x.from <- x.from[toKeep]
+        y.from <- y.from[toKeep]
+        x.to <- x.to[toKeep]
+        y.to <- y.to[toKeep]
+        col <- col[toKeep]
+        xy <- xy[toKeep,,drop=FALSE]
+        x <- x[toKeep,,drop=FALSE]
+        labels <- labels[toKeep]
+
+    }
+
+
+    ## DO THE PLOTTING ##
+    if(plot){
+        obg <- par("bg")
+        on.exit(par(bg=obg))
+        if(!add){
+            par(bg=bg)
+            plot(xy, type="n", ...)
+        }
+    }
+
+
+    ## PLOTTING ##
+    if(plot){
+        ## ARROWS
+        if(use.arrows){
+            ## handle segments/arrows with length 0 ##
+            nullLength <- (abs(x.from-x.to)<1e-10) & (abs(y.from-y.to)<1e-10)
+
+            ## handle random noise around coordinates
+            if(jitter.arrows>0){
+                x.from[!nullLength] <- jitter(x.from[!nullLength], jitter.arrows)
+                x.to[!nullLength] <- jitter(x.to[!nullLength], jitter.arrows)
+                y.from[!nullLength] <- jitter(y.from[!nullLength], jitter.arrows)
+                y.to[!nullLength] <- jitter(y.to[!nullLength], jitter.arrows)
+            }
+
+            arrows(x.from[!nullLength], y.from[!nullLength],
+                   x.to[!nullLength], y.to[!nullLength],
+                   col=col[!nullLength], angle=15, ...)
+        } else{
+        ## SEGMENTS
+            ## handle random noise around coordinates
+            if(jitter.arrows>0){
+                x.from[!nullLength] <- jitter(x.from[!nullLength], jitter.arrows)
+                x.to[!nullLength] <- jitter(x.to[!nullLength], jitter.arrows)
+                y.from[!nullLength] <- jitter(y.from[!nullLength], jitter.arrows)
+                y.to[!nullLength] <- jitter(y.to[!nullLength], jitter.arrows)
+            }
+
+            segments(x.from, y.from, x.to, y.to, col=col,...)
+        }
+
+        ## ANNOTATIONS
+        if(annot) {
+            text(xy,lab=labels, font=2)
+        }
+
+        ## SUNFLOWERS / POINTS
+        if(any(nullLength)) {
+            sunflowerplot(x.from[nullLength], y.from[nullLength], seg.lwd=2, size=1/6,
+                          col=col[nullLength], seg.col=col[nullLength], add=TRUE, ...)
+            points(x.from[nullLength], y.from[nullLength], col=col[nullLength], cex=2, pch=20, ...)
+        }
+
+    }
+
+
+    ## RESULT ##
+    res <- data.frame(x.from, y.from, x.to, y.to, col=col)
+
+    return(invisible(res))
+} # end plotSeqTrack
+
+
+
+
+
+###########################
+## get.likelihood.seqTrack
+###########################
+get.likelihood.seqTrack <- function(x, mu, haplo.length,...){
+    if(any(na.omit(x$weight - round(x$weight)) > 1e-10)){
+        warning("Non-integer weights: number of mutations expected in x$weight.")
+    }
+
+    dates <- as.POSIXct(x$date)
+    anc.dates <- as.POSIXct(x$ances.date)
+    nb.days <- abs(as.integer(anc.dates-dates))
+    nb.mut <- x$weight
+
+    ##    res <- dbinom(nb.mut, size=haplo.length*nb.days, prob=mu)
+    res <- dpois(x=nb.mut, lambda=mu*haplo.length*nb.days)
+
+    return(res)
+} # end get.likelihood.seqTrack
+
+
+
+
+
+##########################
+## as("seqTrack", "graphNEL")
+##########################
+if(require(graph)){
+setOldClass("seqTrack")
+setAs("seqTrack", "graphNEL", def=function(from){
+    ##    if(!require(ape)) stop("package ape is required")
+    if(!require(graph)) stop("package graph is required")
+
+    ori.labels <- rownames(from)
+    from <- from[!is.na(from$ances),,drop=FALSE]
+
+
+     ## CONVERT TO GRAPH
+    res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
+    return(res)
+})
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################
+################################################
+######### OLD STUFF - NOT USED FOR NOW ######
+################################################
+################################################
+
+
+
+## #############
+## ## .dTimeSeq
+## #############
+## ##
+## ## mu0 and L are vectors, having one value per segment/chromosome
+## ## mu0 is per nucleotide and per day
+## .dTimeSeq <- function(mu, L, maxNbDays=100){
+##     ##mu <- mu/365 # mutation rates / site / day
+##     t <- 0:maxNbDays # in days added / substracted
+##     temp <- sapply((1-mu)^L, function(x) x^t  )
+##     Pt <- apply(temp,1,prod)
+##     t <- c(-rev(t[-1]), t)
+##     Pt <- c(rev(Pt[-1]), Pt)
+##     return(list(t, Pt))
+## }
+
+
+## #############
+## ## .rTimeSeq
+## #############
+## ##
+## ## mu and L are vectors, having one value per segment/chromosome
+## ##
+## ## this returns nb days
+## .rTimeSeq <- function(n, mu, L, maxNbDays=100){
+##     temp <- .dTimeSeq(mu, L, maxNbDays)
+##     res <- sample(temp[[1]], size=n, replace=TRUE, prob= temp[[2]]/sum(temp[[2]]))
+##     return(res)
+## }
+
+
+
+## #################
+## ## .rUnifDate
+## #################
+## ##
+## ## this returns random uniform dates in a given range
+## ##
+## .rUnifDate <- function(n, dateMin, dateMax, ...){
+##     rangeSize <-  as.integer(difftime(dateMax,dateMin, units="days"))
+##     nbDays <- round(runif(n, min=0, max=rangeSize))
+##     res <- dateMin + nbDays*3600*24
+##     res <- as.POSIXct(round.POSIXt(res, units="days"))
+##     return(res)
+## }
+
+
+
+## #################
+## ## .rNormTimeSeq
+## #################
+## ##
+## ## this returns nb of days
+## .rNormTimeSeq <- function(n, mean, sd, ...){
+##     res <- round(rnorm(n, mean=mean, sd=sd))
+##     return(res)
+## }
+
+
+
+## #################
+## ## .rSampTimeSeq
+## #################
+## ##
+## ## this returns nb of days
+## .rSampTime <- function(n,...){
+##     res <- round(rnorm(n*2, -2))
+##     res <- res[res < 0 & res > -7][1:n]
+##     return(res)
+## }
+
+
+## ##################
+## ## .pAbeforeBfast
+## ##################
+## ##
+## ## faster version, same mu and length for both sequences
+## ## already vectorised for dateA and dateB
+## .pAbeforeBfast <- function(dateA, dateB, mu, L, maxNbDays=100){
+##     ## proba dist for both haplo
+##     temp <- .dTimeSeq(mu, L, maxNbDays)
+##     days <- temp[[1]]
+##     p <- temp[[2]]/sum(temp[[2]]) # scale to proba mass function
+
+##     ## days for A and B
+##     nbDays <- as.integer(round(difftime(dateB,dateA,units="days"))) # dateA - dateB, in days
+
+##     ## function for one comparison
+##     f1 <- function(Dt,max){ # does not work for Dt < 0 (have to reverse proba after)
+##         if(is.na(Dt)) return(NA)
+##         if(Dt>max) return(1)
+##         if(round(Dt)==0){
+##             temp <- sapply(1:(max-1), function(i) p[i]*sum(p[(i+1):max]))
+##             return(sum(temp))
+##         }
+##         term1 <- sum(p[1:Dt])
+##         idx <- seq(2,by=1,length=(max-Dt))
+##         temp <- sapply(idx, function(i) sum(p[i:max]))
+##         term2 <- sum( p[(Dt+1):max] * temp)
+
+##         return(term1+term2)
+##     }
+
+##     ## computations
+##     distribSize <- length(days)
+##     res <- sapply(nbDays, f1, max=distribSize)
+##     res[nbDays<0] <- 1-res[nbDays<0] # reverse proba for negative time diff
+
+##     return(res)
+## } # end .pAbeforeBfast
+
+
+
+
+## ##############
+## ## .pAbeforeB
+## ##############
+## ##
+## ## allows for different distributions for both haplo
+## .pAbeforeB <- function(dateA, dateB, muA, muB, LA, LB, maxNbDays=100){
+##     ## proba dist for A
+##     tempA <- .dTimeSeq(muA, LA, maxNbDays)
+##     days <- tempA[[1]]
+##     pA <- tempA[[2]]/sum(tempA[[2]]) # scale to proba mass function
+
+##     ## proba dist for B
+##     tempB <- .dTimeSeq(muB, LB, maxNbDays)
+##     pB <- tempB[[2]]/sum(tempB[[2]]) # scale to proba mass function
+
+##     ## days for A and B
+##     nbDaysDiff <- as.integer(round(difftime(dateA,dateB,units="days"))) # dateA - dateB, in days
+##     daysA <- days
+##     daysB <- days - nbDaysDiff
+
+##     f1 <- function(i){ # proba A before B for one day
+##         idx <- daysB > daysA[i]
+##         return(pA[i] * sum(pB[idx]))
+##     }
+
+##     res <- sapply(1:length(days), f1) # proba for all days
+##     res <- sum(res) # sum
+##     return(res)
+## }
+
+## .pAbeforeB <- Vectorize(.pAbeforeB,
+##                         vectorize.args=c("dateA","dateB", "muA", "muB", "LA", "LB")) ## end .pAbeforeB
 
 
 
@@ -452,223 +661,6 @@ seqTrack.default <- function(x, x.names, x.dates, best=c("min","max"),
 ##     return(res)
 
 ## } # end seqTrackG
-
-
-
-
-
-
-
-################
-## plotSeqTrack
-################
-plotSeqTrack <- function(x, xy, useArrows=TRUE, annot=TRUE, labels=NULL, dateRange=NULL,
-                         col=NULL, bg="grey", add=FALSE, quiet=FALSE,
-                         support=NULL, support.thres=0.5, timeorder.thres=NULL,
-                         mu=NULL, seq.length=NULL,
-                         col.pal=heat.colors, plot=TRUE,...){
-
-    ## CHECKS ##
-    if(!inherits(x,"seqTrack")) stop("x is not a seqTrack object")
-    ##if(ncol(x) != 5) stop("x does not have five columns")
-    if(ncol(xy) != 2) stop("xy does not have two columns")
-    if(nrow(xy) != nrow(x)) stop("x and xy have inconsistent dimensions")
-    if(!is.null(timeorder.thres) & (is.null(mu) | is.null(seq.length)) ){
-        stop("timeorder.thres provided without mu and seq.length.")
-    }
-    if(!is.null(support)){
-        if(length(support)!=nrow(xy)) stop("Inconsistent length for support.")
-    }
-
-    isAmbig <- NULL
-
-    ## RECYCLE COL
-    if(!is.null(col)){
-        col <- rep(col,length=nrow(x))
-    }
-
-    ## HANDLE COLOR PALETTE
-    if(is.null(col) & !is.null(support)){ # use palette iff support provided without col
-        opal <- palette()
-        on.exit(palette(opal))
-        palette(col.pal(100))
-    }
-
-    ## DEFAULT LABELS
-    if(is.null(labels)){
-        labels <- rownames(x)
-    }
-
-    ## SUBSET DATA (REMOVE NAs) ##
-    isNA <- is.na(x[,2])
-    x <- x[!isNA,,drop=FALSE]
-    xy.all <- xy ## used to retrieve all coordinates
-    xy <- xy[!isNA,,drop=FALSE]
-    if(!is.null(labels)){ # subset labels
-        labels <- labels[!isNA]
-    }
-    if(!is.null(col)){ # subset colors
-        col <- col[!isNA]
-    }
-    if(!is.null(support)){
-        support <- support[!isNA] # subset support
-    }
-
-
-    ## FIND AMBIGUOUS ANCESTRIES ##
-    if(!is.null(support)){
-        isAmbig <- support < support.thres
-    }
-
-
-    ## FIND AMBIGUOUS TEMPORAL ORDERING ##
-    if(!is.null(timeorder.thres)){
-        temp <- .pAbeforeBfast(x$ances.date, x$date, mu, seq.length)
-        if(is.null(isAmbig)){
-            isAmbig <- temp < timeorder.thres
-        } else {
-            isAmbig <- isAmbig | (temp < timeorder.thres)
-        }
-    }
-
-
-    ## FIND SEGMENTS COORDS ##
-    from <- unlist(x[,2])
-    to <- unlist(x[,1])
-
-    x.from <- xy.all[from,1]
-    y.from <- xy.all[from,2]
-    x.to <- xy.all[to,1]
-    y.to <- xy.all[to,2]
-
-
-    ## FIND THE COLOR FOR EDGES ##
-    if(is.null(col)){
-        if(!is.null(support)){
-            opalette <- palette()
-            on.exit(palette(opalette))
-
-            w <- support/max(support,na.rm=TRUE) # support from 0 to 1
-            w <- 1 + ((1-w)*99)
-            col <- w
-        } else{
-            col <- rep("black", length(from))
-        }
-    }
-
-
-    ## THIS WAS USED WHEN COLOR REPRESENTED THE NUMBER OF MUTATIONS ##
-    ##  if(is.null(col)){
-    ##         w <- as.numeric(x[,3])
-    ##         w <- max(w) - w
-    ##         w <- w-min(w)
-    ##         w <- 1+ w/max(w) * 99
-
-    ##         opalette <- palette()
-    ##         on.exit(palette(opalette))
-    ##         palette(heat.colors(100))
-
-    ##         col <- w
-    ##     }
-
-
-    ## HANDLE RANGE OF DATES ##
-    if(!is.null(dateRange)){
-
-        if(is.character(dateRange)){
-            msg <- paste("dateRange is a character vector; " ,
-                         "please convert it as dates using 'as.POSIXct'" ,
-                         "\n(making sure dates are given as 'YYYY/MM/DD' or 'YYYY-MM-DD').", sep="")
-            stop(msg)
-        }
-
-        if(any(is.na(dateRange))){
-            stop("NA in dateRange")
-        }
-
-        dates <- x$date
-        toKeep <- (dates > min(dateRange)) & (dates < max(dateRange))
-        if(sum(toKeep)==0) {
-            if(!quiet) cat("\nNo item in the specified date range.\n")
-            return(NULL)
-        }
-
-        ## do the subsetting
-        x.from <- x.from[toKeep]
-        y.from <- y.from[toKeep]
-        x.to <- x.to[toKeep]
-        y.to <- y.to[toKeep]
-        col <- col[toKeep]
-        xy <- xy[toKeep,,drop=FALSE]
-        x <- x[toKeep,,drop=FALSE]
-        if(!is.null(isAmbig)) { # subset isAmbig
-            isAmbig <- isAmbig[toKeep]
-        }
-        if(!is.null(labels)){ # subset labels
-            labels <- labels[toKeep]
-        }
-    }
-
-
-
-    ## DO THE PLOTTING ##
-    if(plot){
-        obg <- par("bg")
-        on.exit(par(bg=obg))
-        if(!add){
-            par(bg=bg)
-            plot(xy, type="n")
-        }
-    }
-
-    ## ARROWS
-    if(useArrows & plot){
-        ## handle segments/arrows with length 0 ##
-        nullLength <- (abs(x.from-x.to)<1e-10) & (abs(y.from-y.to)<1e-10)
-
-        if(any(isAmbig)){ # plot arrows & segments
-            arrows(x.from[!isAmbig & !nullLength], y.from[!isAmbig & !nullLength],
-                                    x.to[!isAmbig & !nullLength], y.to[!isAmbig & !nullLength],
-                                    col=col[!isAmbig & !nullLength], angle=15, ...)
-            segments(x.from[isAmbig], y.from[isAmbig],
-                     x.to[isAmbig], y.to[isAmbig], col=col[isAmbig],...)
-        } else{ # plot all arrows
-            arrows(x.from[!nullLength], y.from[!nullLength],
-                                    x.to[!nullLength], y.to[!nullLength],
-                   col=col[!nullLength], angle=15, ...)
-        }
-    } else{
-        ## SEGMENTS
-        if(plot) segments(x.from, y.from, x.to, y.to, col=col,...)
-    }
-
-
-    if(annot & plot) {
-        text(xy,lab=labels, font=2)
-    }
-
-    if(any(nullLength) & plot) {
-        sunflowerplot(x.from[nullLength], y.from[nullLength], seg.lwd=2, size=1/6,
-                      col=col[nullLength], seg.col=col[nullLength], add=TRUE, ...)
-        points(x.from[nullLength], y.from[nullLength], col=col[nullLength], cex=2, pch=20, ...)
-    }
-
-
-    ## RESULT ##
-    res <- data.frame(x.from, y.from, x.to, y.to, col=col)
-    if(!is.null(isAmbig)) {
-        res <- cbind.data.frame(res, isAmbig)
-    }
-    return(invisible(res))
-} # end plotSeqTrack
-
-
-
-
-
-
-
-
 
 
 
@@ -1084,71 +1076,4 @@ plotSeqTrack <- function(x, xy, useArrows=TRUE, annot=TRUE, labels=NULL, dateRan
 
 
 
-
-
-
-###########################
-## get.likelihood.seqTrack
-###########################
-get.likelihood.seqTrack <-function(x, method=("genetic"), mu=NULL, seq.length=NULL,...){
-    method <- match.arg(method)
-    if(method=="genetic"){ # p(nb mutations occur in the time interval)
-        if(any(na.omit(x$weight - round(x$weight)) > 1e-10)){
-            warning("Non-integer weights: number of mutations expected in x$weight.")
-        }
-
-        if(is.null(mu)) stop("mu is required.")
-        if(is.null(seq.length)) stop("seq.length is required.")
-
-        dates <- as.POSIXct(x$date)
-        anc.dates <- as.POSIXct(x$ances.date)
-        nb.days <- abs(as.integer(anc.dates-dates))
-        nb.mut <- x$weight
-        ##mu <- mu/365
-        ##mu <- mu*nb.days
-
-        res <- dbinom(nb.mut, size=seq.length*nb.days, prob=mu)
-    } else{
-        cat("Method not implemented.")
-    }
-
-    return(res)
-} # end get.likelihood.seqTrack
-
-
-
-
-
-
-###############
-## seqTrack.ml
-###############
-## seqTrack.ml <- function(aln, x.dates, best=c("min","max"), ...){
-
-## } # end seqTrack.ml
-
-
-
-
-
-
-
-
-
-##########################
-## as("seqTrack", "graphNEL")
-##########################
-setOldClass("seqTrack")
-setAs("seqTrack", "graphNEL", def=function(from){
-    if(!require(ape)) stop("package ape is required")
-    if(!require(graph)) stop("package graph is required")
-
-    ori.labels <- rownames(from)
-    from <- from[!is.na(from$ances),,drop=FALSE]
-
-
-     ## CONVERT TO GRAPH
-    res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
-    return(res)
-})
 

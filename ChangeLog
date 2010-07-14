@@ -1,3 +1,22 @@
+			CHANGES IN ADEGENET VERSION 1.2-5
+
+
+NEW FEATURES
+
+	o SeqTrack, an algorithm for the reconstruction of genealogies, is
+	now fully implemented and documented.
+
+	o haploGen, a system for simulating genealogies, is now fully
+	implemented and documented.
+
+
+BUG FIXES
+
+	o summary methods for genind and genpop are fixed (again) for the
+	new R version 2.11.1.
+
+
+
 			CHANGES IN ADEGENET VERSION 1.2-4
 
 
@@ -19,6 +38,8 @@ NEW FEATURES
 	o Pre-release of new simulation tools, still undocumented
 	(haploPop and haploGen).
 
+	o New datasets eHGDP and H3N2
+
 
 BUG FIXES
 
@@ -27,6 +48,7 @@ BUG FIXES
 	o summary issue arised in certain conditions, depending on which
 	package was loaded before adegenet; in some cases, the summary
 	procedure was not found for genind/genpop objects. Fixed now.
+
 
 
 			CHANGES IN ADEGENET VERSION 1.2-3
