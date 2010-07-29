@@ -16,6 +16,11 @@ loadingplot <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, fac=NULL
         warning("Some values in x are less than 0\n Using abs(x) instead, but this might not be optimal.")
         x <- abs(x)
     }
+    if(is.null(at)){
+        at <- 1:length(x)
+    } else {
+        if(length(at) != length(x)) stop("x and at do not have the same length.")
+    }
 
     ## preliminary computations
     y.min <- min(min(x),0)
@@ -49,14 +54,12 @@ loadingplot <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, fac=NULL
     }
 
     ## annotate variables that are above the threshold
-    if(!is.null(at)){
-        x.ann <- at[x > threshold]
-    } else {
-        x.ann <- which(x > threshold)
-    }
+    x.ann <- at[x > threshold]
     x.ann <- jitter(x.ann,fac=lab.jitter)
+
     y.ann <- x[x > threshold] + y.offset
     y.ann <- jitter(y.ann,fac=lab.jitter)
+
     txt.ann <- lab[x > threshold]
     text(x=x.ann, y=y.ann, label=txt.ann, cex=cex.lab)
 

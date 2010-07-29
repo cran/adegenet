@@ -8,6 +8,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   if(ncol(xy) != 2) stop("xy does not have two columns.")
   if(any(is.na(xy))) stop("NA entries in xy.")
   result.type <- tolower(result.type)
+   if(is.null(type) & !ask) stop("Non-interactive mode but no graph chosen; please provide a value for 'type' argument.")
 
   if(!require(spdep, quiet=TRUE)) stop("spdep library is required.")
 
@@ -38,16 +39,14 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   }
 
   ## check for uniqueness of coordinates
-  x <- xy[,1]
-  y <- xy[,2]
-  temp <- table(x,y)
-  if(any(temp>1) & (!is.null(type) && !type %in% c(5,7))){ # coords need not be unique if type==5 or 7
-      xy <- jitter(xy)
-      warning("Random noise was added to xy as duplicated coordinates existed.")
+  if(any(xyTable(xy)$number>1)){ # if duplicate coords
+      DUPLICATE.XY <- TRUE
+  } else {
+      DUPLICATE.XY <- FALSE
   }
 
 
-  if(is.null(type) & !ask) { type <- 1 }
+  ## if(is.null(type) & !ask) { type <- 1 }
 
   ### begin large while ###
   chooseAgain <- TRUE
@@ -74,9 +73,21 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         type <- as.integer(readLines(n = 1))
         temp <- type < 1 |type > 7
         if(temp) cat("\nWrong answer\n")
+
+        if(type %in% 1:4 & DUPLICATE.XY){
+            cat("\n\n== PROBLEM DETECTED ==")
+            cat("\nDuplicate locations detected\nPlease choose another graph (5-7) or add random noise to locations (see ?jitter).\n")
+            temp <- TRUE
+        }
+
       } # end while
     }
     ##
+
+    ## warning about duplicate xy coords
+    if(type %in% 1:4 & DUPLICATE.XY){
+        stop("Duplicate locations detected and incompatible with graph type 1-4.\nPlease choose another graph (5-7) or add random noise to locations (see ?jitter).")
+    }
 
     ## graph types
     ## type 1: Delaunay

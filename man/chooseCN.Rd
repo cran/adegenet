@@ -7,7 +7,8 @@
   from 6 types of graph and one additional weighting scheme.
   \code{chooseCN} calls functions from appropriate packages, handles
   non-unique coordinates and returns a connection network either with
-  classe \code{nb} or \code{listw}.
+  classe \code{nb} or \code{listw}. For graph types 1-4, duplicated
+  locations are not accepted and will issue an error.
 }
 \usage{
 chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL, 
@@ -53,7 +54,11 @@ chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL,
   neighbours, but the spatial weights are directly proportional to the
   inversed spatial distances.\cr
   Also not that in this case, the output of the function is always a
-  \code{listw} object, even if \code{nb} was requested. 
+  \code{listw} object, even if \code{nb} was requested.\cr
+
+  The choice of the connection network has been discuted on the adegenet
+  forum. Please search the archives from adegenet website (section
+  'contact') using 'graph' as keyword. 
 }
 \value{Returns a connection network having the class \code{nb} or
   \code{listw}. The xy coordinates are passed as attribute to the

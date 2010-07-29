@@ -170,7 +170,7 @@ should match the number of groups, not the number of individuals.}
 \references{
 Jombart, T., Devillard, S. and Balloux, F.
 Discriminant analysis of principal components: a new method for the analysis of
-genetically structured populations. Submitted to \emph{Genetics}.
+genetically structured populations. Submitted to \emph{BMC genetics}.
 }
 \seealso{
   - \code{\link{find.clusters}}: to identify clusters without prior.

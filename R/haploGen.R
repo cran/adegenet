@@ -8,14 +8,32 @@
 ## mean.gen.time, sd.gen.time: average time for transmission and its standard deviation (normal dist)
 ## mean.repro, sd.repro: average number of transmissions and its standard deviation (normal dist)
 ##
-haploGen <- function(seq.length=1000, mu=0.0001,
-                     Tmax=50, mean.gen.time=5, sd.gen.time=1,
-                     mean.repro=2, sd.repro=1, max.nb.haplo=1e3,
-                     geo.sim=TRUE, grid.size=5, lambda.xy=0.5, matConnect=NULL,
+haploGen <- function(seq.length=10000, mu=0.0001, t.max=20,
+                     gen.time=function(){round(rnorm(1,5,1))},
+                     repro=function(){round(rnorm(1,2,1))}, max.nb.haplo=1e3,
+                     geo.sim=TRUE, grid.size=5, lambda.xy=0.5,
+                     mat.connect=NULL,
                      ini.n=1, ini.xy=NULL){
 
     ## CHECKS ##
     if(!require(ape)) stop("The ape package is required.")
+
+
+    ## HANDLE ARGUMENTS ##
+    if(is.numeric(mu)){
+        mu.val <- mu
+        mu <- function(){return(mu.val)}
+    }
+
+    if(is.numeric(gen.time)){
+        gen.time.val <- gen.time
+        gen.time <- function(){gen.time.val}
+    }
+
+    if(is.numeric(repro)){
+        repro.val <- repro
+        repro <- function(){repro.val}
+    }
 
 
     ## GENERAL VARIABLES ##
@@ -42,13 +60,14 @@ haploGen <- function(seq.length=1000, mu=0.0001,
     }
 
     ## duplicate a sequence (including possible mutations)
-    seq.dupli <- function(seq){
-        toChange <- as.logical(rbinom(n=seq.length, size=1, prob=mu))
-        res <- seq
+    seq.dupli <- function(seq, T){ # T is the number of time units between ancestor and decendent
+        ## toChange <- as.logical(rbinom(n=seq.length, size=1, prob=mu())) # can be faster
+        temp <- rbinom(n=1, size=seq.length*T, prob=mu()) # total number of mutations
+        toChange <- sample(1:seq.length, size=temp, replace=FALSE)
         if(sum(toChange)>0) {
-            res[toChange] <- substi(res[toChange])
+            seq[toChange] <- substi(seq[toChange])
         }
-        return(res)
+        return(seq)
     }
 
     ## what is the name of the new sequences?
@@ -59,7 +78,8 @@ haploGen <- function(seq.length=1000, mu=0.0001,
 
     ## how many days before duplication occurs ?
     time.dupli <- function(){
-        res <- round(rnorm(1, mean=mean.gen.time, sd=sd.gen.time))
+        ##res <- round(rnorm(1, mean=mean.gen.time, sd=sd.gen.time))
+        res <- gen.time()
         res[res<0] <- 0
         return(res)
     }
@@ -72,7 +92,8 @@ haploGen <- function(seq.length=1000, mu=0.0001,
 
     ## how many duplication/transmission occur?
     nb.desc <- function(){
-        res <- round(rnorm(1, mean=mean.repro, sd=sd.repro))
+        ##res <- round(rnorm(1, mean=mean.repro, sd=sd.repro))
+        res <- repro()
         res[res<0] <- 0
         return(res)
     }
@@ -83,7 +104,7 @@ haploGen <- function(seq.length=1000, mu=0.0001,
     }
 
     ## where does a transmission occur (destination)?
-    if(is.null(matConnect)){ # use universal lambda param
+    if(is.null(mat.connect)){ # use universal lambda param
         xy.dupli <- function(cur.xy, nbLoc){
             mvt <- rpois(2*nbLoc, lambda.xy) * sample(c(-1,1), size=2*nbLoc, replace=TRUE)
             res <- t(matrix(mvt, nrow=2) + as.vector(cur.xy))
@@ -92,14 +113,11 @@ haploGen <- function(seq.length=1000, mu=0.0001,
             return(res)
         }
     } else { # use location-dependent proba of dispersal between locations
-        if(any(matConnect < 0)) stop("Negative values in matConnect (probabilities expected!)")
-        matConnect <- prop.table(matConnect,1)
+        if(any(mat.connect < 0)) stop("Negative values in mat.connect (probabilities expected!)")
+        mat.connect <- prop.table(mat.connect,1)
         xy.dupli <- function(cur.xy, nbLoc){
-            ## lambda.xy <- matConnect[cur.xy[1] , cur.xy[2]]
-            ##             mvt <- rpois(2*nbLoc, lambda.xy) * sample(c(-1,1), size=2*nbLoc, replace=TRUE)
-            ##             res <- t(matrix(mvt, nrow=2) + as.vector(cur.xy))
             idxAncesLoc <- myGrid[cur.xy[1], cur.xy[2]]
-            newLoc <- sample(1:grid.size^2, size=nbLoc, prob=matConnect[idxAncesLoc,], replace=TRUE) # get new locations
+            newLoc <- sample(1:grid.size^2, size=nbLoc, prob=mat.connect[idxAncesLoc,], replace=TRUE) # get new locations
             res <- cbind(row(myGrid)[newLoc] , col(myGrid)[newLoc]) # get coords of new locations
             return(res)
         }
@@ -153,10 +171,10 @@ haploGen <- function(seq.length=1000, mu=0.0001,
         nbDes <- nb.desc()
         if(nbDes==0) return(NULL) # stop if no descendant
         newDates <- sapply(1:nbDes, function(i) date.dupli(date)) # find dates for descendants
-        newDates <- newDates[newDates <= Tmax] # don't store future sequences
+        newDates <- newDates[newDates <= t.max] # don't store future sequences
         nbDes <- length(newDates)
         if(nbDes==0) return(NULL) # stop if no suitable date
-        newSeq <- lapply(1:nbDes, function(i) seq.dupli(seq)) # generate new sequences
+        newSeq <- lapply(1:nbDes, function(i) seq.dupli(seq, newDates[i]-date)) # generate new sequences
         class(newSeq) <- "DNAbin" # lists of DNAbin vectors must also have class "DNAbin"
         newSeq <- as.matrix(newSeq) # list DNAbin -> matrix DNAbin with nbDes rows
         rownames(newSeq) <- seqname.gen(nbDes) # find new labels for these new sequences
@@ -174,10 +192,10 @@ haploGen <- function(seq.length=1000, mu=0.0001,
         nbDes <- nb.desc()
         if(nbDes==0) return(NULL) # stop if no descendant
         newDates <- sapply(1:nbDes, function(i) date.dupli(date)) # find dates for descendants
-        newDates <- newDates[newDates <= Tmax] # don't store future sequences
+        newDates <- newDates[newDates <= t.max] # don't store future sequences
         nbDes <- length(newDates)
         if(nbDes==0) return(NULL) # stop if no suitable date
-        newSeq <- lapply(1:nbDes, function(i) seq.dupli(seq)) # generate new sequences
+        newSeq <- lapply(1:nbDes, function(i) seq.dupli(seq, newDates[i]-date)) # generate new sequences
         class(newSeq) <- "DNAbin" # lists of DNAbin vectors must also have class "DNAbin"
         newSeq <- as.matrix(newSeq) # list DNAbin -> matrix DNAbin with nbDes rows
         rownames(newSeq) <- seqname.gen(nbDes) # find new labels for these new sequences
@@ -188,8 +206,6 @@ haploGen <- function(seq.length=1000, mu=0.0001,
         toExpand <<- c(toExpand, rep(TRUE, nbDes))
         return(NULL)
     }
-
-
 
 
 
@@ -216,6 +232,7 @@ haploGen <- function(seq.length=1000, mu=0.0001,
         res$id <- as.character(1:length(res$ances))
         res$ances <- as.character(res$ances)
         names(res$dates) <- rownames(res$seq)
+        res$call <- match.call()
         class(res) <- "haploGen"
         return(res)
 
@@ -223,13 +240,12 @@ haploGen <- function(seq.length=1000, mu=0.0001,
 
 
 
-
     ## PERFORM SIMULATIONS - SPATIAL CASE ##
     if(geo.sim){
         ## some checks
-        if(!is.null(matConnect)) {
-            if(nrow(matConnect) != ncol(matConnect)) stop("matConnect is not a square matrix")
-            if(nrow(matConnect) != grid.size^2) stop("dimension of matConnect does not match grid size")
+        if(!is.null(mat.connect)) {
+            if(nrow(mat.connect) != ncol(mat.connect)) stop("mat.connect is not a square matrix")
+            if(nrow(mat.connect) != grid.size^2) stop("dimension of mat.connect does not match grid size")
         }
 
         ## initialization
@@ -260,7 +276,7 @@ haploGen <- function(seq.length=1000, mu=0.0001,
             resize.result.xy()
             ## VERBOSE OUTPUT FOR DEBUGGING ##
             ## cat("\nNb strains:",length(res$ances),"/",max.nb.haplo)
-            ##             cat("\nLatest date:", max(res$dates),"/",Tmax)
+            ##             cat("\nLatest date:", max(res$dates),"/",t.max)
             ##             cat("\nRemaining strains to duplicate", sum(toExpand))
             ##             cat("\n",append=TRUE,file="haploGenTime.out")
             ##             iter.time <- as.numeric(difftime(Sys.time(),time.previous,unit="sec"))
@@ -355,27 +371,6 @@ print.haploGen <- function(x, ...){
 
 
 
-####################
-## na.omit.haploGen
-####################
-##
-## ACTUALLY THIS FUNCTION MAKES NO SENSE FOR NOW
-## AS STRAINS WITH NO ANCESTOR MAY BE ANCESTORS OF
-## OTHER STRAINS.
-##
-## na.omit.haploGen <- function(object, ...){
-##     res <- object
-##     isNA <- is.na(res$ances)
-##     res$seq <- res$seq[!isNA,]
-##     res$ances <- res$ances[!isNA]
-##     res$dates <- res$dates[!isNA]
-##     if(!is.null(res$xy)) res$xy <- res$xy[!isNA,]
-
-##     return(res)
-## }
-
-
-
 
 ##################
 ## labels.haploGen
@@ -383,6 +378,8 @@ print.haploGen <- function(x, ...){
 labels.haploGen <- function(object, ...){
     return(object$id)
 }
+
+
 
 
 
@@ -397,24 +394,186 @@ as.POSIXct.haploGen <- function(x, tz="", origin=as.POSIXct("2000/01/01"), ...){
 
 
 
+
+
 #####################
 ## seqTrack.haploGen
 #####################
-seqTrack.haploGen <- function(x, optim=c("min","max"), prox.mat=NULL, ...){
+seqTrack.haploGen <- function(x, best=c("min","max"), prox.mat=NULL, ...){
     myX <- dist.dna(x$seq, model="raw")
     x.names <- labels(x)
     x.dates <- as.POSIXct(x)
     seq.length <- ncol(x$seq)
     myX <- myX * seq.length
+    myX <- as.matrix(myX)
     prevCall <- as.list(x$call)
     if(is.null(prevCall$mu)){
         mu0 <- 0.0001
     } else {
         mu0 <- eval(prevCall$mu)
     }
-    res <- seqTrack(myX, x.names=x.names, x.dates=x.dates, optim=optim, prox.mat=prox.mat,...)
+    res <- seqTrack(myX, x.names=x.names, x.dates=x.dates, best=best, prox.mat=prox.mat,...)
     return(res)
 }
+
+
+
+
+
+
+########################
+## as.seqTrack.haploGen
+########################
+as.seqTrack.haploGen <- function(x){
+    ## x.ori <- x
+    ## x <- na.omit(x)
+    toSetToNA <- x$dates==min(x$dates)
+    res <- list()
+    res$id <- labels(x)
+    res <- as.data.frame(res)
+    res$ances <- x$ances
+    res$ances[toSetToNA] <- NA
+    res$weight <- 1 # ??? have to recompute that...
+    res$weight[toSetToNA] <- NA
+    res$date <- as.POSIXct(x)[labels(x)]
+    res$ances.date <- as.POSIXct(x)[x$ances]
+
+    ## set results as indices rather than labels
+    res$ances <- match(res$ances, res$id)
+    res$id <- 1:length(res$id)
+
+    ## SET CLASS
+    class(res) <- c("seqTrack", "data.frame")
+
+    return(res)
+}
+
+
+
+
+
+
+################
+## plotHaploGen
+################
+plotHaploGen <- function(x, annot=FALSE, date.range=NULL, col=NULL, bg="grey", add=FALSE, ...){
+
+    ## SOME CHECKS ##
+    if(class(x)!="haploGen") stop("x is not a haploGen object")
+    if(is.null(x$xy)) stop("x does not contain xy coordinates - try converting to graphNEL for plotting")
+
+
+    ## ## CONVERSION TO A SEQTRACK-LIKE OBJECT ##
+    xy <- x$xy
+    res <- as.seqTrack.haploGen(x)
+
+    ##     res <- list()
+    ##     res$id <- labels(x)
+    ##     res <- as.data.frame(res)
+    ##     res$ances <- x$ances
+    ##     res$ances[toSetToNA] <- NA
+    ##     res$weight <- 1 # ??? have to recompute that...
+    ##     res$weight[toSetToNA] <- NA
+    ##     res$date <- as.POSIXct(x.ori)[labels(x)]
+    ##     res$ances.date <- as.POSIXct(x.ori)[x$ances]
+    ##     ## set results as indices rather than labels
+    ##     res$ances <- match(res$ances, res$id)
+    ##     res$id <- 1:length(res$id)
+
+
+    ## CALL TO PLOTSEQTRACK ##
+    plotSeqTrack(x=res, xy=xy, annot=annot, date.range=date.range,
+                        col=col, bg=bg, add=add, ...)
+
+    return(invisible(res))
+
+} # end plotHaploGen
+
+
+
+
+
+
+###################
+## sample.haploGen
+###################
+sample.haploGen <- function(x, n){
+##sample.haploGen <- function(x, n, rDate=.rTimeSeq, arg.rDate=NULL){
+    ## EXTRACT THE SAMPLE ##
+    res <- x[sample(1:nrow(x$seq), n, replace=FALSE)]
+
+
+    ## RETRIEVE SOME PARAMETERS FROM HAPLOSIM CALL
+    prevCall <- as.list(x$call)
+    if(!is.null(prevCall$mu)){
+        mu0 <- eval(prevCall$mu)
+    } else {
+        mu0 <- 1e-04
+    }
+
+    if(!is.null(prevCall$seq.length)){
+        L <- eval(prevCall$seq.length)
+    } else {
+        L <- 1000
+    }
+
+    ## truedates <- res$dates
+    ## daterange <- diff(range(res$dates,na.rm=TRUE))
+
+    ## if(identical(rDate,.rTimeSeq)){
+    ##     sampdates <- .rTimeSeq(n=length(truedates), mu=mu0, L=L, maxNbDays=daterange/2)
+    ## } else{
+    ##     arg.rDate$n <- n
+    ##     sampdates <- do.call(rDate, arg.rDate)
+    ## }
+    ## sampdates <- truedates + abs(sampdates)
+
+    return(res)
+} # end sample.haploGen
+
+
+
+
+
+
+##########################
+## as("haploGen", "graphNEL")
+##########################
+if(require(graph)) setOldClass("haploGen")
+setAs("haploGen", "graphNEL", def=function(from){
+    if(!require(ape)) stop("package ape is required")
+    if(!require(graph)) stop("package graph is required")
+
+    N <- length(from$ances)
+    areNA <- is.na(from$ances)
+
+    ## EXTRACT WEIGHTS (nb of mutations)
+    M <- as.matrix(dist.dna(from$seq, model="raw")*ncol(from$seq))
+    rownames(M) <- colnames(M) <- from$id
+    w <- mapply(function(i,j) {M[i, j]}, i=from$ances[!areNA], j=from$id[!areNA])
+
+
+    ## CONVERT TO GRAPH
+    res <- ftM2graphNEL(ft=cbind(from$ances[!areNA], from$id[!areNA]), W=w, edgemode = "directed", V=from$id)
+    return(res)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -470,145 +629,3 @@ seqTrack.haploGen <- function(x, optim=c("min","max"), prox.mat=NULL, ...){
 ##                                      nstep=nstep, step.size=step.size,
 ##                                      rDate=rDate, arg.rDate=arg.rDate, rMissDate=rMissDate, ...)
 ## } # end optimize.seqTrack.haploGen
-
-
-
-
-
-########################
-## as.seqTrack.haploGen
-########################
-as.seqTrack.haploGen <- function(x){
-    ## x.ori <- x
-    ## x <- na.omit(x)
-    toSetToNA <- x$dates==min(x$dates)
-    res <- list()
-    res$id <- labels(x)
-    res <- as.data.frame(res)
-    res$ances <- x$ances
-    res$ances[toSetToNA] <- NA
-    res$weight <- 1 # ??? have to recompute that...
-    res$weight[toSetToNA] <- NA
-    res$date <- as.POSIXct(x)[labels(x)]
-    res$ances.date <- as.POSIXct(x)[x$ances]
-
-    ## set results as indices rather than labels
-    res$ances <- match(res$ances, res$id)
-    res$id <- 1:length(res$id)
-
-    ## SET CLASS
-    class(res) <- c("seqTrack", "data.frame")
-
-    return(res)
-}
-
-
-
-
-################
-## plotHaploGen
-################
-plotHaploGen <- function(x, annot=FALSE, dateRange=NULL, col=NULL, bg="grey", add=FALSE, ...){
-
-    ## SOME CHECKS ##
-    if(class(x)!="haploGen") stop("x is not a haploGen object")
-    if(is.null(x$xy)) stop("x does not contain xy coordinates; try to simulate date")
-
-
-    ## ## CONVERSION TO A SEQTRACK-LIKE OBJECT ##
-    xy <- x$xy
-    res <- as.seqTrack.haploGen(x)
-
-    ##     res <- list()
-    ##     res$id <- labels(x)
-    ##     res <- as.data.frame(res)
-    ##     res$ances <- x$ances
-    ##     res$ances[toSetToNA] <- NA
-    ##     res$weight <- 1 # ??? have to recompute that...
-    ##     res$weight[toSetToNA] <- NA
-    ##     res$date <- as.POSIXct(x.ori)[labels(x)]
-    ##     res$ances.date <- as.POSIXct(x.ori)[x$ances]
-    ##     ## set results as indices rather than labels
-    ##     res$ances <- match(res$ances, res$id)
-    ##     res$id <- 1:length(res$id)
-
-
-    ## CALL TO PLOTSEQTRACK ##
-    plotSeqTrack(x=res, xy=xy, annot=annot, dateRange=dateRange,
-                        col=col, bg=bg, add=add, ...)
-
-    return(invisible(res))
-
-} # end plotHaploGen
-
-
-
-
-
-
-###################
-## sample.haploGen
-###################
-sample.haploGen <- function(x, n, rDate=.rTimeSeq, arg.rDate=NULL){
-    ## EXTRACT THE SAMPLE ##
-    res <- x[sample(1:nrow(x$seq), n, replace=FALSE)]
-
-
-    ## RETRIEVE SOME PARAMETERS FROM HAPLOSIM CALL
-    prevCall <- as.list(x$call)
-    if(!is.null(prevCall$mu)){
-        mu0 <- eval(prevCall$mu)
-    } else {
-        mu0 <- 1e-04
-    }
-
-    if(!is.null(prevCall$seq.length)){
-        L <- eval(prevCall$seq.length)
-    } else {
-        L <- 1000
-    }
-
-    truedates <- res$dates
-    daterange <- diff(range(res$dates,na.rm=TRUE))
-
-    if(identical(rDate,.rTimeSeq)){
-        sampdates <- .rTimeSeq(n=length(truedates), mu=mu0, L=L, maxNbDays=daterange/2)
-    } else{
-        arg.rDate$n <- n
-        sampdates <- do.call(rDate, arg.rDate)
-    }
-    sampdates <- truedates + abs(sampdates)
-
-    res$dates <- sampdates
-
-    return(res)
-} # end sample.haploGen
-
-
-
-
-
-
-
-
-##########################
-## as("haploGen", "graphNEL")
-##########################
-setOldClass("haploGen")
-setAs("haploGen", "graphNEL", def=function(from){
-    if(!require(ape)) stop("package ape is required")
-    if(!require(graph)) stop("package graph is required")
-
-    N <- length(from$ances)
-    areNA <- is.na(from$ances)
-
-    ## EXTRACT WEIGHTS (nb of mutations)
-    M <- as.matrix(dist.dna(from$seq, model="raw")*ncol(from$seq))
-    rownames(M) <- colnames(M) <- from$id
-    w <- mapply(function(i,j) {M[i, j]}, i=from$ances[!areNA], j=from$id[!areNA])
-
-
-    ## CONVERT TO GRAPH
-    res <- ftM2graphNEL(ft=cbind(from$ances[!areNA], from$id[!areNA]), W=w, edgemode = "directed", V=from$id)
-    return(res)
-})

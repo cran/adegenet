@@ -25,7 +25,7 @@
 \source{
   Jombart, T., Devillard, S. and Balloux, F.  Discriminant analysis of
   principal components: a new method for the analysis of genetically
-  structured populations. Submitted to \emph{PLoS genetics}.
+  structured populations. Submitted to \emph{BMC genetics}.
 
 }
 \author{

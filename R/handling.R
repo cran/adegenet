@@ -6,7 +6,6 @@
 # T. Jombart
 ###########################
 
-
 ##############################
 # Method truenames for genind
 ##############################
@@ -48,6 +47,8 @@ setMethod("truenames",signature(x="genpop"), function(x){
 
     return(X)
 })
+
+
 
 
 
@@ -173,141 +174,6 @@ setMethod("$<-","genind",function(x,name,value) {
   return(x)
 })
 
-
-setMethod("$","genpop",function(x,name) {
-    return(slot(x,name))
-})
-
-
-setMethod("$<-","genpop",function(x,name,value) {
-  slot(x,name,check=TRUE) <- value
-  return(x)
-})
-
-
-
-
-
-###############
-# '[' operator
-###############
-## genind
-setMethod("[","genind",
-          function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=FALSE) {
-
-              if (missing(i)) i <- TRUE
-              if (missing(j)) j <- TRUE
-
-              pop <- NULL
-              if(is.null(x@pop)) { tab <- truenames(x) }
-              if(!is.null(x@pop)) {
-                  temp <- truenames(x)
-                  tab <- temp$tab
-                  pop <- temp$pop
-                  pop <- factor(pop[i])
-              }
-
-              ## handle loc argument
-              if(!is.null(loc)){
-                  loc <- as.character(loc)
-                  temp <- !loc %in% x@loc.fac
-                  if(any(temp)) { # si mauvais loci
-                      warning(paste("the following specified loci do not exist:", loc[temp]))
-                  }
-                  j <- x$loc.fac %in% loc
-              } # end loc argument
-
-              prevcall <- match.call()
-
-              tab <- tab[i, j, ...,drop=FALSE]
-
-              if(drop){
-                  allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
-                  toKeep <- (allNb > 1e-10)
-                  tab <- tab[,toKeep, drop=FALSE]
-              }
-
-              res <- genind(tab,pop=pop,prevcall=prevcall, ploidy=x@ploidy, type=x@type)
-
-              ## handle 'other' slot
-              nOther <- length(x@other)
-              namesOther <- names(x@other)
-              counter <- 0
-              if(treatOther){
-                  f1 <- function(obj,n=nrow(x@tab)){
-                      counter <<- counter+1
-                      if(!is.null(dim(obj)) && nrow(obj)==n) { # if the element is a matrix-like obj
-                          obj <- obj[i,,drop=FALSE]
-                      } else if(length(obj) == n) { # if the element is not a matrix but has a length == n
-                          obj <- obj[i]
-                          if(is.factor(obj)) {obj <- factor(obj)}
-                      } else {warning(paste("cannot treat the object",namesOther[counter]))}
-
-                      return(obj)
-                  } # end f1
-
-                  res@other <- lapply(x@other, f1) # treat all elements
-
-              } # end treatOther
-
-              return(res)
-          })
-
-
-## genpop
-setMethod("[","genpop",
-          function(x, i, j, ..., loc=NULL, treatOther=TRUE, drop=FALSE) {
-
-              if (missing(i)) i <- TRUE
-              if (missing(j)) j <- TRUE
-
-              tab <- truenames(x)
-
-              ## handle loc argument
-              if(!is.null(loc)){
-                  loc <- as.character(loc)
-                  temp <- !loc %in% x@loc.fac
-                  if(any(temp)) { # si mauvais loci
-                      warning(paste("the following specified loci do not exist:", loc[temp]))
-                  }
-                  j <- x$loc.fac %in% loc
-              } # end loc argument
-
-              prevcall <- match.call()
-              tab <- tab[i, j, ...,drop=FALSE]
-
-              if(drop){
-                  allNb <- apply(tab, 2, sum, na.rm=TRUE) # allele absolute frequencies
-                  toKeep <- (allNb > 1e-10)
-                  tab <- tab[,toKeep, drop=FALSE]
-              }
-
-              res <- genpop(tab,prevcall=prevcall)
-
-              ## handle 'other' slot
-              nOther <- length(x@other)
-              namesOther <- names(x@other)
-              counter <- 0
-              if(treatOther){
-                  f1 <- function(obj,n=nrow(x@tab)){
-                      counter <<- counter+1
-                      if(!is.null(dim(obj)) && nrow(obj)==n) { # if the element is a matrix-like obj
-                          obj <- obj[i,,drop=FALSE]
-                      } else if(length(obj) == n) { # if the element is not a matrix but has a length == n
-                          obj <- obj[i]
-                          if(is.factor(obj)) {obj <- factor(obj)}
-                      } else {warning(paste("cannot treat the object",namesOther[counter]))}
-
-                      return(obj)
-                  } # end f1
-
-                  res@other <- lapply(x@other, f1) # treat all elements
-
-              } # end treatOther
-
-
-              return(res)
-          })
 
 
 
