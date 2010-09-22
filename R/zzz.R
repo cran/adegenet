@@ -2,7 +2,7 @@
 #.initAdegenetClasses()
 #.initAdegenetUtils()
     library.dynam("adegenet", pkg, lib)
-    startup.txt <- "   ==========================\n    adegenet 1.2-5 is loaded\n   ==========================\n\n - to start, type '?adegenet'\n - to browse adegenet website, type 'adegenetWeb()'\n - to post questions/comments: adegenet-forum@lists.r-forge.r-project.org\n\n"
+    startup.txt <- "   ==========================\n    adegenet 1.2-6 is loaded\n   ==========================\n\n - to start, type '?adegenet'\n - to browse adegenet website, type 'adegenetWeb()'\n - to post questions/comments: adegenet-forum@lists.r-forge.r-project.org\n\n"
 
     packageStartupMessage(startup.txt)
 

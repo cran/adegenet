@@ -25,6 +25,7 @@ makefreq <- function(x,quiet=FALSE,missing=NA,truenames=TRUE){
 
   # tabfreq is a pop x loci table of allelic frequencies
   tabfreq <- t(apply(tabcount,1,function(r) unlist(tapply(r,x@loc.fac,f1))))
+  if(x@loc.nall == 1) tabfreq <- t(tabfreq) # matrix is transposed by apply if there's a single allele
   colnames(tabfreq) <- colnames(x@tab)
 
   # NA treatment
