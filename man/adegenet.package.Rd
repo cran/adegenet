@@ -36,6 +36,12 @@
   and then extract SNPs from DNA alignments using
   \code{\link{DNAbin2genind}}. \cr
 
+ - protein sequences alignments: polymorphic sites can be extracted from
+   protein sequences alignments in \code{alignment} format (package
+   \code{seqinr}, see \code{\link[seqinr]{as.alignment}}) using the
+   function \code{\link{alignment2genind}}. \cr
+
+
   It is also possible to read genotypes coded by character strings from
   a data.frame in which genotypes are in rows, markers in columns. For
   this, use \code{\link{df2genind}}. Note that \code{\link{df2genind}}
@@ -83,6 +89,7 @@
    Several functions allow to use usual, and less usual analyses:\cr
    - \code{\link{HWE.test.genind}}: performs HWE test for all
    populations and loci combinations \cr
+   - \code{\link{pairwise.fst}}: computes simple pairwise Fst between populations\cr
    - \code{\link{gstat.randtest}}: performs a Monte Carlo test of Goudet's G statistic, measuring
    population structure (based on \code{\link[hierfstat]{g.stats.glob}} package \code{hierfstat}).\cr
    - \code{\link{dist.genpop}}: computes 5 genetic distances among populations. \cr
@@ -158,8 +165,8 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.2-5\cr
-    Date: \tab 2010-07-14 \cr
+    Version: \tab 1.2-6\cr
+    Date: \tab 2010-09-22 \cr
     License: \tab GPL (>=2)
   }  
 }
@@ -193,5 +200,6 @@
   - \code{ade4} for multivariate analysis\cr
   - \code{ape} for phylogenetics and DNA data handling\cr
   - \code{pegas} for population genetics tools\cr
+  - \code{seqinr} for handling nucleic and proteic sequences\cr
 }
 

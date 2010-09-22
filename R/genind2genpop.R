@@ -7,7 +7,10 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
   if(!is.genind(x)) stop("x is not a valid genind object")
   checkType(x)
 
-  if(is.null(x@pop) && is.null(pop)) stop("pop is not provided either in x or in pop")
+  if(is.null(x@pop) && is.null(pop)) {
+      if(!quiet) warning("\npop is not provided either in x or in pop - assuming one single group")
+      pop <- factor(rep(1, nrow(x@tab)))
+  }
 
   missing <- match.arg(missing)
 

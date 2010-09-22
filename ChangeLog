@@ -1,3 +1,20 @@
+			CHANGES IN ADEGENET VERSION 1.2-6
+
+
+NEW FEATURES
+
+	o pairwise.fst: computes Nei's pairwise Fst between populations
+
+	o alignment2genind: extract polymorphism from nucleic and proteic
+	aligned sequences with the 'alignment' format, returning a genind object.
+
+
+BUG FIXES
+
+	o fixed a minor issue in Hs, occuring in fixed loci for a given population.
+
+
+
 			CHANGES IN ADEGENET VERSION 1.2-5
 
 
@@ -323,7 +340,7 @@ NEW FEATURES
 	implement the Monmonier algorithm. While not restrained to genetic
 	data analysis, this method can be used to find genetic boundaries
 	among individuals or populations based on their allelic
-	frequencies and spatial coordinates. 
+	frequencies and spatial coordinates.
 
 BUG FIXES
 

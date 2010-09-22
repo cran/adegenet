@@ -60,6 +60,7 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL
     }
 
     toKeep <- apply(x, 2, isPoly)
+    if(sum(toKeep)==0) stop("No polymorphic site detected")
     x <- x[,toKeep]
 
     ## build output
@@ -68,6 +69,99 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL
 
     return(res)
 } # end DNAbin2genind
+
+
+
+
+
+
+
+################
+# alignment2genind
+################
+alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThres=1/100){
+
+    ## misc checks
+    if(!require(seqinr)) stop("The package seqinr is required.")
+    if(!inherits(x,"alignment")) stop("x is not a alignment object")
+    N <- length(x$seq)
+    if(!is.null(x$nam) && length(x$nam)!=N) stop("Inconsistent names in x (length of x$nam and x$seq do not match). ")
+
+
+    ## convert alignment to matrix of characters
+    mat <- sapply(x$seq, s2c, USE.NAMES=FALSE)
+    if(nrow(mat)!=x$nb){
+        mat <- t(mat)
+    }
+
+    rownames(mat) <- x$nam
+
+    if(is.null(colnames(x))) {
+        colnames(mat) <- 1:ncol(mat)
+    }
+
+    ## replace NAs
+    if(is.null(na.char)){
+        if(is.null(exp.char)) stop("both exp.char and na.char are NULL")
+        temp <- paste(exp.char, collapse="", sep="")
+        if(any(exp.char=="-")) {
+            temp <- paste("-",temp, sep="") # string '-' must begin the regexp
+        }
+        temp <- paste("[^", temp, "]", sep="") # anything but the expected is NA
+        mat <- gsub(temp,NA,mat)
+    } else {
+        temp <- paste(na.char, collapse="", sep="")
+        if(any(na.char=="-")) {
+            temp <- paste("-",temp, sep="") # string '-' must start the regexp
+        }
+        temp <- paste("[", temp, "]", sep="")
+        mat <- gsub(temp,NA,mat)
+    }
+
+    ## keep only columns with polymorphism (i.e., SNPs)
+    isPoly <- function(vec){
+        N <- sum(!is.na(vec)) # N: number of sequences
+        temp <- table(vec)/N
+        if(sum(temp > polyThres) >= 2) return(TRUE)
+        return(FALSE)
+    }
+
+    toKeep <- apply(mat, 2, isPoly)
+    if(sum(toKeep)==0) stop("No polymorphic site detected")
+
+    mat <- mat[,toKeep, drop=FALSE]
+
+    ## build output
+    res <- df2genind(mat, pop=pop, ploidy=1, ncode=1, type="codom")
+    res$call <- match.call()
+
+    if(!is.null(x$com)){
+        res@other$com <- x$com
+    }
+
+    return(res)
+} # end alignment2genind
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
