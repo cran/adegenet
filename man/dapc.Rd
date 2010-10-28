@@ -4,15 +4,13 @@
 \alias{dapc.data.frame}
 \alias{dapc.matrix}
 \alias{dapc.genind}
+\alias{dapc.dudi}
 \alias{print.dapc}
 \alias{summary.dapc}
 \alias{scatter.dapc}
 \alias{assignplot}
 \title{Discriminant Analysis of Principal Components (DAPC)}
 \description{
-  Important: this method is currently under review. Please email the
-  author before using it.
-  
   These functions implement the Discriminant Analysis of Principal Components
   (DAPC). See 'details' section for a succint description of the method. DAPC
   implementation calls upon \code{\link[ade4]{dudi.pca}} from the \code{ade4} package and
@@ -40,13 +38,15 @@
 \usage{
 \method{dapc}{data.frame}(x, grp, n.pca=NULL, n.da=NULL, center=TRUE,
      scale=FALSE,var.contrib=FALSE, pca.select=c("nbEig","percVar"),
-    perc.pca=NULL, \ldots)
+    perc.pca=NULL, \ldots, dudi=NULL)
 
 \method{dapc}{matrix}(x, \ldots)
 
 \method{dapc}{genind}(x, pop=NULL, n.pca=NULL, n.da=NULL, scale=FALSE,
      scale.method=c("sigma", "binom"), truenames=TRUE, all.contrib=FALSE,
      pca.select=c("nbEig","percVar"), perc.pca=NULL, \ldots)
+
+\method{dapc}{dudi}(x, grp, \ldots)
 
 \method{print}{dapc}(x, \dots)
 
@@ -115,6 +115,9 @@ should match the number of groups, not the number of individuals.}
 \item{pch}{a \code{numeric} indicating the type of point to be used to indicate
   the prior group of individuals (see \code{\link{points}} documentation for
   more details).}
+\item{dudi}{optionally, a multivariate analysis with the class
+  \code{dudi} (from the ade4 package). If provided, prior PCA will be
+  ignored, and this object will be used as a prior step for variable orthogonalisation.}
 }
 \details{
   The Discriminant Analysis of Principal Components (DAPC) is designed
@@ -168,9 +171,9 @@ should match the number of groups, not the number of individuals.}
   - \code{scatter.dapc, assignplot} return the matched call.\cr
 }
 \references{
-Jombart, T., Devillard, S. and Balloux, F.
-Discriminant analysis of principal components: a new method for the analysis of
-genetically structured populations. Submitted to \emph{BMC genetics}.
+  Jombart T, Devillard S and Balloux F  (2010) Discriminant analysis of
+  principal components: a new method for the analysis of genetically
+  structured populations. BMC Genetics11:94. doi:10.1186/1471-2156-11-94
 }
 \seealso{
   - \code{\link{find.clusters}}: to identify clusters without prior.

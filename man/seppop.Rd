@@ -16,7 +16,7 @@
 }
 \usage{
 \S4method{seppop}{genind}(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
-  drop=FALSE)
+  drop=FALSE, treatOther=TRUE)
 }
 \arguments{
   \item{x}{a \linkS4class{genind} object}
@@ -29,11 +29,14 @@
     a list of \linkS4class{genind} object (default) or a matrix of data
     corresponding to the 'tab' slots.}
   \item{drop}{a logical stating whether alleles that are no longer
-  present in a subset of data should be discarded (TRUE) or kept anyway
-  (FALSE, default).}
+    present in a subset of data should be discarded (TRUE) or kept anyway
+    (FALSE, default).}
+  \item{treatOther}{a logical stating whether elements of the
+  \code{@other} slot should be treated as well (TRUE), or not
+  (FALSE). See details in accessor documentations (\code{\link{pop}}).}
 }
 \value{
-  According to 'rse.type': a list of \linkS4class{genind} object
+  According to 'res.type': a list of \linkS4class{genind} object
   (default) or a matrix of data corresponding to the 'tab' slots.
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }

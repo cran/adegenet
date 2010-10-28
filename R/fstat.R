@@ -65,7 +65,7 @@ pairwise.fst <- function(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRU
 
 
     ## compute pairwise Fst for all pairs
-    lx <- seppop(x)
+    lx <- seppop(x,treatOther=FALSE)
     temp <- pop(x)
     levPop <- levels(temp)
     allPairs <- combn(1:length(levPop), 2)

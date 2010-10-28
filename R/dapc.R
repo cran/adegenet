@@ -8,7 +8,7 @@ dapc <- function (x, ...) UseMethod("dapc")
 #################
 dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
                             center=TRUE, scale=FALSE, var.contrib=FALSE,
-                            pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
+                            pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
 
     ## FIRST CHECKS
     if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
@@ -18,22 +18,27 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     pca.select <- match.arg(pca.select)
     if(!is.null(perc.pca) & is.null(n.pca)) pca.select <- "percVar"
     if(is.null(perc.pca) & !is.null(n.pca)) pca.select <- "nbEig"
+    if(!is.null(dudi) && !inherits(dudi, "dudi")) stop("dudi provided, but not of class 'dudi'")
 
 
     ## SOME GENERAL VARIABLES
     N <- nrow(x)
 
-    ## PERFORM PCA ##
-    maxRank <- min(dim(x))
 
-    pcaX <- dudi.pca(x, center = center, scale = scale, scannf = FALSE, nf=maxRank)
+    if(is.null(dudi)){ # if no dudi provided
+        ## PERFORM PCA ##
+        maxRank <- min(dim(x))
+        pcaX <- dudi.pca(x, center = center, scale = scale, scannf = FALSE, nf=maxRank)
+    } else { # else use the provided dudi
+        pcaX <- dudi
+    }
     cumVar <- 100 * cumsum(pcaX$eig)/sum(pcaX$eig)
 
     ## select the number of retained PC for PCA
     if(is.null(n.pca) & pca.select=="nbEig"){
-            plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA")
-            cat("Choose the number PCs to retain (>=1): ")
-            n.pca <- as.integer(readLines(n = 1))
+        plot(cumVar, xlab="Number of retained PCs", ylab="Cumulative variance (%)", main="Variance explained by PCA")
+        cat("Choose the number PCs to retain (>=1): ")
+        n.pca <- as.integer(readLines(n = 1))
     }
 
     if(is.null(perc.pca) & pca.select=="percVar"){
@@ -45,6 +50,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     ## get n.pca from the % of variance to conserve
     if(!is.null(perc.pca)){
         n.pca <- min(which(cumVar >= perc.pca))
+        if(perc.pca > 99.999) n.pca <- length(pcaX$eig)
         if(n.pca<1) n.pca <- 1
     }
 
@@ -54,6 +60,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     n.pca <- min(X.rank, n.pca)
     if(n.pca >= N) stop("number of retained PCs of PCA is greater than N")
     if(n.pca > N/3) warning("number of retained PCs of PCA may be too large (> N /3)\n results may be unstable ")
+    n.pca <- round(n.pca)
 
     U <- pcaX$c1[, 1:n.pca, drop=FALSE] # principal axes
     XU <- pcaX$li[, 1:n.pca, drop=FALSE] # principal components
@@ -63,7 +70,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
 
 
      ## PERFORM DA ##
-    ldaX <- lda(XU, grp)
+    ldaX <- lda(XU, grp, tol=1e-30) # tol=1e-30 is a kludge, but a safe (?) one to avoid fancy rescaling by lda.default
     if(is.null(n.da)){
         barplot(ldaX$svd^2, xlab="Linear Discriminants", ylab="F-statistic", main="Discriminant analysis eigenvalues", col=heat.colors(length(levels(grp))) )
         cat("Choose the number discriminant functions to retain (>=1): ")
@@ -71,6 +78,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     }
 
     n.da <- min(n.da, length(levels(grp))-1, n.pca) # can't be more than K-1 disc. func., or more than n.pca
+    n.da <- round(n.da)
     predX <- predict(ldaX, dimen=n.da)
 
 
@@ -165,6 +173,15 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
 
 
 
+##################
+# Function dapc.dudi
+##################
+dapc.dudi <- function(x, grp, ...){
+    return(dapc.data.frame(x$li, grp, dudi=x, ...))
+}
+
+
+
 ######################
 # Function print.dapc
 ######################
@@ -251,11 +268,31 @@ summary.dapc <- function(object, ...){
 ##############
 scatter.dapc <- function(x, xax=1, yax=2, col=rainbow(length(levels(x$grp))), posi="bottomleft", bg="grey", ratio=0.3, csub=1.2, ...){
     if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    axes <- c(xax,yax)
-    par(bg=bg)
-    s.class(x$ind.coord[,axes], fac=x$grp, col=col, ...)
-    if(ratio>0.001) {
-        add.scatter.eig(x$eig, ncol(x$loadings), axes[1], axes[2], posi=posi, ratio=ratio, csub=csub)
+    ONEDIM <- xax==yax | ncol(x$ind.coord)==1
+
+    if(!ONEDIM){
+        axes <- c(xax,yax)
+        par(bg=bg)
+        s.class(x$ind.coord[,axes], fac=x$grp, col=col, ...)
+        if(ratio>0.001) {
+            add.scatter.eig(x$eig, ncol(x$loadings), axes[1], axes[2], posi=posi, ratio=ratio, csub=csub)
+        }
+    } else {
+        ## get plotted axis
+        if(ncol(x$ind.coord)==1) {
+            pcLab <- 1
+        } else{
+            pcLab <- xax
+        }
+        ## get densities
+        ldens <- tapply(x$ind.coord[,pcLab], x$grp, density)
+        allx <- unlist(lapply(ldens, function(e) e$x))
+        ally <- unlist(lapply(ldens, function(e) e$y))
+         par(bg=bg)
+        plot(allx, ally, type="n", xlab=paste("Discriminant function", pcLab), ylab="Density")
+        for(i in 1:length(ldens)){
+            lines(ldens[[i]]$x,ldens[[i]]$y, col=col[i], lwd=2)
+        }
     }
     return(invisible(match.call()))
 } # end scatter.dapc
@@ -314,9 +351,153 @@ assignplot <- function(x, only.grp=NULL, subset=NULL, cex.lab=.75, pch=3){
 
 
 
-###############
-## randtest.dapc
-###############
-##randtest.dapc <- function(x, nperm = 999, ...){
 
-##} # end randtest.dapc
+
+###############
+## a.score
+###############
+a.score <- function(x, n.sim=10, ...){
+    if(!inherits(x,"dapc")) stop("x is not a dapc object")
+
+    ## perform DAPC based on permuted groups
+    lsim <- lapply(1:n.sim, function(i) summary(dapc(x$tab, sample(x$grp), n.pca=x$n.pca, n.da=x$n.da))$assign.per.pop)
+    sumry <- summary(x)
+
+    ## get the a-scores
+    f1 <- function(Pt, Pf){
+        tol <- 1e-7
+        ##res <- (Pt-Pf) / (1-Pf)
+        ##res[Pf > (1-tol)] <- 0
+        res <- Pt-Pf
+        return(res)
+    }
+
+    lscores <- lapply(lsim, function(e) f1(sumry$assign.per.pop, e))
+
+    ## make a table of a-scores
+    tab <- data.frame(lscores)
+    colnames(tab) <- paste("sim", 1:n.sim, sep=".")
+    rownames(tab) <- names(sumry$assign.per.pop)
+    tab <- t(as.matrix(tab))
+
+    ## make result
+    res <- list()
+    res$tab <- tab
+    res$pop.score <- apply(tab, 2, mean)
+    res$mean <- mean(tab)
+
+    return(res)
+
+} # end a.score
+
+
+
+
+
+
+
+##############
+## optim.a.score
+##############
+optim.a.score <- function(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
+                         n.sim=10, n.da=length(levels(x$grp)), ...){
+    ## A FEW CHECKS ##
+    if(!inherits(x,"dapc")) stop("x is not a dapc object")
+    if(max(n.pca)>ncol(x$tab)) {
+        n.pca <- min(n.pca):ncol(x$tab)
+    }
+    if(n.da>length(levels(x$grp))){
+        n.da <- min(n.da):length(levels(x$grp))
+    }
+    pred <- NULL
+    if(length(n.pca)==1){
+        n.pca <- 1:n.pca
+    }
+    if(length(n.da)==1){
+        n.da <- 1:n.da
+    }
+
+
+    ## AUXILIARY FUNCTION ##
+    f1 <- function(ndim){
+        temp <- dapc(x$tab[,1:ndim,drop=FALSE], x$grp, n.pca=ndim, n.da=x$n.da)
+        a.score(temp, n.sim=n.sim)$pop.score
+    }
+
+
+    ## SMART: COMPUTE A FEW VALUES, PREDICT THE BEST PICK ##
+    if(smart){
+        if(!require(stats)) stop("the package stats is required for 'smart' option")
+        o.min <- min(n.pca)
+        o.max <- max(n.pca)
+        n.pca <- pretty(n.pca, n) # get evenly spaced nb of retained PCs
+        n.pca <- n.pca[n.pca>0 & n.pca<=ncol(x$tab)]
+        if(!any(o.min==n.pca)) n.pca <- c(o.min, n.pca) # make sure range is OK
+        if(!any(o.max==n.pca)) n.pca <- c(o.max, n.pca) # make sure range is OK
+        lres <- lapply(n.pca, f1)
+        names(lres) <- n.pca
+        means <- sapply(lres, mean)
+        sp1 <- smooth.spline(n.pca, means) # spline smoothing
+        pred <- predict(sp1, x=1:max(n.pca))
+        best <- pred$x[which.max(pred$y)]
+    } else { ## DO NOT TRY TO BE SMART ##
+        lres <- lapply(n.pca, f1)
+        names(lres) <- n.pca
+        best <- which.max(sapply(lres, mean))
+        means <- sapply(lres, mean)
+    }
+
+
+    ## MAKE FINAL OUTPUT ##
+    res <- list()
+    res$pop.score <- lres
+    res$mean <- means
+    if(!is.null(pred)) res$pred <- pred
+    res$best <- best
+
+    ## PLOTTING (OPTIONAL) ##
+    if(plot){
+        if(smart){
+            boxplot(lres, at=n.pca, col="gold", xlab="Number of retained PCs", ylab="a-score", xlim=range(n.pca)+c(-1,1), ylim=c(-.1,1.1))
+            lines(pred, lwd=3)
+            points(pred$x[best], pred$y[best], col="red", lwd=3)
+            title("a-score optimisation - spline interpolation")
+            mtext(paste("Optimal number of PCs:", res$best), side=3)
+        } else {
+            myCol <- rep("gold", length(lres))
+            myCol[best] <- "red"
+            boxplot(lres, at=n.pca, col=myCol, xlab="Number of retained PCs", ylab="a-score", xlim=range(n.pca)+c(-1,1), ylim=c(-.1,1.1))
+            lines(n.pca, sapply(lres, mean), lwd=3, type="b")
+            myCol <- rep("black", length(lres))
+            myCol[best] <- "red"
+            points(n.pca, res$mean, lwd=3, col=myCol)
+            title("a-score optimisation - basic search")
+            mtext(paste("Optimal number of PCs:", res$best), side=3)
+        }
+    }
+
+    return(res)
+} # end optim.a.score
+
+
+
+
+
+
+## ############
+## ## crossval
+## ############
+## crossval <- function (x, ...) UseMethod("crossval")
+
+## crossval.dapc <- function(){
+
+## }
+
+
+
+## ###############
+## ## randtest.dapc
+## ###############
+## ##randtest.dapc <- function(x, nperm = 999, ...){
+
+## ##} # end randtest.dapc
