@@ -7,10 +7,7 @@
 \alias{.find.sub.clusters}
 \title{find.cluster: cluster identification using successive K-means}
 \description{
-  Important: this method is currently under review. Please email the
-  author before using it.
-  
-  These functions implement the clustering procedure used in Discriminant
+   These functions implement the clustering procedure used in Discriminant
   Analysis of Principal Components (DAPC, Jombart et al. submitted). This
   procedure consists in running successive K-means with an increasing number of
   clusters (\code{k}), after transforming data using a principal component
@@ -152,9 +149,10 @@
   \item{size}{an \code{integer} vector giving the size of the different clusters.}
 }
 \references{
-Jombart, T., Devillard, S. and Balloux, F.
-Discriminant analysis of principal components: a new method for the analysis of
-genetically structured populations. Submitted to \emph{Genetics}.
+  Jombart T, Devillard S and Balloux F  (2010) Discriminant analysis of
+  principal components: a new method for the analysis of genetically
+  structured populations. BMC Genetics
+  11:94. doi:10.1186/1471-2156-11-94
 }
 \seealso{
   - \code{\link{dapc}}: implements the DAPC.

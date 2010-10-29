@@ -1,3 +1,24 @@
+		CHANGES IN ADEGENET VERSION 1.2-7
+
+
+NEW FEATURES
+
+	o dapc and find.clusters are now stable versions for the published methods.
+
+	o a.score and optim.a.score are released in their beta versions.
+
+	o scatter.dapc is now adapted to representation 1-dimensional DAPC results.
+	
+
+BUG FIXES
+
+	o fixed a major issue in the ape package causing haploGen to
+	bug. This is a temporary replacement, waiting for ape to implement
+	the changes (currently, adegenet replaces ape's as.list.DNAbin
+	function with a corrected version).
+
+
+
 			CHANGES IN ADEGENET VERSION 1.2-6
 
 
