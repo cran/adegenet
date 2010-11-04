@@ -1,4 +1,16 @@
-		CHANGES IN ADEGENET VERSION 1.2-7
+			CHANGES IN ADEGENET VERSION 1.2-8
+
+
+
+BUG FIXES
+
+	o fixed a major issue in the conversion of genind objects to
+	hierfstat data format. In some cases, this issue biased the
+	results of the wrapper function "fstat".
+
+
+
+			CHANGES IN ADEGENET VERSION 1.2-7
 
 
 NEW FEATURES
