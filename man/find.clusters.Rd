@@ -19,9 +19,6 @@
   clustering of individuals (argument \code{clust}). In such case, clusters will
   be sought within each prior group.
 
-  \code{.find.sub.clusters} is a hidden function called in some instances of
-  \code{find.clusters}, and should not be called directly by the user.
-
   The K-means procedure used in \code{find.clusters} is \code{\link[stats]{kmeans}} function
   from the \code{stats} package. The PCA function is \code{\link[ade4]{dudi.pca}} from the
   \code{ade4} package.

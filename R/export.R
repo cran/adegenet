@@ -83,41 +83,37 @@ genind2hierfstat <- function(x,pop=NULL){
     if(x@ploidy != as.integer(2)) stop("not implemented for non-diploid genotypes")
     checkType(x)
 
-    if(is.null(pop)) pop <- x@pop
+    if(is.null(pop)) pop <- pop(x)
     if(is.null(pop)) pop <- as.factor(rep("P1",nrow(x@tab)))
 
-    ## make one table by locus from x@tab
-    kX <- seploc(x,res.type="matrix")
-    ## kX is a list of nloc tables
+    ## ## NOTES ON THE CODING IN HIERFSTAT ##
+    ## - interpreting function is genot2al
+    ## - same coding has to be used for all loci
+    ## (i.e., all based on the maximum number of digits to be used)
+    ## - alleles have to be coded as integers
+    ## - alleles have to be sorted by increasing order when coding a genotype
+    ## - for instance, 121 is 1/21, 101 is 1/1, 11 is 1/1
 
-    ## prepare allele names
-    all.names <- x@all.names
+    ## find max number of alleles ##
+    max.nall <- max(x@loc.nall)
+    x@all.names <- lapply(x$all.names, function(e) .genlab("",max.nall)[1:length(e)])
 
-    ## check the number of first 0 to remove from all.names
-    nfirstzero <- attr(regexpr("^0*",unlist(all.names)),"match.length")
-    nrmzero <- min(nfirstzero)
 
-    for(i in 1:nrmzero) {
-        all.names <- lapply(all.names,function(e) gsub("^0","",e))
-    }
-
-    ## function to recode a genotype in form "A1A2" (as integers) from frequencies
-    recod <- function(vec,lab){
-        if(all(is.na(vec))) return(NA)
-        if(sum(vec) < 0) return(NA)
-        temp <- which(vec!=0)
-        lab <- lab[temp]
-        res <- as.integer(paste(lab[1],lab[length(lab)],sep=""))
-        return(res)
-    }
-
-                                        # kGen is a list of nloc vectors of genotypes
-    kGen <- lapply(1:length(kX), function(i) apply(kX[[i]],1,recod,all.names[[i]]))
-    res <- cbind(as.numeric(pop),as.data.frame(kGen))
+    ## VERSION USING GENIND2DF ##
+    gen <- genind2df(x, sep="", usepop=FALSE)
+    gen <- as.matrix(data.frame(lapply(gen, as.numeric)))
+    res <- cbind(as.numeric(pop),as.data.frame(gen))
     colnames(res) <- c("pop",x@loc.names)
+    if(!any(table(x@ind.names)>1)){
+        rownames(res) <- x@ind.names
+    } else {
+        warning("non-unique labels for individuals; using generic labels")
+        rownames(res) <- 1:nrow(res)
+    }
 
     return(res)
-}
+} # end genind2hierfstat
+
 
 
 
