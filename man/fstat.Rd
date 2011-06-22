@@ -38,8 +38,8 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
 }
 \value{
   A vector, a matrix, or a dist object containing F statistics.}
-\seealso{\code{\link{Hs}}, \code{\link[hierfstat]{varcomp.glob}},
-  \code{\link{gstat.randtest}}
+\seealso{\code{\link{Hs}}%, \code{\link[hierfstat]{varcomp.glob}},
+ % \code{\link{gstat.randtest}}
 }
 \references{
   Nei, M. (1973) Analysis of gene diversity in subdivided
@@ -55,16 +55,16 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
  \eqn{  Fst(A,B) = \frac{(Ht - (n_A Hs(A) + n_B Hs(B))/(n_A + n_B) )}{Ht}} \cr
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
-\examples{
-if(require(hierfstat)){
-data(nancycats)
+% \examples{
+% if(require(hierfstat)){
+% data(nancycats)
 
-## Fst, Fis, Fit
-fstat(nancycats)
+% ## Fst, Fis, Fit
+% fstat(nancycats)
 
-## pairwise Fst
-mat.fst <- pairwise.fst(nancycats, res.type="matrix")
-mat.fst
-}
-}
+% ## pairwise Fst
+% mat.fst <- pairwise.fst(nancycats, res.type="matrix")
+% mat.fst
+% }
+% }
 \keyword{multivariate}

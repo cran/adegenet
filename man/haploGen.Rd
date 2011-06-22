@@ -101,7 +101,7 @@ sample.haploGen(x, n)
   \item{n}{an integer indicating the number of haplotypes to be retained
     in the sample}
   \item{from, to}{arguments of the conversion function, for converting a
-    \code{haploGen} object into a \code{\link[graph]{graphNEL-class}}.}
+    \code{haploGen} object into a \code{graphNEL-class}.}
   \item{tz, origin}{ aguments to be passed to \code{\link{as.POSIXct}}
     (see ?as.POSIXct)}
   \item{\dots}{further arguments to be passed to other methods}
@@ -142,7 +142,7 @@ sample.haploGen(x, n)
   \code{install.packages("ape")}
 
   - for various purposes including plotting, converting genealogies to
-  graphs (\code{\link[graph]{graphNEL-class}} class) can be useful. This requires the
+  graphs (\code{graphNEL-class} class) can be useful. This requires the
   packages graph, and possibly Rgraphviz for plotting. These packages are
   not on CRAN, but on Bioconductor. To install them, use:\cr
   source("http://bioconductor.org/biocLite.R")\cr
@@ -153,7 +153,7 @@ sample.haploGen(x, n)
 
 
   === Converting haploGen objects to graphs ===\cr
-  \code{haploGen} objects can be converted to \code{\link[graph]{graphNEL-class}}
+  \code{haploGen} objects can be converted to \code{graphNEL-class}
   objects, which can in turn be plotted and manipulated using classical
   graph tools. Simply use 'as(x, "graphNEL")' where 'x' is a
   \code{haploGen} object. This functionality requires the \code{graph}

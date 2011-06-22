@@ -32,6 +32,7 @@ Jouy-en-Josas, France)
   \bold{39}: 545--567.
 }
 \examples{
+\dontrun{
 data(microbov)
 microbov
 summary(microbov)
@@ -100,6 +101,6 @@ structure",i))
 axis(side=2,at=seq(0,12,by=2),labels=paste(seq(0,12,by=2),"\%"),cex=3)
 abline(h=seq(0,12,by=2),col="grey",lty=2)
 }
-
+}
 }
 \keyword{datasets}

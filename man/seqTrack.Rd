@@ -133,7 +133,7 @@ get.likelihood(\ldots)
 
   
   === Converting seqTrack objects to graphs ===\cr
-  seqTrack objects can be converted to \code{\link[graph]{graphNEL-class}} objects,
+  seqTrack objects can be converted to \code{graphNEL-class} objects,
   which can in turn be plotted and manipulated using classical graph
   tools. Simply use 'as(x, "graphNEL")' where 'x' is a seqTrack
   object. This functionality requires the \code{graph} package. Note

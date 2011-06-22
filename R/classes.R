@@ -40,7 +40,7 @@ setClassUnion("factorOrNULL", c("factor","NULL"))
 setClassUnion("charOrNULL", c("character","NULL"))
 setClassUnion("callOrNULL", c("call","NULL"))
 setClassUnion("intOrNum", c("integer","numeric","NULL"))
-
+setClassUnion("intOrNULL", c("integer","NULL"))
 
 
 ####################
