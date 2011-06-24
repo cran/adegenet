@@ -71,5 +71,6 @@ colorplot.default <- function(xy, X, axes=NULL, add.plot=FALSE, defaultLevel=0, 
         do.call(points,listArgs)
     }
 
-    return(invisible(match.call()))
+    ##return(invisible(match.call()))
+    return(invisible(col))
 } # end colorplot.default

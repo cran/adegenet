@@ -55,6 +55,7 @@ hybridize(x1, x2, n, pop=NULL, res.type=c("genind","df","STRUCTURE"), file=NULL,
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 ## Let's make some cattle hybrids
 ##
 data(microbov)
@@ -84,6 +85,7 @@ X <- genind2genpop(newDat,missing="chi2",quiet=TRUE)
 coa1 <- dudi.coa(as.data.frame(X$tab),scannf=FALSE,nf=3)
 s.label(coa1$li,label=X$pop.names)
 add.scatter.eig(coa1$eig,2,1,2)
+}
 }
 }
 \keyword{manip}

@@ -23,11 +23,11 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
     pop <- as.character(pop)
     pop <- factor(pop, levels=unique(pop))
   } else {
-    pop <- x@pop
+    pop <- pop(x)
     # keep levels in order of appearance
-    pop <- as.character(pop)
-    pop <- factor(pop, levels=unique(pop))
-    if(!is.null(x@pop.names)) levels(pop) <- x@pop.names # restore real names
+    ##pop <- as.character(pop)
+    ##pop <- factor(pop, levels=unique(pop))
+    ##if(!is.null(x@pop.names)) levels(pop) <- x@pop.names # restore real names
   }
 
   # make generic pop labels, store real pop names
@@ -51,6 +51,7 @@ genind2genpop <- function(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
     lab.col <- names(tabcount)
     tabcount <- matrix(tabcount,nrow=1)
     colnames(tabcount) <- lab.col
+    rownames(tabcount) <- levels(pop)[1]
   }
 
   ## make final object

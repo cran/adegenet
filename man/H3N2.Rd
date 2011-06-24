@@ -1,13 +1,27 @@
 \encoding{UTF-8}
 \name{H3N2}
 \alias{H3N2}
+\alias{usflu}
+\alias{usflu.fasta}
+\alias{USflu}
+\alias{USflu.fasta}
 \docType{data}
 \title{Seasonal influenza (H3N2) HA segment data}
 \description{
-This dataset consists of 1903 strains of seasonal influenza (H3N2)
-distributed worldwide, and typed at 125 SNPs located in the
-hemagglutinin (HA) segment. These data were gathered from DNA sequences
-available from Genbank (http://www.ncbi.nlm.nih.gov/Genbank/).
+The dataset \code{H3N2} consists of 1903 strains of seasonal influenza
+(H3N2) distributed worldwide, and typed at 125 SNPs located in the
+hemagglutinin (HA) segment. It is stored as an R object with class
+\linkS4class{genind} and can be accessed as usual using
+\code{data(H3N2)} (see example). These data were gathered from DNA
+sequences available from Genbank (http://www.ncbi.nlm.nih.gov/Genbank/).
+
+
+The data file \code{usflu.fasta} is a toy dataset also gathered from
+Genbank, consisting of the aligned sequences of 80 seasonal influenza
+isolates (HA segment) sampled in the US, in \code{fasta} format. This
+file is installed alongside the package; the path to this file is
+automatically determined by R using \code{system.file} (see example in
+this manpage and in ?fasta2genlight) as well.
 }
 \usage{data(H3N2)}
 \format{
@@ -32,6 +46,7 @@ Discriminant analysis of principal components: a new method for the analysis of
 genetically structured populations. Submitted to \emph{BMC genetics}.
 }
 \examples{
+#### H3N2 ####
 ## LOAD DATA
 data(H3N2)
 H3N2
@@ -54,7 +69,20 @@ barplot(dapc1$eig, main="H3N2 - DAPC eigenvalues")
 
 
 ## SCATTERPLOT (axes 1-2)
-scatter(dapc1, ratio=.2)
+scatter(dapc1, posi.da="topleft", cstar=FALSE, cex=2, pch=17:22,
+solid=.5, bg="white")
+
+
+
+
+#### usflu.fasta ####
+myPath <- system.file("files/usflu.fasta",package="adegenet")
+myPath
+
+## extract SNPs from alignments using fasta2genlight
+## see ?fasta2genlight for more details
+obj <- fasta2genlight(myPath, chunk=10) # process 10 sequences at a time
+obj
 
 }
 \keyword{datasets}

@@ -49,7 +49,12 @@ is.genind(x)
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \seealso{
   \code{\linkS4class{genind} class}, and \code{\link{import2genind}} for
-  importing from various types of file.
+  importing from various types of file.\cr
+
+  Related classes:\cr
+  - \linkS4class{genpop} for storing data per populations\cr
+
+  - \linkS4class{genlight} for an efficient storage of binary SNPs genotypes\cr
 }
 \examples{
 data(nancycats)

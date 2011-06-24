@@ -1,3 +1,49 @@
+			CHANGES IN ADEGENET VERSION 1.3-0
+
+
+
+BUG FIXES
+
+	o fixed broken dependencies with hierfstat and graph packages
+	(used to be FAQ #4).
+
+	o fixed a minor bug in loadingplot regarding possible label errors.
+
+NEW FEATURES
+
+	o genome-wide SNP data support using the new class genlight,
+	supported by compiled C routines and parallelized computations on
+	multicore architectures.
+
+	o dedicated find.clusters and dapc methods for genlight objects.
+
+	o read.PLINK to read SNP data with PLINK format into genlight
+	objects.
+
+	o read.snp to read SNP data with adegenet's own format into genlight
+	objects.
+
+	o fasta2genlight to extract SNP from FASTA files into genlight
+	objects.
+
+	o new method 'predict' for DAPC objects, allowing for using
+	supplementary individuals.
+
+	o many new options of DAPC scatterplots (scatter.dapc).
+
+	o new plotting method 'compoplot' for DAPC objects, displaying
+	group memberships in a STRUCTURE-like way... only prettier.
+
+	o many new accessors for the classes genind and genpop.
+
+	o 4 new tutorial vignettes: adegenet-basics, adegenet-dapc,
+	adegenet-spca, adegenet-genomics.
+
+	o last but not least: Ismail Ahmed has joined the project as a
+	developper.
+
+
+
 			CHANGES IN ADEGENET VERSION 1.2-8
 
 

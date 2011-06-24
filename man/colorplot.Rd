@@ -40,7 +40,7 @@ colorplot(\dots)
     functions. See \code{?plot.default} and \code{?points}.}
 }
 \value{
-  Invisibly returns the matched call. 
+  Invisibly returns a vector of colours used in the plot.
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \examples{

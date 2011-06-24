@@ -63,8 +63,12 @@ Class \code{"\linkS4class{indInfo}"}, directly.
 \seealso{\code{\link{as.genind}}, \code{\link{is.genind}}, \code{\link{genind2genpop}},
   \code{\link{genpop}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.genepop}},
-  \code{\link{read.fstat}}, \code{\link{na.replace}}
-  
+  \code{\link{read.fstat}}, \code{\link{na.replace}}\cr
+
+  Related classes:\cr
+  - \linkS4class{genpop} for storing data per populations\cr
+
+  - \linkS4class{genlight} for an efficient storage of binary SNPs genotypes\cr
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{

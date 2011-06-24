@@ -710,3 +710,466 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
     return(invisible())
 }
 
+
+
+
+
+
+
+#######################
+# Function read.snp
+#######################
+read.snp <- function(file, quiet=FALSE, chunkSize=1000,
+                  multicore=require("multicore"), n.cores=NULL, ...){
+    ext <- .readExt(file)
+    ext <- toupper(ext)
+    if(ext != "SNP") warning("wrong file extension - '.snp' expected")
+    if(!quiet) cat("\n Reading biallelic SNP data file into a genlight object... \n\n")
+    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
+    if(multicore && is.null(n.cores)){
+        n.cores <- multicore:::detectCores()
+    }
+
+    call <- match.call()
+
+
+    ## HANDLE THE COMMENTS ##
+    if(!quiet) cat("\n Reading comments... \n")
+
+    count <- 0L
+    i <- 0
+    while(count < 2L){
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=i, nmax=1, blank.lines.skip=FALSE)
+        if(length(grep(">>>>", txt)>0)){
+            count <- count + 1L
+        }
+        i <- i+1
+        if(count==0L && i>10){
+            warning("No comment section at the beginning of the file. Format may be wrong.")
+            i <- 0
+            break
+        }
+    }
+
+    lines.to.skip <- i
+
+
+    ## READ GENERAL DATA (>>) ##
+    if(!quiet) cat("\n Reading general information... \n")
+
+    misc.info <- list()
+
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=1)
+
+    while(length(grep(">>", txt))>0){
+        itemName <- gsub(">>","", txt)
+        itemName <- gsub("(^[[:space:]]+)|([[:space:]]+$)", "", itemName)
+        misc.info[itemName] <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip + 1, nmax=1)
+        lines.to.skip <-lines.to.skip + 2
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=1)
+    }
+
+    ## transform each character string into a vector
+    misc.info <- sapply(misc.info, function(e) unlist(strsplit(e,"[[:space:]]+")))
+
+    ## READ GENOTYPE DATA ##
+    ## one genotype is read/converted at a time to spare RAM
+    if(!quiet) cat("\n Reading",ifelse(is.null(misc.info$population),"",length(misc.info$population)), "genotypes... \n")
+
+
+    res <- list() # this will be a list of SNPbin objects
+
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=chunkSize*2)
+
+    ID.INDIV <- grep(">", txt)
+
+    COUNT <- 0 # used to count the nb reads
+
+    while(length(ID.INDIV)>0){
+        COUNT <- COUNT + 1
+        if(!quiet) {
+            if(COUNT %% 5 == 0){
+                cat(length(res)+length(ID.INDIV))
+            } else {
+                cat(".")
+            }
+        }
+
+        ind.lab <- gsub(">","", txt[ID.INDIV])
+        ind.lab <- gsub("(^[[:space:]]+)|([[:space:]]+$)", "", ind.lab)
+        temp <- strsplit(txt[ID.INDIV+1], "")
+        temp <- lapply(temp, function(e) suppressWarnings(as.integer(e)))
+        if(multicore){
+            res <- c(res, mclapply(temp, function(e) new("SNPbin", e),
+                                   mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
+        } else {
+            res <- c(res, lapply(temp, function(e) new("SNPbin", e)) )
+        }
+        names(res)[(length(res)-length(ID.INDIV)+1):length(res)] <- ind.lab
+        lines.to.skip <-lines.to.skip + length(txt)
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=chunkSize*2)
+        ID.INDIV <- grep(">", txt)
+    }
+
+
+    ## CHECK CONSISTENCY ##
+    if(!quiet) cat("\n Checking consistency... \n")
+
+    n.loc <- unique(sapply(res, nLoc))
+    n.ind <- length(res)
+    other <- list()
+
+    if(length(n.loc)>1) {
+        print(n.loc)
+        warning("!!! Differing numbers of loci detected between individuals !!!")
+    }
+
+    if(!is.null(misc.info$position) && length(misc.info$position)!=n.loc) {
+        other$position <- misc.info$position
+        misc.info$position <- NULL
+        warning("vector of positions of the SNPs does not match the number of SNPs - storing this information in @other")
+    }
+    if(!is.null(misc.info$allele) && length(misc.info$allele)!=n.loc) {
+        other$allele <- misc.info$allele
+        misc.info$allele <- NULL
+        warning("vector of alleles of the SNPs does not match the number of SNPs - storing this information in @other")
+    }
+    if(!is.null(misc.info$chromosome) && length(misc.info$chromosome)!=n.loc) {
+        other$chromosome <- misc.info$chromosome
+        misc.info$chromosome <- NULL
+        warning("vector of chromosomes of the SNPs does not match the number of SNPs - storing this information in @other")
+    }
+    if(!is.null(misc.info$population) && length(misc.info$population)!=n.ind) {
+        other$population <- misc.info$population
+        misc.info$population <- NULL
+        warning("vector of population of the individuals does not match the number of individuals - storing this information in @other")
+    }
+    if(!is.null(misc.info$ploidy) && length(misc.info$ploidy)>1 && length(misc.info$ploidy)!=n.ind) {
+        other$ploidy <- misc.info$ploidy
+        misc.info$ploidy <- NULL
+        warning("vector of ploidy of the individuals has more than one value but does not match the number of individuals - storing this information in @other")
+    }
+
+
+    ## BUILD OUTPUT ##
+    if(!quiet) cat("\n Building final object... \n")
+
+    ind.names <- names(res)
+    if(!is.null(misc.info$chromosome)){
+        other <- list(chromosome = misc.info$chromosome)
+    }
+
+    res <- new("genlight", gen=res, ind.names=ind.names, position=misc.info$position, loc.all=misc.info$allele, ploidy=misc.info$ploidy, pop=misc.info$population, other=other)
+
+    if(!quiet) cat("\n...done.\n\n")
+
+    return(res)
+
+} # end read.snp
+
+
+
+
+
+
+
+####################
+## extract.PLINKmap
+####################
+extract.PLINKmap <- function(file, x=NULL){
+    ## CHECK EXTENSION ##
+    ext <- .readExt(file)
+    ext <- toupper(ext)
+    if(ext != "MAP") warning("wrong map.file extension - '.map' expected")
+
+
+    ## READ FILE ##
+    ## find nb of columns
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE,  nlines=1)
+    nb.col <- length( unlist(strsplit(txt,"[[:blank:]]+")))
+
+    ## read file
+    txt <- scan(file,what="character",sep="\t",quiet=TRUE)
+    txt <- matrix(txt, ncol=4, byrow=TRUE)
+
+
+    ## EXTRACT INFO AND RETURN OBJECT ##
+    ## return a genlight
+    if(!is.null(x)){
+        ## match data
+        ord <- match(locNames(x), txt[,2]) # check that it is the 2nd column
+        if(!inherits(x, "genlight")) stop("x is not a genlight object")
+        other(x)$chromosome <- factor(txt[ord,1])
+        other(x)$position <- as.integer(txt[ord,4])
+
+        return(x)
+    }
+
+    ## return a list
+    res <- list(chromosome=factor(txt[ord,1]), position=as.integer(txt[ord,4]))
+
+    return(res)
+} # end extract.PLINKmap
+
+
+
+
+
+
+
+########################
+## Function read.PLINK
+########################
+read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
+                       multicore=require("multicore"), n.cores=NULL, ...){
+    ## HANDLE ARGUMENTS ##
+    ext <- .readExt(file)
+    ext <- toupper(ext)
+    if(ext != "RAW") warning("wrong file extension - '.raw' expected")
+    if(!quiet) cat("\n Reading PLINK raw format into a genlight object... \n\n")
+    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
+    if(multicore && is.null(n.cores)){
+        n.cores <- multicore:::detectCores()
+    }
+
+
+    ## READ NAMES OF LOCI ##
+    if(!quiet) cat("\n Reading loci information... \n")
+
+    loc.names <- scan(file,what="character",sep=" ",quiet=TRUE,  nlines=1, blank.lines.skip=FALSE)
+    n.loc <- length(loc.names) - 6
+    misc.info <- lapply(1:6,function(i) NULL)
+    names(misc.info) <- loc.names[1:6]
+    loc.names <- loc.names[7:length(loc.names)]
+    loc.names <- gsub("_[1-9]$","",loc.names)
+
+    ## READ GENOTYPES ##
+    if(!quiet) cat("\n Reading and converting genotypes... \n")
+
+    res <- list() # this will be a list of SNPbin objects
+
+    ## initialize reading
+    lines.to.skip <- 1
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=chunkSize)
+    txt <- lapply(txt, function(e) unlist(strsplit(e,"[[:blank:]]+") ))
+
+    COUNT <- 0 # used to count the nb reads
+
+    while(length(txt)>0){
+        COUNT <- COUNT + 1
+        if(!quiet) {
+            if(COUNT %% 5 == 0){
+                cat(length(res)+length(txt))
+            } else {
+                cat(".")
+            }
+        }
+
+
+        ## handle misc info
+        temp <- lapply(txt, function(e) e[1:6])
+        for(i in 1:6){
+            misc.info[[i]] <- c(misc.info[[i]], unlist(lapply(temp, function(e) e[[i]])) )
+        }
+
+
+        ## build SNPbin objects
+        txt <- lapply(txt, function(e) suppressWarnings(as.integer(e[-(1:6)])))
+
+        if(multicore){
+            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2),
+                                   mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
+        } else {
+            res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2)) )
+        }
+
+        lines.to.skip <-lines.to.skip + length(txt)
+
+        ## read lines
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=chunkSize)
+        txt <- lapply(txt, function(e) unlist(strsplit(e,"[[:blank:]]+") ))
+    }
+
+
+    ## MAKE A FEW CHECKS ##
+    if(!all(sapply(res, nLoc)==n.loc)) stop(paste("some individuals do not have",n.loc,"SNPs."))
+
+
+    ## BUILD FINAL OBJECT ##
+    if(!quiet) cat("\n Building final object... \n")
+
+    res <- new("genlight",res, ploidy=2)
+    indNames(res) <- misc.info$IID
+    pop(res) <- misc.info$FID
+    locNames(res) <- loc.names
+    misc.info <- misc.info[c("SEX", "PHENOTYPE", "PAT","MAT")]
+    names(misc.info) <- tolower(names(misc.info))
+    misc.info$sex[misc.info$sex==1] <- "m"
+    misc.info$sex[misc.info$sex==2] <- "f"
+    misc.info$sex <- factor(misc.info$sex)
+    misc.info$phenotype[misc.info$phenotype==1] <- "control"
+    misc.info$phenotype[misc.info$phenotype==2] <- "case"
+    misc.info$phenotype <- factor(misc.info$phenotype)
+    other(res) <- misc.info
+
+
+    ## HANDLE MAP FILE INFO ##
+    if(!is.null(map.file)){
+        res <- extract.PLINKmap(map.file, res)
+    }
+
+
+    ## RETURN OUTPUT ##
+    if(!quiet) cat("\n...done.\n\n")
+
+    return(res)
+} # end read.PLINK
+
+
+
+
+
+
+
+###########################
+## Function fasta2genlight
+###########################
+fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALSE,
+                       multicore=require("multicore"), n.cores=NULL, ...){
+    ## HANDLE ARGUMENTS ##
+    ext <- .readExt(file)
+    ext <- toupper(ext)
+    if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
+    if(!quiet) cat("\n Converting FASTA alignment into a genlight object... \n\n")
+    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
+    if(multicore && is.null(n.cores)){
+        n.cores <- multicore:::detectCores()
+    }
+
+
+    ## PRIOR CHECKS ##
+    ## find nb of lines per genome
+    lines.to.skip <- 0
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE, nmax=1)
+
+    while(length(grep("^>.+", txt))<2){
+        lines.to.skip <- lines.to.skip + 1
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, nmax=lines.to.skip)
+    }
+
+    LINES.PER.IND <- lines.to.skip-1
+
+
+    ## find length of a genome
+    NLOC <- sum(nchar(txt[2:LINES.PER.IND]))
+
+
+    ## SCAN ALL POSITIONS AND IDENTIFY SNPs ##
+    if(!quiet) cat("\n Looking for polymorphic positions... \n")
+
+    ## read all genomes by chunks
+    ## initialize
+    lines.to.skip <- 0
+    IND.LAB <- NULL
+    POOL <- as.list(rep("-", NLOC))
+    COUNT <- 0 # used to count the nb reads
+
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=LINES.PER.IND*chunkSize)
+
+    ## read and process chunks
+    while(length(txt)>0){
+        COUNT <- COUNT + 1
+        if(!quiet) {
+            for(i in 1:(COUNT*chunkSize)) cat(".")
+        }
+
+
+        nb.ind <- length(grep("^>", txt))
+        IND.LAB <- c(IND.LAB, sub(">","",txt[grep("^>", txt)])) # find individuals' labels
+        txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
+        if(multicore){
+            txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split=""),
+                            mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one vector
+        } else {
+            txt <- lapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")) # each genome -> one vector
+        }
+
+        ## POOL contains all alleles of each position
+        temp <- as.list(apply(matrix(unlist(txt), byrow=TRUE, nrow=length(txt)),2,unique)) # alleles current genomes
+        POOL <- mapply(function(x,y) unique(c(x,y)), POOL, temp, SIMPLIFY=FALSE) # update global pool
+
+        lines.to.skip <- lines.to.skip + nb.ind*LINES.PER.IND
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=LINES.PER.IND*chunkSize)
+    }
+
+
+    ## analyse pool of alleles
+    letterOK <- c("a","g","c","t","A","G","C","T")
+    POOL <- lapply(POOL, function(e) e[e %in% letterOK]) # keep only proper letters
+    ## POOL <- lapply(POOL, setdiff, "-")
+    nb.alleles <- sapply(POOL, length)
+    snp.posi <- nb.alleles==2
+    sec.all <- unlist(lapply(POOL[snp.posi], function(e) e[2]))
+
+
+
+    ## RE-READ DATA, CONVERT SNPs TO GENLIGHT ##
+    if(!quiet) cat("\n Extracting SNPs from the alignment... \n")
+
+    ## initialize
+    lines.to.skip <- 0
+    COUNT <- 0 # used to count the nb reads
+    res <- list()
+
+    txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=LINES.PER.IND*chunkSize)
+
+    ## returns a vector of nb of second alleles or NAs
+    f1 <- function(vec){
+        out <- as.integer(vec==sec.all)
+        out[!vec %in% letterOK] <- NA
+        return(out)
+    }
+
+    ## read and process chunks
+    while(length(txt)>0){
+        COUNT <- COUNT + 1
+        if(!quiet) {
+            for(i in 1:(COUNT*chunkSize)) cat(".")
+        }
+
+
+        ## read SNPs
+        nb.ind <- length(grep("^>", txt))
+        txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
+        if(multicore){
+            txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi],
+                                        mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one SNP vector
+        } else {
+            txt <- lapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi]) # each genome -> one SNP vector
+        }
+
+        ## convert to genlight
+        ##res <- c(res, lapply(txt, function(e) new("SNPbin", as.integer(e==sec.all))))
+        res <- c(res, lapply(txt, function(e) new("SNPbin", f1(e))))
+
+        lines.to.skip <- lines.to.skip + nb.ind*LINES.PER.IND
+        txt <- scan(file,what="character",sep="\n",quiet=TRUE, skip=lines.to.skip, nmax=LINES.PER.IND*chunkSize)
+    }
+
+
+
+    ## BUILD FINAL OBJECT ##
+    if(!quiet) cat("\n Building final object... \n")
+
+    res <- new("genlight",res, ploidy=1)
+    indNames(res) <- IND.LAB
+    alleles(res) <- sapply(POOL[snp.posi], paste, collapse="/")
+    position(res) <- which(snp.posi)
+    if(saveNbAlleles) other(res) <- list(nb.all.per.loc=nb.alleles)
+
+
+    ## RETURN OUTPUT ##
+    if(!quiet) cat("\n...done.\n\n")
+
+    return(res)
+} # end fasta2genlight

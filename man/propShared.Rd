@@ -24,6 +24,8 @@ propShared(obj)
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+
+\dontrun{
 ## make a small object
 data(microbov)
 obj <- microbov[1:5,microbov@loc.fac \%in\% c("L01","L02")]
@@ -42,6 +44,7 @@ matDist <- exp(-matSimil)
 D <- cailliez(as.dist(matDist))
 pcoa1 <- dudi.pco(D,scannf=FALSE,nf=3)
 s.class(pcoa1$li,microbov$pop,lab=microbov$pop.names)
+}
 }
 }
 \keyword{manip}

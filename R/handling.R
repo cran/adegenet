@@ -186,7 +186,7 @@ setMethod("$<-","genind",function(x,name,value) {
 setGeneric("seppop", function(x, ...) standardGeneric("seppop"))
 
 ## genind
-setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"), drop=FALSE, treatOther=TRUE){
+setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"), drop=FALSE, treatOther=TRUE, quiet=TRUE){
     ## checkType(x)
 
     ## misc checks
@@ -206,7 +206,7 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
     ## pop <- x@pop # comment to take pop arg into account
 
     ## make a list of genind objects
-    kObj <- lapply(levels(pop), function(lev) x[pop==lev, , drop=drop, treatOther=treatOther])
+    kObj <- lapply(levels(pop), function(lev) x[pop==lev, , drop=drop, treatOther=treatOther, quiet=quiet])
     names(kObj) <- levels(pop)
 
     ## res is a list of genind
@@ -221,6 +221,8 @@ setMethod("seppop", signature(x="genind"), function(x,pop=NULL,truenames=TRUE,re
 
     return(res)
 }) # end seppop
+
+
 
 
 
@@ -517,6 +519,23 @@ setMethod("nLoc","genpop", function(x,...){
 
 
 
+#######
+# nInd
+#######
+setGeneric("nInd", function(x,...){
+    standardGeneric("nInd")
+})
+
+
+
+setMethod("nInd","genind", function(x,...){
+    return(nrow(x@tab))
+})
+
+
+
+
+
 ######
 # pop
 ######
@@ -577,6 +596,9 @@ setGeneric("locNames", function(x,...){
     standardGeneric("locNames")
 })
 
+setGeneric("locNames<-", function(x, value) {
+    standardGeneric("locNames<-")
+})
 
 
 setMethod("locNames","genind", function(x, withAlleles=FALSE, ...){
@@ -590,6 +612,14 @@ setMethod("locNames","genind", function(x, withAlleles=FALSE, ...){
 })
 
 
+setReplaceMethod("locNames","genind",function(x,value) {
+    value <- as.character(value)
+    if(length(value) != nLoc(x)) stop("Vector length does no match number of loci")
+    names(value) <- names(locNames(x))
+    slot(x,"loc.names",check=TRUE) <- value
+    return(x)
+})
+
 
 setMethod("locNames","genpop", function(x, withAlleles=FALSE, ...){
     ## return simply locus names
@@ -600,4 +630,166 @@ setMethod("locNames","genpop", function(x, withAlleles=FALSE, ...){
     res <- paste(res,unlist(x@all.names),sep=".")
     return(res)
 })
+
+
+setReplaceMethod("locNames","genpop",function(x,value) {
+    value <- as.character(value)
+    if(length(value) != nLoc(x)) stop("Vector length does no match number of loci")
+    names(value) <- names(locNames(x))
+    slot(x,"loc.names",check=TRUE) <- value
+    return(x)
+})
+
+
+###########
+# indNames
+###########
+setGeneric("indNames", function(x,...){
+    standardGeneric("indNames")
+})
+
+setGeneric("indNames<-", function(x, value){
+    standardGeneric("indNames<-")
+})
+
+setMethod("indNames","genind", function(x, ...){
+    return(x@ind.names)
+})
+
+
+setReplaceMethod("indNames","genind",function(x,value) {
+    value <- as.character(value)
+    if(length(value) != nInd(x)) stop("Vector length does no match number of individuals")
+    names(value) <- names(indNames(x))
+    slot(x,"ind.names",check=TRUE) <- value
+    return(x)
+})
+
+
+
+
+
+##########
+# alleles
+##########
+setGeneric("alleles", function(x,...){
+    standardGeneric("alleles")
+})
+
+setGeneric("alleles<-", function(x, value){
+    standardGeneric("alleles<-")
+})
+
+setMethod("alleles","genind", function(x, ...){
+    return(x@all.names)
+})
+
+setReplaceMethod("alleles","genind", function(x, value){
+    if(!is.list(value)) stop("replacement value must be a list")
+    if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
+    if(any(sapply(value, length) != x$loc.nall)) stop("number of replacement alleles do not match that of the object")
+    x@all.names <- value
+    return(x)
+})
+
+
+setMethod("alleles","genpop", function(x, ...){
+    return(x@all.names)
+})
+
+setReplaceMethod("alleles","genpop", function(x, value){
+    if(!is.list(value)) stop("replacement value must be a list")
+    if(length(value)!=nLoc(x)) stop("replacement list must be of length nLoc(x)")
+    if(any(sapply(value, length) != x$loc.nall)) stop("number of replacement alleles do not match that of the object")
+    x@all.names <- value
+    return(x)
+})
+
+
+
+##########
+## ploidy
+##########
+setGeneric("ploidy", function(x,...){
+    standardGeneric("ploidy")
+})
+
+setGeneric("ploidy<-", function(x, value){
+    standardGeneric("ploidy<-")
+})
+
+setMethod("ploidy","genind", function(x,...){
+    return(x@ploidy)
+})
+
+
+setReplaceMethod("ploidy","genind",function(x,value) {
+    value <- as.integer(value)
+    if(any(value)<1) stop("Negative or null values provided")
+    if(any(is.na(value))) stop("NA values provided")
+    if(length(value)>1) warning("Several ploidy numbers provided; using only the first integer")
+    slot(x,"ploidy",check=TRUE) <- value[1]
+    return(x)
+})
+
+
+setMethod("ploidy","genpop", function(x,...){
+    return(x@ploidy)
+})
+
+
+setReplaceMethod("ploidy","genpop",function(x,value) {
+    value <- as.integer(value)
+    if(any(value)<1) stop("Negative or null values provided")
+    if(any(is.na(value))) stop("NA values provided")
+    if(length(value)>1) warning("Several ploidy numbers provided; using only the first integer")
+    slot(x,"ploidy",check=TRUE) <- value[1]
+    return(x)
+})
+
+
+
+
+
+
+##########
+## other
+#########
+setGeneric("other", function(x,...){
+    standardGeneric("other")
+})
+
+setGeneric("other<-", function(x, value){
+    standardGeneric("other<-")
+})
+
+setMethod("other","genind", function(x,...){
+    if(length(x@other)==0) return(NULL)
+    return(x@other)
+})
+
+
+setReplaceMethod("other","genind",function(x,value) {
+    if( !is.null(value) && (!is.list(value) | is.data.frame(value)) ) {
+        value <- list(value)
+    }
+    slot(x,"other",check=TRUE) <- value
+    return(x)
+})
+
+
+setMethod("other","genpop", function(x,...){
+    if(length(x@other)==0) return(NULL)
+    return(x@other)
+})
+
+
+setReplaceMethod("other","genpop",function(x,value) {
+    if( !is.null(value) && (!is.list(value) | is.data.frame(value)) ) {
+        value <- list(value)
+    }
+    slot(x,"other",check=TRUE) <- value
+    return(x)
+})
+
 

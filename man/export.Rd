@@ -49,18 +49,18 @@ genind2hierfstat(x,pop=NULL)
 }
 \seealso{\code{\link{import2genind}}}
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
-\examples{
-if(require(hierfstat)){
+% \examples{
+% if(require(hierfstat)){
 
-obj <- read.fstat(system.file("data/diploid.dat",package="hierfstat"))
+% obj <- read.fstat(system.file("data/diploid.dat",package="hierfstat"))
 
-X <- genind2hierfstat(obj)
-X
+% X <- genind2hierfstat(obj)
+% X
 
-read.fstat.data(paste(.path.package("hierfstat"),"/data/diploid.dat",sep="",collapse=""),nloc=5)
-}
-if(require(genetics)){
-genind2genotype(obj)
-}
-}
+% read.fstat.data(paste(.path.package("hierfstat"),"/data/diploid.dat",sep="",collapse=""),nloc=5)
+% }
+% if(require(genetics)){
+% genind2genotype(obj)
+% }
+% }
 \keyword{manip}

@@ -90,7 +90,4 @@ optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE, n.sim=10, n.d
     Components (DAPC)
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
-\examples{
-
-}
 \keyword{multivariate}

@@ -70,28 +70,28 @@ adegenetWeb <- function(){
 
 
 
-############################
-# Function adegenetTutorial
-############################
-adegenetTutorial <- function(which=c("general","spca")){
-    which <- match.arg(which)
-    if(which=="general"){
-        url <- "http://adegenet.r-forge.r-project.org/files/adegenet.pdf"
-        cat("\n")
-        cat("  >> Seeking the general tutorial for adegenet.\n")
-        cat("  >> Opening url \"",url,"\".\n ", sep="")
-        cat("\n")
-        browseURL(url)
-    }
-    if(which=="spca"){
-        url <- "http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf"
-        cat("\n")
-        cat("  >> Seeking the sPCA tutorial for adegenet.\n")
-        cat("  >> Opening url \"",url,"\". \n", sep="")
-        cat("\n")
-        browseURL(url)
-    }
-}
+## ############################
+## # Function adegenetTutorial
+## ############################
+## adegenetTutorial <- function(which=c("basics","spca")){
+##     which <- match.arg(which)
+##     if(which=="general"){
+##         url <- "http://adegenet.r-forge.r-project.org/files/adegenet.pdf"
+##         cat("\n")
+##         cat("  >> Seeking the general tutorial for adegenet.\n")
+##         cat("  >> Opening url \"",url,"\".\n ", sep="")
+##         cat("\n")
+##         browseURL(url)
+##     }
+##     if(which=="spca"){
+##         url <- "http://adegenet.r-forge.r-project.org/files/tutorial-spca.pdf"
+##         cat("\n")
+##         cat("  >> Seeking the sPCA tutorial for adegenet.\n")
+##         cat("  >> Opening url \"",url,"\". \n", sep="")
+##         cat("\n")
+##         browseURL(url)
+##     }
+## }
 
 
 
@@ -140,3 +140,78 @@ checkType <- function(x){
 } # end checkType
 
 
+
+
+
+
+##########
+## transp
+##########
+## AUXIL FUNCTION TO USE TRANSPARENT COLORS
+transp <- function(col, alpha=.5){
+    res <- apply(col2rgb(col),2, function(c) rgb(c[1]/255, c[2]/255, c[3]/255, alpha))
+    return(res)
+}
+
+
+
+##########
+## corner
+##########
+## AUXIL FUNCTION TO ADD LETTER TO A PLOT
+corner <- function(text, posi="topleft",  inset=0.1, ...){
+    oxpd <- par("xpd")
+    on.exit(par(xpd=oxpd))
+    par(xpd=TRUE)
+    myUsr <- par("usr")
+    xrange <- myUsr[1:2]
+    yrange <- myUsr[3:4]
+    x.size <- abs(diff(xrange))
+    y.size <- abs(diff(yrange))
+    inset <- rep(inset, length=2)
+    x.inset <- inset[1]
+    y.inset <- inset[2]
+
+    if(length(grep("top", posi))==1){
+        y <- yrange[2] - y.size*y.inset
+    } else {
+        y <- yrange[1] + y.size*y.inset
+    }
+
+    if(length(grep("right", posi))==1){
+        x <- xrange[2] - x.size*x.inset
+    } else {
+        x <- xrange[1] + x.size*x.inset
+    }
+
+    text(x, y, lab=text, ...)
+}
+
+
+
+
+
+###########
+## num2col
+###########
+## translate numeric values into colors of a palette
+num2col <- function(x, col.pal=heat.colors, reverse=FALSE,
+                    x.min=min(x), x.max=max(x), na.col="green"){
+    if(any(is.na(x))) warning("NAs detected in x")
+    x[x < x.min] <- x.min
+    x[x > x.max] <- x.max
+    x <- x-x.min # min=0
+    x.max <- x.max-x.min # update x.max
+    x <- x/x.max # max=1
+    x <- round(x*100)
+    x[x<=0] <- 1
+    if(!reverse) {
+        pal <- col.pal(100)
+    } else {
+        pal <- rev(col.pal(100))
+    }
+
+    res <- pal[x]
+    res[is.na(res)] <- na.col
+    return(res)
+}
