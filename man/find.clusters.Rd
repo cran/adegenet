@@ -238,7 +238,7 @@ grp$stat
 
 
 ## to try different values of k (interactive)
-grp <- find.clusters(hgdp, max.n=50, n.pca=200, scale=FALSE)
+grp <- find.clusters(eHGDP, max.n=50, n.pca=200, scale=FALSE)
 
 ## and then, to plot BIC values:
 plot(grp$Kstat, type="b", col="blue")

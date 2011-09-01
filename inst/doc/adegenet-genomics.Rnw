@@ -22,7 +22,7 @@
 
 \begin{document}
 
-\SweaveOpts{prefix.string = figs/genomics, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+\SweaveOpts{prefix.string = genomics, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
 
 
 
@@ -65,7 +65,7 @@ The subsequent amounts of genetic data pose challenges in terms of storing and h
 making former tools developed for classical genetic markers such as microsatellite impracticable using
 standard computers.
 Adegenet has developed new object classes dedicated to handling genome-wide polymorphism (SNPs) with
-minimum rapid access memory (RAM) requirements.
+minimum random access memory (RAM) requirements.
 \\
 
 Two new formal classes have been implemented: \texttt{SNPbin}, used to store genome-wide SNPs for
@@ -669,7 +669,7 @@ x <- glSim(100, 0, 100, ploidy=2)
 plot(x)
 @
 \begin{center}
-  \includegraphics{figs/glsim1}
+  \includegraphics{glsim1}
 \end{center}
 
 Strong patterns of LD between contiguous sites are also very easy to spot:
@@ -680,7 +680,7 @@ x <- glSim(100, 100, ploidy=2, LD=TRUE, block.size=10)
 plot(x)
 @
 \begin{center}
-  \includegraphics{figs/glsim2}
+  \includegraphics{glsim2}
 \end{center}
 
 Of course, this is merely a very preliminary approach to the data.
@@ -740,7 +740,7 @@ interesting biological signal.
 More generally and perhaps more importantly, this figure may also cast light on a well-known social
 phenomenon occuring mainly in young people attending noisy kinds of conferences:
 \begin{center}
-  \includegraphics{figs/devilsign}
+  \includegraphics{devilsign}
 \end{center}
 
 \noindent We can indeed wonder whether the gesture usually referred to as the '\textit{devil sign}'
@@ -905,7 +905,7 @@ pca1 <- glPca(flu)
 load("Robjects/pca1.RData")
 @
 \begin{center}
-  \includegraphics{figs/pca1}
+  \includegraphics{pca1}
 \end{center}
 When \texttt{nf} (number of retained factors) is not specified, the function displays the barplot of
 eigenvalues of the analysis and asks the user for a number of retained principal components.
@@ -992,7 +992,7 @@ loadingplot(dapc1$var.contr, thres=4e-4)
 @
 
 \begin{center}
-  \includegraphics{figs/loadingplotGL}
+  \includegraphics{loadingplotGL}
 \end{center}
 
 \noindent And we can zoom in to the contributions of the last 100 SNPs to make sure that the tail indeed

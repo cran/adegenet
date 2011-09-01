@@ -36,7 +36,7 @@
 \begin{document}
 
 
-\SweaveOpts{prefix.string = figs/spca, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+\SweaveOpts{prefix.string = spca, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
 
 
 \definecolor{Soutput}{rgb}{0,0,0.56}
@@ -889,7 +889,7 @@ title("sPCA - colorplot of PC 1 and 2\n(lagged scores)", col.main="yellow", line
 @
 
 %% \begin{center}
-%% \includegraphics[width=.6\textwidth]{figs/rupicacolors.png}
+%% \includegraphics[width=.6\textwidth]{rupicacolors.png}
 %% \end{center}
 
 

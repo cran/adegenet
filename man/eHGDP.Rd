@@ -107,7 +107,7 @@ colorplot(xy, -dapc1$grp.coord, cex=3, add=TRUE, trans=FALSE)
 
 ## LOOK FOR OTHER CLUSTERS
 ## to reproduce results of the reference paper, use :
-## grp <- find.clusters(hgdp, max.n=50, n.pca=200, scale=FALSE)
+## grp <- find.clusters(eHGDP, max.n=50, n.pca=200, scale=FALSE)
 ## and then
 ## plot(grp$Kstat, type="b", col="blue")
 

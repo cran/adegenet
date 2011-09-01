@@ -117,7 +117,7 @@
    \code{\link{optimize.monmonier}}. Object of the class
    \code{monmonier} can be plotted and printed using the corresponding
    methods. \cr
-   - \code{\link{spca}}: implements Jombart et al. (in revision) spatial
+   - \code{\link{spca}}: implements Jombart et al. (2008) spatial
    Principal Component Analysis \cr
    - \code{\link{global.rtest}}: implements Jombart et al. (2008)
    test for global spatial structures \cr
@@ -187,14 +187,14 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.3-0\cr
-    Date: \tab 2011-06-22 \cr
+    Version: \tab 1.3-1\cr
+    Date: \tab 2011-09-01 \cr
     License: \tab GPL (>=2)
   } 
 }
 \author{
   Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
-  with contributions of: Ismail Ahmed, Peter Solymos\cr
+  with contributions of: Ismail Ahmed <ismail.ahmed@inserm.fr>, Peter Solymos\cr
   and contributed datasets from: Katayoun Moazami-Goudarzi, Denis Laloë,
   Dominique Pontier, Daniel Maillard, Francois Balloux.
 }
@@ -212,7 +212,7 @@
   outbreaks from genetic data: a graph approach. \emph{Heredity}. doi:
   10.1038/hdy.2010.78.\cr
 
-  Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D.  Revealing
+  Jombart, T., Devillard, S., Dufour, A.-B. and Pontier, D. (2008) Revealing
   cryptic spatial patterns in genetic variability by a new multivariate
   method. \emph{Heredity}, \bold{101}, 92--103.\cr
 

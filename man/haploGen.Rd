@@ -12,8 +12,8 @@
 \alias{plotHaploGen}
 \alias{sample.haploGen}
 %\alias{as,haploGen,graphNEL-method}
-\alias{coerce,haploGen,graphNEL-method}
-\alias{as,haploGen,graphNEL-method}
+%\alias{coerce,haploGen,graphNEL-method}
+%\alias{as,haploGen,graphNEL-method}
 \title{Simulation of genealogies of haplotypes}
 \description{
   The function \code{haploGen} implements simulations of genealogies of
@@ -48,7 +48,7 @@ haploGen(seq.length=10000, mu=0.0001, t.max=20,
 as.seqTrack.haploGen(x)
 plotHaploGen(x, annot=FALSE, date.range=NULL, col=NULL, bg="grey", add=FALSE, \dots)
 sample.haploGen(x, n)
-\S4method{coerce}{haploGen,graphNEL}(from, to, strict=TRUE)
+%\S4method{coerce}{haploGen,graphNEL}(from, to, strict=TRUE)
 }
 \arguments{
   \item{seq.length}{an integer indicating the length of the simulated
@@ -100,14 +100,14 @@ sample.haploGen(x, n)
   \item{annot,date.range,col,bg,add}{arguments to be passed to \code{\link{plotSeqTrack}}.}
   \item{n}{an integer indicating the number of haplotypes to be retained
     in the sample}
-  \item{from, to}{arguments of the conversion function, for converting a
-    \code{haploGen} object into a \code{graphNEL-class}.}
+  % \item{from, to}{arguments of the conversion function, for converting a
+  %   \code{haploGen} object into a \code{graphNEL-class}.}
   \item{tz, origin}{ aguments to be passed to \code{\link{as.POSIXct}}
     (see ?as.POSIXct)}
   \item{\dots}{further arguments to be passed to other methods}
-  \item{strict}{a logical used for compatibility with \code{as} generic
-    function, but not used in the conversion. See \code{\link{setAs}} for
-    more information.}
+  % \item{strict}{a logical used for compatibility with \code{as} generic
+  %   function, but not used in the conversion. See \code{\link{setAs}} for
+  %   more information.}
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \references{
@@ -152,14 +152,15 @@ sample.haploGen(x, n)
   See the respective vignettes for more information on using these packages.
 
 
-  === Converting haploGen objects to graphs ===\cr
-  \code{haploGen} objects can be converted to \code{graphNEL-class}
-  objects, which can in turn be plotted and manipulated using classical
-  graph tools. Simply use 'as(x, "graphNEL")' where 'x' is a
-  \code{haploGen} object. This functionality requires the \code{graph}
-  package (see 'details').
+  % === Converting haploGen objects to graphs ===\cr
+  % \code{haploGen} objects can be converted to \code{graphNEL-class}
+  % objects, which can in turn be plotted and manipulated using classical
+  % graph tools. Simply use 'as(x, "graphNEL")' where 'x' is a
+  % \code{haploGen} object. This functionality requires the \code{graph}
+  % package (see 'details').
 }
 \examples{
+\dontrun{
 if(require(ape)){
 ## PERFORM SIMULATIONS
 x <- haploGen(repro=2)
@@ -169,17 +170,17 @@ x
 plotHaploGen(x, bg="white")
 title("Spatial dispersion of the haplotypes")
 
-## PLOT GENEALOGY
-if(require(graph) & require(Rgraphviz)){
-g=as(x, "graphNEL")
-g
-renderGraph(layoutGraph(g))
-}
+% ## PLOT GENEALOGY
+% if(require(graph) & require(Rgraphviz)){
+% g=as(x, "graphNEL")
+% g
+% renderGraph(layoutGraph(g))
+% }
 
 
 ## USE SEQTRACK RECONSTRUCTION
 x.recons <- seqTrack(x)
 mean(x.recons$ances==x$ances, na.rm=TRUE) # proportion of correct reconstructions
-
+}
 }
 }

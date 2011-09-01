@@ -24,6 +24,7 @@ Dominique Pontier (UMR CNRS 5558, University Lyon1, France)
   habitat using: not all colonies are equal. submitted to \emph{Molecular Ecology}
 }
 \examples{
+\dontrun{
 data(nancycats)
 nancycats
 
@@ -53,6 +54,7 @@ dat <- genind2hierfstat(nancycats)
 
 Fstat <- varcomp.glob(dat$pop,dat[,-1])
 Fstat
+}
 }
 }
 \keyword{datasets}

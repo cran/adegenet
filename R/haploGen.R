@@ -567,28 +567,28 @@ sample.haploGen <- function(x, n){
 ##########################
 ## as("haploGen", "graphNEL")
 ##########################
-if(require(graph)){
-    setOldClass("haploGen")
+## if(require(graph)){
+##     setOldClass("haploGen")
 
-    setAs("haploGen", "graphNEL", def=function(from){
-        if(!require(ape)) stop("package ape is required")
-        if(!require(graph)) stop("package graph is required")
+##     setAs("haploGen", "graphNEL", def=function(from){
+##         if(!require(ape)) stop("package ape is required")
+##         if(!require(graph)) stop("package graph is required")
 
-        N <- length(from$ances)
-        areNA <- is.na(from$ances)
+##         N <- length(from$ances)
+##         areNA <- is.na(from$ances)
 
-        ## EXTRACT WEIGHTS (nb of mutations)
-        M <- as.matrix(dist.dna(from$seq, model="raw")*ncol(from$seq))
-        rownames(M) <- colnames(M) <- from$id
-        w <- mapply(function(i,j) {M[i, j]}, i=from$ances[!areNA], j=from$id[!areNA])
+##         ## EXTRACT WEIGHTS (nb of mutations)
+##         M <- as.matrix(dist.dna(from$seq, model="raw")*ncol(from$seq))
+##         rownames(M) <- colnames(M) <- from$id
+##         w <- mapply(function(i,j) {M[i, j]}, i=from$ances[!areNA], j=from$id[!areNA])
 
 
-        ## CONVERT TO GRAPH
-        res <- ftM2graphNEL(ft=cbind(from$ances[!areNA], from$id[!areNA]), W=w, edgemode = "directed", V=from$id)
-        return(res)
-    })
+##         ## CONVERT TO GRAPH
+##         res <- ftM2graphNEL(ft=cbind(from$ances[!areNA], from$id[!areNA]), W=w, edgemode = "directed", V=from$id)
+##         return(res)
+##     })
 
-}
+## }
 
 
 

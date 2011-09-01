@@ -114,8 +114,8 @@
 }
 \examples{
 #### HAPLOID EXAMPLE ####
-## create a genotype of 1,000,000 SNPs
-dat <- sample(c(0,1,NA), 1e6, prob=c(.495, .495, .01), replace=TRUE)
+## create a genotype of 100,000 SNPs
+dat <- sample(c(0,1,NA), 1e5, prob=c(.495, .495, .01), replace=TRUE)
 dat[1:10]
 x <- new("SNPbin", dat)
 x
@@ -137,8 +137,8 @@ object.size(dat)/object.size(x) # EFFICIENCY OF CONVERSION
 
 
 #### TETRAPLOID EXAMPLE ####
-## create a genotype of 1,000,000 SNPs
-dat <- sample(c(0:4,NA), 1e6, prob=c(rep(.995/5,5), 0.005), replace=TRUE)
+## create a genotype of 100,000 SNPs
+dat <- sample(c(0:4,NA), 1e5, prob=c(rep(.995/5,5), 0.005), replace=TRUE)
 x <- new("SNPbin", dat)
 identical(as(x, "integer"),as.integer(dat)) # MUST BE TRUE
 

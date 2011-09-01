@@ -348,7 +348,11 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     if(pca.info){
         res$pca.loadings <- as.matrix(U)
         res$pca.cent <- glMean(x,alleleAsUnit=FALSE)
-        res$pca.norm <- sqrt(glVar(x,alleleAsUnit=FALSE))
+        if(scale) {
+            res$pca.norm <- sqrt(glVar(x,alleleAsUnit=FALSE))
+        } else {
+            res$pca.norm <- rep(1, nLoc(x))
+        }
         res$pca.eig <- pcaX$eig
     }
 
@@ -570,7 +574,13 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
     ## group legend
     if(legend){
         ## add a legend
-        legend(posi.leg, fill=col, legend=txt.leg, cex=cleg, bg=bg.inset)
+        temp <- list(...)$cex
+        if(is.null(temp)) temp <- 1
+        if(ONEDIM | temp<0.5 | all(pch=="")) {
+            legend(posi.leg, fill=col, legend=txt.leg, cex=cleg, bg=bg.inset)
+        } else {
+            legend(posi.leg, col=col, legend=txt.leg, cex=cleg, bg=bg.inset, pch=pch, pt.cex=temp)
+        }
     }
 
     ## eigenvalues discriminant analysis
@@ -949,6 +959,8 @@ predict.dapc <- function(object, newdata, prior = object$prior, dimen,
     ## HANDLE DIMEN ##
     if(!missing(dimen)){
         if(dimen > object$n.da) stop(paste("Too many dimensions requested. \nOnly", object$n.da, "discriminant functions were saved in DAPC."))
+    } else {
+        dimen <- object$n.da
     }
 
     ## CALL PREDICT.LDA ##
