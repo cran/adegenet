@@ -6,8 +6,8 @@
 \alias{get.likelihood}
 \alias{get.likelihood.seqTrack}
 \alias{seqTrack-class}
-\alias{as,seqTrack,graphNEL-method}
-\alias{coerce,seqTrack,graphNEL-method}
+%\alias{as,seqTrack,graphNEL-method}
+%\alias{coerce,seqTrack,graphNEL-method}
 \title{SeqTrack algorithm for reconstructing genealogies}
 \description{
   The SeqTrack algorithm [1] aims at reconstructing genealogies of sampled
@@ -165,7 +165,26 @@ mean(dat$ances==res$ances,na.rm=TRUE)
 
 
 ## PLOT RESULTS
+\dontrun{
 if(require(graph) && require(Rgraphviz)){
+## quick convertion method to graphNEL ##
+setOldClass("seqTrack")
+setAs("seqTrack", "graphNEL", def=function(from){
+    ##    if(!require(ape)) stop("package ape is required")
+    if(!require(graph)) stop("package graph is required")
+
+    ori.labels <- rownames(from)
+    from <- from[!is.na(from$ances),,drop=FALSE]
+
+
+     ## CONVERT TO GRAPH
+    res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
+    return(res)
+})
+## end conversion function ##
+
+
+
 dat.g <- as(dat, "graphNEL")
 res.g <- as(res, "graphNEL")
 
@@ -181,7 +200,7 @@ res.annot <- as.character(unlist(edgeWeights(res.g)))
 names(res.annot) <- edgeNames(res.g)
 renderGraph(layoutGraph(res.g, edgeAttrs = list(label = res.annot)))
 }
-
+}
 
 
 

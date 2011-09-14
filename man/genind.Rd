@@ -79,14 +79,16 @@ obj
 validObject(obj)
 summary(obj)
 
+\dontrun{
 # test inter-colonies structuration
 if(require(hierfstat)){
 gtest <- gstat.randtest(obj,nsim=99)
 gtest
 plot(gtest)
 }
+}
 
-# perform an inter-class PCA
+# perform a between-class PCA
 if(require(ade4)){
 pca1 <- dudi.pca(obj@tab,scannf=FALSE,scale=FALSE)
 pcabet1 <- between(pca1,obj@pop,scannf=FALSE)

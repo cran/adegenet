@@ -223,8 +223,6 @@ scatter(dapc1, cell=2, pch="", cstar=0, posi.da="top",
 lab=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
 
 
-
-
 ## SHOW COMPOPLOT ON MICROBOV DATA ##
 data(microbov)
 dapc1 <- dapc(microbov, n.pca=20, n.da=15)
@@ -233,6 +231,7 @@ compoplot(dapc1, lab="")
 
 
 
+\dontrun{
 ## EXAMPLE USING GENLIGHT OBJECTS ##
 ## simulate data
 x <- glSim(50,4e3-50, 50, ploidy=2)
@@ -252,7 +251,6 @@ loadingplot(tail(dapc1$var.contr, 100), main="Loading plot - last 100 SNPs")
 
 
 
-\dontrun{
 ## USE "PREDICT" TO PREDICT GROUPS OF NEW INDIVIDUALS ##
 ## load data
 data(sim2pop)

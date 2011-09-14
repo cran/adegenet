@@ -51,6 +51,7 @@ sup.pop=NULL, sub.pop=NULL, nsim=499)
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 if(require(hierfstat)){
 # here the example of g.stats.glob is taken using gstat.randtest
 data(gtrunchier)
@@ -70,6 +71,7 @@ gstat.randtest(x,nsim=99,method="within",sup.pop=gtrunchier$Locality)
 
 # pop test with sub.pop kept constant
 gstat.randtest(x,nsim=99,pop=gtrunchier$Locality,method="between",sub.pop=gtrunchier$Patch)
+}
 }
 }
 \keyword{manip}

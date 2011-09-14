@@ -167,6 +167,7 @@ glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE,
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 ## simulate a toy dataset
 x <- glSim(50,4e3, 50, ploidy=2)
 x
@@ -184,5 +185,6 @@ scatter(pca1, ratio=.2)
 ## plot showing groups
 s.class(pca1$scores, pop(x), col=colors()[c(131,134)])
 add.scatter.eig(pca1$eig,2,1,2)
+}
 }
 \keyword{multivariate}

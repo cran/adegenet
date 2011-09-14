@@ -35,7 +35,7 @@
 \begin{document}
 
 
-\SweaveOpts{prefix.string = figs/dapc, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+\SweaveOpts{prefix.string = dapc, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
 
 
 \definecolor{Soutput}{rgb}{0,0,0.56}
@@ -172,7 +172,7 @@ grp <- find.clusters(x, max.n.clust=40)
 @
 
 \begin{center}
-  \includegraphics[width=.7\textwidth]{figs/findclust-pca.pdf}
+  \includegraphics[width=.7\textwidth]{findclust-pca.pdf}
 \end{center}
 
 \noindent
@@ -184,7 +184,7 @@ are kept).
 
 Then, the function displays a graph of BIC values for increasing values of $k$:
 \begin{center}
-  \includegraphics[width=.7\textwidth]{figs/findclust-bic.pdf}
+  \includegraphics[width=.7\textwidth]{findclust-bic.pdf}
 \end{center}
 
 \noindent This graph shows a clear decrease of BIC until $k=6$ clusters, after which BIC increases.
@@ -234,7 +234,7 @@ summarise and understand the data. There is no longer a "true $k$", but some val
 better, more efficient summaries of the data than others.
 For instance, in the following case:
 \begin{center}
-  \includegraphics[width=.7\textwidth]{figs/findclust-noclearcut.pdf}
+  \includegraphics[width=.7\textwidth]{findclust-noclearcut.pdf}
 \end{center}
 
 \noindent , the concept of "true $k$" is fairly hypothetical. This does not mean that clutering
@@ -306,7 +306,7 @@ respect to the number of individuals can lead to over-fitting and unstability in
 probabilities returned by the method (see section below about the stability of membership probabilities).
 
 \begin{center}
-  \includegraphics[width=.7\textwidth]{figs/findclust-pca.pdf}
+  \includegraphics[width=.7\textwidth]{findclust-pca.pdf}
 \end{center}
 
 \noindent The bottomline is therefore retaining a few PCs without sacrificing too much information.
@@ -316,7 +316,7 @@ retain 40 PCs.
 Then, the method displays a barplot of eigenvalues for the discriminant analysis, asking for a
 number of discriminant functions to retain (unless argument \texttt{n.da} is provided).
 \begin{center}
-  \includegraphics[width=.7\textwidth]{figs/eigen-dapc.pdf}
+  \includegraphics[width=.7\textwidth]{eigen-dapc.pdf}
 \end{center}
 
 For small number of clusters, all eigenvalues can be retained since all discriminant functions can
@@ -655,7 +655,7 @@ dapc2 <- dapc(microbov, n.da=100, n.pca=50)
 temp <- optim.a.score(dapc2)
 @
 \begin{center}
-  \includegraphics[width=.7\textwidth]{figs/ascore.pdf}
+  \includegraphics[width=.7\textwidth]{ascore.pdf}
 \end{center}
 
 

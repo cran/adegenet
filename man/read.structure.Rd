@@ -10,6 +10,11 @@
    turning the 'ask' argument to FALSE. However, one has to know the
    number of genotypes, of markers and if genotypes are coded on a
    single or on two rows before importing data.
+
+   Note: \code{read.structure} is meant for DIPLOID DATA ONLY. Haploid
+   data with the STRUCTURE format can easily be read into R using
+   \code{read.table} or \code{read.csv} and then converted using
+   \code{\link{df2genind}}.
  }
 \usage{
 read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE)

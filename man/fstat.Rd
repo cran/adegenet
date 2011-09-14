@@ -55,16 +55,20 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
  \eqn{  Fst(A,B) = \frac{(Ht - (n_A Hs(A) + n_B Hs(B))/(n_A + n_B) )}{Ht}} \cr
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
-% \examples{
-% if(require(hierfstat)){
-% data(nancycats)
+\examples{
+\dontrun{
+## pairwise Fst
+mat.fst <- pairwise.fst(nancycats, res.type="matrix")
+mat.fst
 
-% ## Fst, Fis, Fit
-% fstat(nancycats)
 
-% ## pairwise Fst
-% mat.fst <- pairwise.fst(nancycats, res.type="matrix")
-% mat.fst
-% }
-% }
+## using hierfstat (if available)
+if(require(hierfstat)){
+data(nancycats)
+
+## Fst, Fis, Fit
+fstat(nancycats)
+}
+}
+}
 \keyword{multivariate}

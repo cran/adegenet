@@ -35,7 +35,7 @@
 \begin{document}
 
 
-\SweaveOpts{prefix.string = figs/base, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
+\SweaveOpts{prefix.string = base, echo=TRUE, eval=TRUE, fig = FALSE, eps = FALSE, pdf = TRUE}
 
 
 \definecolor{Soutput}{rgb}{0,0,0.56}
@@ -1566,7 +1566,7 @@ abline(lm(Dgen~Dgeo))
 title("Isolation by distance plot")
 @
 \begin{center}
-\includegraphics{figs/densIbd}
+\includegraphics{densIbd}
 \end{center}
 
 The scatterplot clearly shows one single consistent cloud of point, without discontinuities which
@@ -1636,7 +1636,7 @@ It seems we are now ready to proceed to the algorithm.
 mon1 <- monmonier(sim2pop$other$xy,D,gab)
 @
 \begin{center}
-\includegraphics[width=.5\textwidth]{figs/monthres1.png}
+\includegraphics[width=.5\textwidth]{monthres1.png}
 \end{center}
 
 \noindent This plot shows all local differences sorted in decreasing order.
@@ -1685,7 +1685,7 @@ D <- dist(pco1$li)
 mon1 <- monmonier(sim2pop$other$xy,D,gab)
 @
 \begin{center}
-\includegraphics[width=.5\textwidth]{figs/monthres2.png}
+\includegraphics[width=.5\textwidth]{monthres2.png}
 \end{center}
 
 <<mon9,echo=FALSE>>=

@@ -1,6 +1,25 @@
+	
+			CHANGES IN ADEGENET VERSION 1.3-1
+
+BUG FIXES
+
+	o removed all dependency with graph package, which was still
+	causing errors on some systems - whenever Bioconductor was not by
+	default one of the accessible repositories (used to be FAQ #4).
+
+NEW FEATURES
+
+	o legend in scatter.dapc now matches to the type and size of
+	symbols used in the plot.
+
+	o the package has been made smaller (from 20MB to 8.5MB).
+
+	o a warning has been added to read.structure: the function is made
+	for diploid data only.
+
+
+
 			CHANGES IN ADEGENET VERSION 1.3-0
-
-
 
 BUG FIXES
 
@@ -45,8 +64,6 @@ NEW FEATURES
 
 
 			CHANGES IN ADEGENET VERSION 1.2-8
-
-
 
 BUG FIXES
 

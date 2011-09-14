@@ -5,6 +5,11 @@
 \description{
   The function \code{read.genepop} reads Genepop data files (.gen) and
   convert them into a \linkS4class{genind} object.
+
+  Note: \code{read.genepop} is meant for DIPLOID DATA ONLY. Haploid
+  data with the Genepop format can be read into R using
+  \code{read.table} or \code{read.csv} after removing headers and 'POP'
+  lines, and then converted using \code{\link{df2genind}}.
 }
 \usage{
 read.genepop(file,missing=NA,quiet=FALSE)
