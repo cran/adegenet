@@ -166,7 +166,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
 setMethod("initialize", "genlight", function(.Object, ..., multicore=require("multicore"), n.cores=NULL) {
     if(multicore && !require(multicore)) stop("multicore package requested but not installed")
     if(multicore && is.null(n.cores)){
-        n.cores <- multicore:::detectCores()
+        n.cores <- parallel:::detectCores()
     }
 
     x <- .Object

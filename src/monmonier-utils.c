@@ -85,7 +85,7 @@ void CheckAllSeg(int *nrow, int *ncol, double *tab, tPointd a, tPointd b, int *a
 /* X est le tableau des segments ; chaque ligne est un segment (xP,yP,xQ,yQ) */
 int i,j,n,p,k,temp;
 double **mat;
-tPointd c,d,crois;
+tPointd c,d;
 
 
 /* Memory allocation for local C variables */
@@ -239,8 +239,6 @@ Assumes it is already known that abc are collinear.
 ---------------------------------------------------------------------*/
 bool    Between( tPointd a, tPointd b, tPointd c )
 {
-   tPointd      ba, ca;
-
    /* If ab not vertical, check betweenness on x; else on y. */
    if ( a[X] != b[X] )
      return ((a[X] <= c[X]) && (c[X] <= b[X])) ||

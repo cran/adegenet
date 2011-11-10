@@ -4,7 +4,12 @@
 \title{ Reading data from GENETIX}
 \description{
   The function \code{read.genetix} reads GENETIX data files (.gtx) and
-  convert them into a \linkS4class{genind} object. 
+  convert them into a \linkS4class{genind} object.
+
+  Note: \code{read.genetix} is meant for DIPLOID DATA ONLY. Haploid
+  data with the GENETIX format can be read into R using
+  \code{read.table} or \code{read.csv} after removing headers and 'POP'
+  lines, and then converted using \code{\link{df2genind}}.
 }
 \usage{
 read.genetix(file=NULL,missing=NA,quiet=FALSE)

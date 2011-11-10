@@ -178,7 +178,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
     ## SOME CHECKS ##
     if(multicore && !require(multicore)) stop("multicore package requested but not installed")
     if(multicore && is.null(n.cores)){
-        n.cores <- multicore:::detectCores()
+        n.cores <- parallel:::detectCores()
     }
 
 
@@ -302,7 +302,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
         if(!useC){
             if(multicore && !require(multicore)) stop("multicore package requested but not installed")
             if(multicore && is.null(n.cores)){
-                n.cores <- multicore:::detectCores()
+                n.cores <- parallel:::detectCores()
             }
 
 

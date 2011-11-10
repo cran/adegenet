@@ -4,7 +4,12 @@
 \title{ Reading data from Fstat}
 \description{
  The function \code{read.fstat} reads Fstat data files (.dat) and
- convert them into a \linkS4class{genind} object. 
+ convert them into a \linkS4class{genind} object.
+
+ Note: \code{read.fstat} is meant for DIPLOID DATA ONLY. Haploid
+ data with the Hierfstat format can be read into R using
+ \code{read.table} or \code{read.csv} after removing headers and 'POP'
+ lines, and then converted using \code{\link{df2genind}}.
 }
 \usage{
 read.fstat(file,missing=NA,quiet=FALSE)

@@ -1,27 +1,20 @@
 \encoding{UTF-8}
 \name{F statistics}
 \alias{fstat}
-\alias{Fst}
 \alias{FST}
 \alias{fst}
 \alias{pairwise.fst}
 \title{F statistics for genind objects}
 \description{
-  The function \code{fstat} computes a global Fst, while
   \code{pairwise.fst} computes Nei's pairwise Fst between all pairs of
-  populations. Both functions are designed for \linkS4class{genind}
-  objects.
+  populations using a \linkS4class{genind} object. Heretozygosities are
+  weighted by group sizes (see details).
 
-  \code{fstat} is wrapper for \code{varcomp.glob} from package
-  \code{hierfstat} for \linkS4class{genind} objects. It computes F statistics (Fst, Fis, Fit)
-  given a set of genotypes and a grouping factor.
-
-  \code{pairwise.fst} is an implementation of Nei's Fst in which
-  heretozygosities are weighted by group sizes (see details).
+  The function \code{fstat} is no longer available as the package
+  \code{hierfstat} has been removed from CRAN. For Fst, Fis and Fit, use
+  the function \code{Fst} from the \code{pagas} package (see example).
 }
 \usage{
-fstat(x, pop=NULL, fstonly=FALSE)
-
 pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
 }
 \arguments{
@@ -29,17 +22,15 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
   \item{pop}{a factor giving the 'population' of each individual. If NULL,
     pop is seeked from \code{pop(x)}. Note that the term population refers in
     fact to any grouping of individuals'.}
-  \item{fstonly}{a logical stating whether only the Fst value should be
-    returned (TRUE) instead of all F statistics (FALSE, default).}
   \item{res.type}{the type of result to be returned: a \code{dist} object, or a
     symmetric matrix}
   \item{truenames}{a logical indicating whether true labels (as opposed
     to generic labels) should be used to name the output.}
 }
 \value{
-  A vector, a matrix, or a dist object containing F statistics.}
-\seealso{\code{\link{Hs}}%, \code{\link[hierfstat]{varcomp.glob}},
- % \code{\link{gstat.randtest}}
+  A vector, a matrix, or a dist object containing F statistics.
+}
+\seealso{\code{\link{Hs}}
 }
 \references{
   Nei, M. (1973) Analysis of gene diversity in subdivided
@@ -60,15 +51,20 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
 ## pairwise Fst
 mat.fst <- pairwise.fst(nancycats, res.type="matrix")
 mat.fst
-
-
-## using hierfstat (if available)
-if(require(hierfstat)){
-data(nancycats)
+}
 
 ## Fst, Fis, Fit
-fstat(nancycats)
-}
+if(require(pegas)){
+data(nancycats)
+
+## conversion to pegas's format
+as.loci(nancycats)
+
+## use Fst from pegas
+fsttab <- Fst(as.loci(nancycats))
+
+## average over loci
+apply(fsttab, 2, mean)
 }
 }
 \keyword{multivariate}
