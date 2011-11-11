@@ -78,7 +78,10 @@
    alleles. This covers formats from many softwares like GENETIX or
    STRUCTURE. For this, see \code{\link{genind2df}}.\cr
 
+   Also note that the \code{pegas} package imports \linkS4class{genind}
+   objects using the function \code{as.loci}.
 
+   
    === MANIPULATING DATA ===\cr
    Several functions allow one to manipulate \linkS4class{genind} or
    \linkS4class{genpop} objects\cr
@@ -187,8 +190,8 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.3-1\cr
-    Date: \tab 2011-09-01 \cr
+    Version: \tab 1.3-2\cr
+    Date: \tab 2011-11-11 \cr
     License: \tab GPL (>=2)
   } 
 }
@@ -226,8 +229,8 @@
 \seealso{
   adegenet is related to several packages, in particular:\cr
   - \code{ade4} for multivariate analysis\cr
-  - \code{ape} for phylogenetics and DNA data handling\cr
   - \code{pegas} for population genetics tools\cr
+  - \code{ape} for phylogenetics and DNA data handling\cr
   - \code{seqinr} for handling nucleic and proteic sequences\cr
 }
 

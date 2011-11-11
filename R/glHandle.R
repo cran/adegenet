@@ -254,7 +254,7 @@ setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.siz
     if(!is.null(n.block) & !is.null(block.size)) stop("n.block and block.size are both provided.")
     if(multicore && !require(multicore)) stop("multicore package requested but not installed")
     if(multicore && is.null(n.cores)){
-        n.cores <- multicore:::detectCores()
+        n.cores <- parallel:::detectCores()
     }
 
 

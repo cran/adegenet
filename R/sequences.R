@@ -88,6 +88,13 @@ alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="
     if(!is.null(x$nam) && length(x$nam)!=N) stop("Inconsistent names in x (length of x$nam and x$seq do not match). ")
 
 
+    ## check that na.char does not overide specified exp.char
+    if(!is.null(na.char) && na.char %in% exp.char){
+        na.char <- na.char[!na.char %in% exp.char]
+        if(length(na.char)==0) na.char <- NULL
+    }
+
+
     ## convert alignment to matrix of characters
     mat <- sapply(x$seq, s2c, USE.NAMES=FALSE)
     if(nrow(mat)!=x$nb){
