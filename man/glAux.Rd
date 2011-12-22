@@ -82,7 +82,7 @@ glDotProd(x, center = FALSE, scale = FALSE, alleleAsUnit = FALSE,
 }
 
 \seealso{
-  - \code{\link{genlight}}: class of object for storing massive binary
+  - \code{\linkS4class{genlight}}: class of object for storing massive binary
   SNP data.
   
   - \code{\link{dapc}}: Discriminant Analysis of Principal Components.

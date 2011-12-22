@@ -4,7 +4,7 @@
 \title{Compute proportion of shared alleles}
 \description{The function \code{propShared} computes the proportion of
   shared alleles in a set of genotypes (i.e. from a \linkS4class{genind}
-  object). Current implementation works for haploid and diploid genotypes.
+  object). Current implementation works for any level of ploidy.
 }
 \usage{
 propShared(obj)
@@ -13,8 +13,7 @@ propShared(obj)
   \item{obj}{a \linkS4class{genind} object.}
  }
  \details{
-   Computations of the proportion of shared alleles are computed in C
-   for diploid individuals, and in efficient R code for haploid genotypes.
+   Computations of the numbers of shared alleles are done in C.
    Proportions are computed from all available data, i.e. proportion can
    be computed as far as there is at least one typed locus in common
    between two genotypes.
