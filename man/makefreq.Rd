@@ -33,6 +33,7 @@ makefreq(x,quiet=FALSE,missing=NA,truenames=TRUE)
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(microbov)
 obj1 <- microbov
 
@@ -53,6 +54,7 @@ add.scatter.eig(ca1$eig,nf=2,xax=1,yax=2,posi="topleft")
 pca1 <- dudi.pca(Xfreq$tab,scale=FALSE,scannf=FALSE)
 s.label(pca1$li,sub="Principal Component Analysis",csub=1.2)
 add.scatter.eig(pca1$eig,nf=2,xax=1,yax=2,posi="top")
+}
 }
 }
 \keyword{manip}

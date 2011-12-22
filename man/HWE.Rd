@@ -52,6 +52,7 @@
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(nancycats)
 obj <- nancycats
 if(require(genetics)){
@@ -62,6 +63,7 @@ HWE.test(obj,res.type="matrix")
 
 #more precise view to...
 obj.test$fca90$P10
+}
 }
 }
 \keyword{manip}

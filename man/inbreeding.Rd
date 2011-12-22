@@ -61,6 +61,7 @@ inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample", "function"), 
   Thibaut Jombart \email{t.jombart@imperial.ac.uk}\cr
 }
 \examples{
+\dontrun{
 ## cattle breed microsatellite data
 data(microbov)
 
@@ -85,5 +86,5 @@ Fdens[[1]]
 
 ## plot the first 10 functions
 invisible(sapply(Fdens[1:10], plot, ylab="Density", main="Density of probability of F values"))
-
+}
 }

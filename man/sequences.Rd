@@ -38,6 +38,7 @@ alignment2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThre
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 if(require(ape)){
 data(woodmouse)
 x <- DNAbin2genind(woodmouse)
@@ -62,6 +63,7 @@ if(require(ade4)){
 pco1 <- dudi.pco(D, scannf=FALSE,nf=2)
 scatter(pco1, posi="bottomright")
 title("Principal Coordinate Analysis\n-based on proteic distances-")
+}
 }
 }
 }

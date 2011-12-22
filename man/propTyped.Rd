@@ -38,9 +38,11 @@
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(nancycats)
 propTyped(nancycats,by="loc")
 propTyped(genind2genpop(nancycats),by="both")
+}
 }
 \keyword{methods}
 \keyword{manip}

@@ -56,11 +56,11 @@ genind2genpop(x,pop=NULL,missing=c("NA","0","chi2"),quiet=FALSE,
 }
 \examples{
 ## simple conversion
-  data(nancycats)
-  nancycats
-  catpop <- genind2genpop(nancycats)
-  catpop
-  summary(catpop)
+data(nancycats)
+nancycats
+catpop <- genind2genpop(nancycats)
+catpop
+summary(catpop)
 
 ## processing the @other slot
 data(sim2pop)

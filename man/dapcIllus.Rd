@@ -46,6 +46,7 @@
    structured populations. Submitted to \emph{Genetics}.
 }
 \examples{
+\dontrun{
 if(require(MASS) & require(ade4)){
 
 data(dapcIllus)
@@ -86,6 +87,7 @@ lapply(lres, scatter)
 
 # detach data
 detach(dapcIllus)
+}
 }
 }
 \keyword{datasets}

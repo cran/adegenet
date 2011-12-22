@@ -190,7 +190,7 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.3-3\cr
+    Version: \tab 1.3-4\cr
     Date: \tab 2011-12-21 \cr
     License: \tab GPL (>=2)
   } 

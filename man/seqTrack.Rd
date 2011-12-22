@@ -150,6 +150,7 @@ get.likelihood(\ldots)
   \code{\link[ape]{dist.dna}} in the ape package to compute pairwise genetic distances in aligned sequences.
 }
 \examples{
+\dontrun{
 if(require(ape)){
 ## ANALYSIS OF SIMULATED DATA ##
 ## SIMULATE A GENEALOGY
@@ -165,7 +166,6 @@ mean(dat$ances==res$ances,na.rm=TRUE)
 
 
 ## PLOT RESULTS
-\dontrun{
 if(require(graph) && require(Rgraphviz)){
 ## quick convertion method to graphNEL ##
 setOldClass("seqTrack")

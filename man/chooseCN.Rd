@@ -68,6 +68,7 @@ chooseCN(xy, ask = TRUE, type = NULL, result.type = "nb", d1 = NULL,
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(nancycats)
 if(require(spdep) & require(ade4)){
 
@@ -77,6 +78,7 @@ cn2 <- chooseCN(nancycats@other$xy,ask=FALSE,type=2)
 cn3 <- chooseCN(nancycats@other$xy,ask=FALSE,type=3)
 cn4 <- chooseCN(nancycats@other$xy,ask=FALSE,type=4)
 par(mfrow=c(1,1))
+}
 }
 }
 \keyword{spatial}
