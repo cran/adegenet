@@ -19,6 +19,7 @@ Thibaut Jombart (t.jombart@imperial.ac.uk), 2008.
 #include "adesub.h"
 
 
+/* THIS FUNCTION IS DEPRECATED */
 void sharedAll(int *matAll, int *nRow, int *nCol, double *resVec)
 {
 /* Declare local C variables */
@@ -109,3 +110,48 @@ void sharedAll(int *matAll, int *nRow, int *nCol, double *resVec)
 	freeinttab(mat);
 
 } /* end sharedAll */
+
+
+
+/* SMALL FUNCTION TO RETURN THE SMALLEST OF 2 INTEGERS */
+int min_int(int a, int b){
+	if(a<b) return a;
+	return b;
+}
+
+
+
+
+/* THIS IS THE FUNCTION TO USE */
+void nb_shared_all(int *in, int *out, int *nind, int *ncol){
+	int i, j, k, counter=0, **mat, n = *nind, p = *ncol;
+
+	/* allocate memory for table of allele nb */
+	tabintalloc(&mat, n, p);
+
+
+	/* reconstruct table of allele nb */
+	for(j=1;j<=p;j++){
+		for(i=1;i<=n;i++){
+			mat[i][j] = in[counter++];
+		}
+	}
+
+
+	/* perform computations */
+	counter = 0;
+	for(i=1;i<=(n-1);i++){
+		for(j=i+1;j<=n;j++){
+			out[counter] = 0; /* initialize result to zero */
+			for(k=1;k<=p;k++){
+				out[counter] = out[counter] + min_int(mat[i][k], mat[j][k]);
+			}
+			counter++;
+		}
+	}
+
+
+	/* Free allocated memory */
+	freeinttab(mat);
+
+} /* end nb_shared_all */

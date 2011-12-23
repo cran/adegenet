@@ -80,7 +80,7 @@ glSim(n.ind, n.snp.nonstruc, n.snp.struc = 0, grp.size = round(n.ind/2),
 }
 
 \seealso{
-  - \code{\link{genlight}}: class of object for storing massive binary
+  - \code{\linkS4class{genlight}}: class of object for storing massive binary
   SNP data.
 
   - \code{\link{glPlot}}: plotting \linkS4class{genlight} objects.
@@ -97,6 +97,7 @@ plot(x)
 x <- glSim(100, 1e3, n.snp.struc=100, ploid=2)
 plot(x)
 
+\dontrun{
 ## 1,000 non structured SNPs, 100 structured SNPs, ploidy=4
 x <- glSim(100, 1e3, n.snp.struc=100, ploid=4)
 plot(x)
@@ -108,6 +109,6 @@ plot(x)
 ##  same thing, loci with LD structures
 x <- glSim(100, 1e3, n.snp.struc=100, ploid=2, alpha=0.4, LD=TRUE, block.size=100)
 plot(x)
-
+}
 }
 \keyword{multivariate}

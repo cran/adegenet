@@ -46,6 +46,7 @@ Discriminant analysis of principal components: a new method for the analysis of
 genetically structured populations. Submitted to \emph{BMC genetics}.
 }
 \examples{
+\dontrun{
 #### H3N2 ####
 ## LOAD DATA
 data(H3N2)
@@ -83,6 +84,6 @@ myPath
 ## see ?fasta2genlight for more details
 obj <- fasta2genlight(myPath, chunk=10) # process 10 sequences at a time
 obj
-
+}
 }
 \keyword{datasets}

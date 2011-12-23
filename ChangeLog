@@ -1,3 +1,16 @@
+			CHANGES IN ADEGENET VERSION 1.3-3
+
+BUG FIXES
+
+	o fixed a bug of propShared, which gave wrong results under weird
+	circumstances. The new implementation is entirely different, uses
+	C code, and is now applicable to data with any level of ploidy.
+
+	o tried making the package smaller by removing unnecessary files.
+
+	
+
+
 			CHANGES IN ADEGENET VERSION 1.3-2
 
 BUG FIXES
@@ -7,13 +20,14 @@ BUG FIXES
 	some platforms).
 
 	o documentation update: fstat function is no longer available due
-	to removal of hierfstat package from CRAN.
+	to removal of hierfstat package from CRAN. An example shows how to
+	use Fst function from the pegas package instead.
 
 	o documentation update: doc now specifies that read.genepop and
 	read.fstat are meant for diploid data only, with guidelines for
 	haploid data.
 
-	
+
 
 			CHANGES IN ADEGENET VERSION 1.3-1
 

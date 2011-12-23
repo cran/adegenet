@@ -155,7 +155,7 @@ glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE,
 }
 
 \seealso{
-  - \code{\link{genlight}}: class of object for storing massive binary
+  - \code{\linkS4class{genlight}}: class of object for storing massive binary
   SNP data.
 
   - \code{\link{glSim}}: a simple simulator for \linkS4class{genlight} objects.
