@@ -28,6 +28,7 @@
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \seealso{\code{\link{seploc}}, \code{\link{repool}}}
 \examples{
+\dontrun{
 data(microbov)
 
 table(pop(microbov))
@@ -35,6 +36,6 @@ obj <- selPopSize(microbov, n=50)
 
 obj
 table(pop(obj))
-
+}
 }
 \keyword{manip}

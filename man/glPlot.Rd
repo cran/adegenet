@@ -46,6 +46,7 @@ glPlot(x, col=NULL, legend=TRUE, posi="bottomleft", bg=rgb(1,1,1,.5),\dots)
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 ## simulate data
 x <- glSim(100, 1e3, n.snp.struc=100, ploid=2)
 
@@ -58,6 +59,6 @@ plot(x, leg=FALSE)
 
 ## use other colors
 plot(x, col=heat.colors(3), bg="white")
-
+}
 }
 \keyword{multivariate}

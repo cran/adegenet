@@ -28,7 +28,9 @@ Hs(x, truenames=TRUE)
 \value{A vector of Hs values (one value per population).}
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(nancycats)
 Hs(genind2genpop(nancycats))
+}
 }
 \keyword{multivariate}

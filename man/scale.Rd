@@ -49,6 +49,7 @@
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 ## load data
 data(microbov)
 obj <- genind2genpop(microbov)
@@ -80,6 +81,7 @@ barplot(pcaX1$eig,main="Eigenvalues\n usual scaling")
 barplot(pcaX2$eig,main="Eigenvalues\n 'binomial' scaling")
 # differences between loadings of alleles
 s.match(pro1$scor1,pro1$scor2,clab=0,sub="usual -> binom (procustean rotation)")
+}
 }
 }
 \keyword{methods}

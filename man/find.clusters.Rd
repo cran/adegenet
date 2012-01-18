@@ -242,7 +242,7 @@ grp <- find.clusters(eHGDP, max.n=50, n.pca=200, scale=FALSE)
 
 ## and then, to plot BIC values:
 plot(grp$Kstat, type="b", col="blue")
-}
+
 
 
 ## ANOTHER SIMPLE EXAMPLE ## 
@@ -277,6 +277,6 @@ x
 plot(x)
 grp <- find.clusters(x, n.pca=100, choose=FALSE, stat="BIC")
 plot(grp$Kstat, type="o", xlab="number of clusters (K)",ylab="BIC",main="find.clusters on a genlight object\n(two groups)")
-
+}
 }
 \keyword{multivariate}

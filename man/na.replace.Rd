@@ -43,6 +43,7 @@
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(nancycats)
 
 obj1 <- genind2genpop(nancycats)
@@ -59,6 +60,7 @@ obj2$loc.names
 
 # missing values where replaced
 truenames(obj2)[,obj2$loc.fac=="L4"]
+}
 }
 \keyword{methods}
 \keyword{manip}

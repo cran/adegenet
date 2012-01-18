@@ -105,6 +105,7 @@ and documentation by Anne B. Dufour \email{dufour@biomserv.univ-lyon1.fr}
 \seealso{ \code{\link[ade4]{cailliez}},\code{\link[ade4]{dudi.pco}} 
 }
 \examples{
+\dontrun{
 if(require(ade4)){
 data(microsatt)
 obj <- as.genpop(microsatt$tab)
@@ -115,6 +116,7 @@ listPco <- lapply(listDist, dudi.pco,scannf=FALSE)
 
 par(mfrow=c(2,3))
 for(i in 1:5) {scatter(listPco[[i]],sub=paste("Dist:", i))}
+}
 }
 }
 \keyword{multivariate}

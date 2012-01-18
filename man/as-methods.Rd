@@ -51,6 +51,7 @@
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk}}
 \examples{
+\dontrun{
 data(microbov)
 x <- na.replace(microbov,method="0")
 as(x[1:3],"data.frame")
@@ -69,6 +70,7 @@ class(x)
 statis1 <- statis(x, scannf=FALSE)
 statis1
 plot(statis1)
+}
 }
 }
 \keyword{methods}
