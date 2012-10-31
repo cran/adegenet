@@ -16,6 +16,8 @@ Thibaut Jombart (t.jombart@imperial.ac.uk), 2008.
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
+#include <R_ext/Print.h>
+
 #include "adesub.h"
 
 

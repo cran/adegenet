@@ -311,6 +311,7 @@ plotSeqTrack <- function(x, xy, use.arrows=TRUE, annot=TRUE, labels=NULL,
 
 
 
+
 ###########################
 ## get.likelihood.seqTrack
 ###########################
@@ -334,24 +335,71 @@ get.likelihood.seqTrack <- function(x, mu, haplo.length,...){
 
 
 
-##########################
-## as("seqTrack", "graphNEL")
-##########################
-## if(require(graph)){
-## setOldClass("seqTrack")
-## setAs("seqTrack", "graphNEL", def=function(from){
-##     ##    if(!require(ape)) stop("package ape is required")
-##     if(!require(graph)) stop("package graph is required")
 
-##     ori.labels <- rownames(from)
-##     from <- from[!is.na(from$ances),,drop=FALSE]
+######################
+## as.igraph.seqTrack
+######################
+as.igraph.seqTrack <- function(x, col.pal=redpal, ...){
+    if(!require(igraph)) stop("package igraph is required")
+
+    ## GET DAG ##
+    from.old <- x$ances
+    to.old <- x$id
+    isNotNA <- !is.na(from.old) & !is.na(to.old)
+    vnames <- sort(unique(c(from.old,to.old)))
+    from <- match(from.old,vnames)
+    to <- match(to.old,vnames)
+    dat <- data.frame(from,to,stringsAsFactors=FALSE)[isNotNA,,drop=FALSE]
+
+    out <- graph.data.frame(dat, directed=TRUE, vertices=data.frame(names=vnames))
+
+    ## SET VARIOUS INFO ##
+    ## WEIGHTS FOR EDGES
+    E(out)$weight <- x$weight[isNotNA]
+
+    ## DATES FOR VERTICES (IN NB OF DAYS FROM EARLIEST DATE)
+    V(out)$dates <- difftime(x$date, min(x$date), units="days")
+
+    ## SET EDGE LABELS ##
+    E(out)$label <- E(out)$weight
+
+    ## SET EDGE COLORS
+    E(out)$color <- num2col(E(out)$weight, col.pal=col.pal, reverse=TRUE)
+
+    ## SET LAYOUT ##
+    ypos <- V(out)$dates
+    ypos <- abs(ypos-max(ypos))
+    attr(out, "layout") <- layout.fruchterman.reingold(out, params=list(miny=ypos, maxy=ypos))
+
+    ## RETURN OBJECT ##
+    return(out)
+
+} # end as.igraph.seqTrack
 
 
-##      ## CONVERT TO GRAPH
-##     res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
-##     return(res)
-## })
-## }
+
+
+
+
+#################
+## plot.seqTrack
+#################
+plot.seqTrack <- function(x, y=NULL, col.pal=redpal, ...){
+    if(!require(igraph)) stop("igraph is required")
+
+    ## get graph ##
+    g <- as.igraph(x, col.pal=col.pal)
+
+    ## make plot ##
+    plot(g, layout=attr(g,"layout"), ...)
+
+    ## return graph invisibly ##
+    return(invisible(g))
+
+} # end plot.seqTrack
+
+
+
 
 
 
@@ -382,6 +430,26 @@ get.likelihood.seqTrack <- function(x, mu, haplo.length,...){
 ######### OLD STUFF - NOT USED FOR NOW ######
 ################################################
 ################################################
+
+##########################
+## as("seqTrack", "graphNEL")
+##########################
+## if(require(graph)){
+## setOldClass("seqTrack")
+## setAs("seqTrack", "graphNEL", def=function(from){
+##     ##    if(!require(ape)) stop("package ape is required")
+##     if(!require(graph)) stop("package graph is required")
+
+##     ori.labels <- rownames(from)
+##     from <- from[!is.na(from$ances),,drop=FALSE]
+
+
+##      ## CONVERT TO GRAPH
+##     res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
+##     return(res)
+## })
+## }
+
 
 
 

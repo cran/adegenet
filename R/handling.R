@@ -346,7 +346,7 @@ repool <- function(...){
 
     ## handle pop
     listPop <- lapply(x, getPop)
-    pop <- unlist(listPop, use.name=FALSE)
+    pop <- unlist(listPop, use.names=FALSE)
     pop <- factor(pop)
 
     ## handle genotypes

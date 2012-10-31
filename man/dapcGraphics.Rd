@@ -140,6 +140,7 @@ compoplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 data(H3N2)
 dapc1 <- dapc(H3N2, pop=H3N2$other$epid, n.pca=30,n.da=6)
 
@@ -187,6 +188,6 @@ assignplot(dapc1, only.grp=2006)
 data(microbov)
 dapc3 <- dapc(microbov, n.pca=20, n.da=15)
 compoplot(dapc3, lab="")
-
+}
 }
 \keyword{multivariate}

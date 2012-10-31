@@ -20,7 +20,7 @@
 \S4method{seppop}{genind}(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
   drop=FALSE, treatOther=TRUE, quiet=TRUE)
 
-\S4method{seppop}{genlight}(x,pop=NULL, treatOther=TRUE, quiet=TRUE)
+\S4method{seppop}{genlight}(x,pop=NULL, treatOther=TRUE, quiet=TRUE, \dots)
 }
 \arguments{
   \item{x}{a \linkS4class{genind} object}
@@ -42,6 +42,7 @@
   \item{quiet}{a logical indicating whether warnings should be issued
     when trying to subset components of the \code{@other} slot (TRUE),
     or not (FALSE, default). }
+  \item{\dots}{further arguments passed to the genlight constructor.}
 }
 \value{
   According to 'res.type': a list of \linkS4class{genind} object

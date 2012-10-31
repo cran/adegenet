@@ -243,7 +243,9 @@
       warning unless the argument \code{quiet} is set to TRUE.}
     \item{quiet}{a logical indicating whether warnings should be issued
       when trying to subset components of the \code{@other} slot which
-      do not match the number of individuals (TRUE), or not (FALSE, default). }
+      do not match the number of individuals (TRUE), or not (FALSE,
+      default). }
+    \item{\dots}{further arguments passed to the genlight constructor.}
     }
 }
 \author{Thibaut Jombart (\email{t.jombart@imperial.ac.uk})}

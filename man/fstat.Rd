@@ -10,11 +10,12 @@
   populations using a \linkS4class{genind} object. Heretozygosities are
   weighted by group sizes (see details).
 
-  The function \code{fstat} is no longer available as the package
-  \code{hierfstat} has been removed from CRAN. For Fst, Fis and Fit, use
-  the function \code{Fst} from the \code{pagas} package (see example).
+  The function \code{fstat} is a wrapper for \code{varcomp.glob} of the
+  package \code{hierfstat}. For Fst, Fis and Fit, an alternative is
+  offered by \code{Fst} from the \code{pagas} package (see example).
 }
 \usage{
+fstat(x, pop=NULL, fstonly=FALSE)
 pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
 }
 \arguments{
@@ -26,6 +27,7 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
     symmetric matrix}
   \item{truenames}{a logical indicating whether true labels (as opposed
     to generic labels) should be used to name the output.}
+  \item{fstonly}{a logical stating whether only the Fst should be returned.}
 }
 \value{
   A vector, a matrix, or a dist object containing F statistics.
@@ -47,6 +49,8 @@ pairwise.fst(x, pop=NULL, res.type=c("dist","matrix"), truenames=TRUE)
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+data(nancycats)
+
 \dontrun{
 ## pairwise Fst
 mat.fst <- pairwise.fst(nancycats, res.type="matrix")
@@ -54,6 +58,12 @@ mat.fst
 }
 
 ## Fst, Fis, Fit
+## using hierfstat
+if(require(hierfstat)){
+fstat(nancycats)
+}
+
+## using pegas
 if(require(pegas)){
 data(nancycats)
 

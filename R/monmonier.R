@@ -57,7 +57,7 @@ if(!is.null(bd.length)) {
 
 
 if(scanthres){
-  plot(sort(unique(D)[unique(D) > 0],dec=TRUE),main="Local distances plot",type="l",xlab="rank",ylab="Sorted local distances")
+  plot(sort(unique(D)[unique(D) > 0],decreasing=TRUE),main="Local distances plot",type="l",xlab="rank",ylab="Sorted local distances")
   abline(h=Dlim,lty=2)
   mtext("Dashed line indicates present threshold")
   cat("Indicate the threshold (\'d\' for default): ")
@@ -468,7 +468,7 @@ plot.monmonier <- function(x, variable=NULL,displayed.runs=1:x$nrun,
 	cpoint <- 1
 	clegend <- 0
     }
-    s.value(xy,variable,grid=FALSE,include.ori=FALSE,addaxes=FALSE,neig=neig,
+    s.value(xy,variable,grid=FALSE,include.origin=FALSE,addaxes=FALSE,neig=neig,
             cneig=cneig,clegend=clegend,csize=csize,cpoint=cpoint,pch=20,pixmap=pixmap,
             method=method,sub=sub,csub=csub,possub=possub,add.plot=add.plot)
     opar <- par(no.readonly=TRUE)
@@ -613,7 +613,7 @@ D <- M*D
 if(is.null(threshold) || (threshold<0)) {Dlim <- summary(unique(D[D>0]))[5]} else {Dlim <- threshold}
 
 if(scanthres){
-  plot(sort(unique(D)[unique(D) > 0],dec=TRUE),main="Local distances plot", type="l", xlab="rank",ylab="Sorted local distances")
+  plot(sort(unique(D)[unique(D) > 0],decreasing=TRUE),main="Local distances plot", type="l", xlab="rank",ylab="Sorted local distances")
   abline(h=Dlim,lty=2)
   mtext("Dashed line indicates present threshold")
   cat("Indicate the threshold (\'d\' for default): ")
@@ -628,7 +628,7 @@ cat(paste("Boundaries computed (required: ",ntry,")\n",sep=""))
 bdr.values <- -1 # used so that the first boundary is automatically the best
 
 for(i in 0:(ntry-1)){
-  temp <- monmonier(xy, dist, cn.nb,skip=i,scanthres=FALSE,
+  temp <- monmonier(xy, dist, cn.nb,skip.local.diff=i,scanthres=FALSE,
                             threshold=Dlim, bd.length=bd.length, allowLoop=allowLoop)
   current.bdr.value <- sum(c(temp$run1$dir1$values, temp$run1$dir2$values))
 

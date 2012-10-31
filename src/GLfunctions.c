@@ -12,9 +12,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <R_ext/Print.h>
 
 #include "snpbin.h"
-
 
 
 /* Function to compute all dot products between individuals */

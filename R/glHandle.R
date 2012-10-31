@@ -81,7 +81,7 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
         x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
                  ind.names=old.ind.names, loc.names=new.loc.names,
-                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other)
+                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, multicore=FALSE,...)
     }
 
     return(x)
@@ -168,7 +168,7 @@ cbind.genlight <- function(...){
         res[[i]] <- Reduce(function(a,b) {cbind(a,b,checkPloidy=FALSE)}, lapply(myList, function(e) e@gen[[i]]) )
     }
 
-    res <- new("genlight",res)
+    res <- new("genlight",res,...)
 
     ## handle loc.names, alleles, etc. ##
     indNames(res) <- indNames(myList[[1]])
@@ -205,7 +205,7 @@ rbind.genlight <- function(...){
 
 
     ## build output
-    res <- new("genlight", Reduce(c, lapply(myList, function(e) e@gen)))
+    res <- new("genlight", Reduce(c, lapply(myList, function(e) e@gen)), ...)
     locNames(res) <- locNames(myList[[1]])
     alleles(res) <- alleles(myList[[1]])
     indNames(res) <- unlist(lapply(myList, indNames))
@@ -224,7 +224,7 @@ rbind.genlight <- function(...){
 ##########
 ## seppop
 ##########
-setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, quiet=TRUE){
+setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, quiet=TRUE, ...){
     ## HANDLE POP ARGUMENT ##
     if(!is.null(pop)) {
         pop(x) <- pop
@@ -233,7 +233,7 @@ setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TR
     if(is.null(pop(x))) stop("pop not provided and pop(x) is NULL")
 
     ## PERFORM SUBSETTING ##
-    kObj <- lapply(levels(pop(x)), function(lev) x[pop(x)==lev, , treatOther=treatOther, quiet=quiet])
+    kObj <- lapply(levels(pop(x)), function(lev) x[pop(x)==lev, , treatOther=treatOther, quiet=quiet, ...])
     names(kObj) <- levels(pop(x))
 
     return(kObj)

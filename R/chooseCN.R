@@ -10,7 +10,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   result.type <- tolower(result.type)
    if(is.null(type) & !ask) stop("Non-interactive mode but no graph chosen; please provide a value for 'type' argument.")
 
-  if(!require(spdep, quiet=TRUE)) stop("spdep library is required.")
+  if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
 
   res <- list()
 
@@ -92,7 +92,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
     ## graph types
     ## type 1: Delaunay
     if(type==1){
-      if(!require(tripack, quiet=TRUE)) stop("tripack library is required.")
+      if(!require(tripack, quietly=TRUE)) stop("tripack library is required.")
       cn <- tri2nb(xy)
     }
 
@@ -110,7 +110,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
 
     ## type 4: Minimum spanning tree
     if(type==4){
-      if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
+      if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
       cn <- ade4::mstree(dist(xy)) # there is also a spdep::mstree
       cn <- neig2nb(cn)
     }

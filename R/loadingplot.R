@@ -63,10 +63,10 @@ loadingplot.default <- function(x, at=NULL, threshold=quantile(x,0.75), axis=1, 
     ## annotate variables that are above the threshold
     if(sum(x > threshold)>0){
         x.ann <- at[x > threshold]
-        x.ann <- jitter(x.ann,fac=lab.jitter)
+        x.ann <- jitter(x.ann,factor=lab.jitter)
 
         y.ann <- x[x > threshold] + y.offset
-        y.ann <- jitter(y.ann,fac=lab.jitter)
+        y.ann <- jitter(y.ann,factor=lab.jitter)
 
         txt.ann <- lab[x > threshold]
         text(x=x.ann, y=y.ann, label=txt.ann, cex=cex.lab, srt=srt, adj=adj)
