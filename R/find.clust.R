@@ -12,8 +12,8 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
                                      pca.select=c("nbEig","percVar"), perc.pca=NULL,..., dudi=NULL){
 
     ## CHECKS ##
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quiet=TRUE)) stop("MASS library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     if(!require(stats)) stop("package stats is required")
 
     stat <- match.arg(stat)
@@ -196,8 +196,8 @@ find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c
                           scale=FALSE, scale.method=c("sigma", "binom"), truenames=TRUE, ...){
 
     ## CHECKS ##
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quiet=TRUE)) stop("MASS library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     if(!require(stats)) stop("package stats is required")
     if(!is.genind(x)) stop("x must be a genind object.")
     stat <- match.arg(stat)
@@ -246,8 +246,8 @@ find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat
                                    scale=FALSE, pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
 
     ## CHECKS ##
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quiet=TRUE)) stop("MASS library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     if(!require(stats)) stop("package stats is required")
     if(!inherits(x, "genlight")) stop("x is not a genlight object.")
     stat <- match.arg(stat)

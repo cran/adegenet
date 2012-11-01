@@ -8,7 +8,7 @@
   Currently, five distances are available, some of which are euclidian
   (see details).\cr
   
-  A non-euclidian distance can be transformed into an Euclidian one
+  A non-euclidian distance can be transformed into an Euclidean one
   using \code{\link[ade4]{cailliez}} in order to perform a
   Principal Coordinate Analysis \code{\link[ade4]{dudi.pco}} (both
   functions in \code{ade4}). \cr
@@ -40,26 +40,26 @@ Let \bold{P} the table of general term \eqn{p_{ij}^k}\cr
 
 The option \code{method} computes the distance matrices between populations using the frequencies \eqn{p_{ij}^k}. \cr
 
-1. Nei's distance (not Euclidian): \cr
+1. Nei's distance (not Euclidean): \cr
 \eqn{D_1(a,b)=- \ln(\frac{\sum_{k=1}^{\nu} \sum_{j=1}^{m(k)}
 p_{aj}^k p_{bj}^k}{\sqrt{\sum_{k=1}^{\nu} \sum_{j=1}^{m(k)}
 {(p_{aj}^k) }^2}\sqrt{\sum_{k=1}^{\nu} \sum_{j=1}^{m(k)}
 {(p_{bj}^k)}^2}})}\cr
 
-2. Angular distance or Edwards' distance (Euclidian):\cr
+2. Angular distance or Edwards' distance (Euclidean):\cr
 \eqn{D_2(a,b)=\sqrt{1-\frac{1}{\nu} \sum_{k=1}^{\nu}
 \sum_{j=1}^{m(k)} \sqrt{p_{aj}^k  p_{bj}^k}}}\cr
 
-3. Coancestrality coefficient or Reynolds' distance (Euclidian):\cr
+3. Coancestrality coefficient or Reynolds' distance (Eucledian):\cr
 \eqn{D_3(a,b)=\sqrt{\frac{\sum_{k=1}^{\nu}
 \sum_{j=1}^{m(k)}{(p_{aj}^k - p_{bj}^k)}^2}{2 \sum_{k=1}^{\nu} (1-
 \sum_{j=1}^{m(k)}p_{aj}^k p_{bj}^k)}}}\cr
 
-4. Classical Euclidean distance or Rogers' distance (Euclidian):\cr
+4. Classical Euclidean distance or Rogers' distance (Eucledian):\cr
 \eqn{D_4(a,b)=\frac{1}{\nu} \sum_{k=1}^{\nu} \sqrt{\frac{1}{2}
 \sum_{j=1}^{m(k)}{(p_{aj}^k - p_{bj}^k)}^2}}\cr
 
-5. Absolute genetics distance or Provesti 's distance (not Euclidian):\cr
+5. Absolute genetics distance or Provesti 's distance (not Euclidean):\cr
 \eqn{D_5(a,b)=\frac{1}{2{\nu}} \sum_{k=1}^{\nu} \sum_{j=1}^{m(k)}
 |p_{aj}^k - p_{bj}^k|}
 }
@@ -91,7 +91,7 @@ Prevosti A. (1974) La distancia genetica entre poblaciones. \emph{Miscellanea Al
 Prevosti A., Oca\~na J. and Alonso G. (1975) Distances between populations of Drosophila subobscura, based on chromosome arrangements frequencies. \emph{Theoretical and Applied Genetics}, \bold{45}, 231--241. \cr
 
 For more information on dissimilarity indexes:\cr
-Gower J. and Legendre P. (1986) Metric and Euclidian properties of
+Gower J. and Legendre P. (1986) Metric and Euclidean properties of
 dissimilarity coefficients. \emph{Journal of Classification}, \bold{3},
 5--48 \cr
 

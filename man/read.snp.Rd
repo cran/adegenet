@@ -79,12 +79,14 @@ read.snp(file, quiet=FALSE, chunkSize = 1000, multicore = require("multicore"),
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 ## show the example file ##
 ## this is the path to the file:
 system.file("files/exampleSnpDat.snp",package="adegenet")
 
 ## show its content:
 file.show(system.file("files/exampleSnpDat.snp",package="adegenet"))
+
 
 ## read the file
 obj <-
@@ -94,5 +96,6 @@ as.matrix(obj)
 ploidy(obj)
 alleles(obj)
 locNames(obj)
+}
 }
 \keyword{manip}

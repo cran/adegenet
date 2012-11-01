@@ -8,10 +8,10 @@
 ## mean.gen.time, sd.gen.time: average time for transmission and its standard deviation (normal dist)
 ## mean.repro, sd.repro: average number of transmissions and its standard deviation (normal dist)
 ##
-haploGen <- function(seq.length=10000, mu=0.0001, t.max=20,
-                     gen.time=function(){round(rnorm(1,5,1))},
-                     repro=function(){round(rnorm(1,2,1))}, max.nb.haplo=1e3,
-                     geo.sim=TRUE, grid.size=5, lambda.xy=0.5,
+haploGen <- function(seq.length=1e4, mu.transi=1e-4, mu.transv=mu.transi/2, t.max=20,
+                     gen.time=function(){1+rpois(1,0.5)},
+                     repro=function(){rpois(1,1.5)}, max.nb.haplo=200,
+                     geo.sim=FALSE, grid.size=10, lambda.xy=0.5,
                      mat.connect=NULL,
                      ini.n=1, ini.xy=NULL){
 
@@ -19,55 +19,27 @@ haploGen <- function(seq.length=10000, mu=0.0001, t.max=20,
     if(!require(ape)) stop("The ape package is required.")
 
 
-    ## HACK TO FIX APE'S BUG ##
-    env <- environment(as.list.DNAbin)
-    as.list.DNAbin.new <- function (x, ...){
-        if (is.list(x))
-            return(x)
-        if (is.null(dim(x)))
-            obj <- list(x)
-        else {
-            n <- nrow(x)
-            obj <- vector("list", n)
-            for (i in 1:n) obj[[i]] <- x[i, ]
-            names(obj) <- rownames(x)
-        }
-        class(obj) <- "DNAbin"
-        obj
-    }
-
-    as.list.DNAbin <- as.list.DNAbin.new
-    unlockBinding("as.list.DNAbin", env)
-    assignInNamespace("as.list.DNAbin", as.list.DNAbin.new, ns="ape", envir=env)
-    assign("as.list.DNAbin", as.list.DNAbin.new, envir=env)
-    lockBinding("as.list.DNAbin", env)
-
-    ## END HACK ##
-
-
-
     ## HANDLE ARGUMENTS ##
-    if(is.numeric(mu)){
-        mu.val <- mu
-        mu <- function(){return(mu.val)}
-    }
-
+    ## if numeric value, make it a function
     if(is.numeric(gen.time)){
-        gen.time.val <- gen.time
-        gen.time <- function(){gen.time.val}
+        gen.time.val <- gen.time[1]
+        gen.time <- function(){return(gen.time.val)}
     }
 
+    ## if numeric value, make it a function
     if(is.numeric(repro)){
-        repro.val <- repro
-        repro <- function(){repro.val}
+        repro.val <- repro[1]
+        repro <- function(){return(repro.val)}
     }
+
 
 
     ## GENERAL VARIABLES ##
     NUCL <- as.DNAbin(c("a","t","c","g"))
+    TRANSISET <- list('a'=as.DNAbin('g'), 'g'=as.DNAbin('a'), 'c'=as.DNAbin('t'), 't'=as.DNAbin('c'))
+    TRANSVSET <- list('a'=as.DNAbin(c('c','t')), 'g'=as.DNAbin(c('c','t')), 'c'=as.DNAbin(c('a','g')), 't'=as.DNAbin(c('a','g')))
     res <- list(seq=as.matrix(as.DNAbin(character(0))), dates=integer(), ances=character())
     toExpand <- logical()
-    ##mu <- mu/365 # mutation rate by day
     myGrid <- matrix(1:grid.size^2, ncol=grid.size, nrow=grid.size)
 
 
@@ -80,20 +52,41 @@ haploGen <- function(seq.length=10000, mu=0.0001, t.max=20,
         return(res)
     }
 
-    ## create substitutions for defined SNPs
+    ## create substitutions for defined SNPs - no longer used
     substi <- function(snp){
-        res <- sapply(1:length(snp), function(e) sample(setdiff(NUCL,e),1)) # ! sapply does not work on DNAbin vectors directly
+        res <- sapply(1:length(snp), function(i) sample(setdiff(NUCL,snp[i]),1)) # ! sapply does not work on DNAbin vectors directly
+        class(res) <- "DNAbin"
+        return(res)
+    }
+
+    ## create transitions for defined SNPs
+    transi <- function(snp){
+        res <- unlist(TRANSISET[as.character(snp)])
+        class(res) <- "DNAbin"
+        return(res)
+    }
+
+    ## create transversions for defined SNPs
+    transv <- function(snp){
+        res <- sapply(TRANSVSET[as.character(snp)],sample,1)
         class(res) <- "DNAbin"
         return(res)
     }
 
     ## duplicate a sequence (including possible mutations)
     seq.dupli <- function(seq, T){ # T is the number of time units between ancestor and decendent
-        ## toChange <- as.logical(rbinom(n=seq.length, size=1, prob=mu())) # can be faster
-        temp <- rbinom(n=1, size=seq.length*T, prob=mu()) # total number of mutations
-        toChange <- sample(1:seq.length, size=temp, replace=FALSE)
-        if(sum(toChange)>0) {
-            seq[toChange] <- substi(seq[toChange])
+        ## transitions ##
+        n.transi <- rbinom(n=1, size=seq.length*T, prob=mu.transi) # total number of transitions
+        if(n.transi>0) {
+            idx <- sample(1:seq.length, size=n.transi, replace=FALSE)
+            seq[idx] <- transi(seq[idx])
+        }
+
+        ## transversions ##
+        n.transv <- rbinom(n=1, size=seq.length*T, prob=mu.transv) # total number of transitions
+        if(n.transv>0) {
+            idx <- sample(1:seq.length, size=n.transv, replace=FALSE)
+            seq[idx] <- transv(seq[idx])
         }
         return(seq)
     }
@@ -107,7 +100,7 @@ haploGen <- function(seq.length=10000, mu=0.0001, t.max=20,
     ## how many days before duplication occurs ?
     time.dupli <- function(){
         ##res <- round(rnorm(1, mean=mean.gen.time, sd=sd.gen.time))
-        res <- gen.time()
+        res <- round(gen.time()) # force integers
         res[res<0] <- 0
         return(res)
     }
@@ -558,6 +551,81 @@ sample.haploGen <- function(x, n){
 
     return(res)
 } # end sample.haploGen
+
+
+
+
+
+
+######################
+## as.igraph.haploGen
+######################
+as.igraph.haploGen <- function(x, col.pal=redpal, ...){
+    if(!require(igraph)) stop("package igraph is required for this operation")
+    if(!require(ape)) stop("package ape is required for this operation")
+
+    ## GET DAG ##
+    from <- x$ances
+    to <- x$id
+    isNotNA <- !is.na(from) & !is.na(to)
+    dat <- data.frame(from,to,stringsAsFactors=FALSE)[isNotNA,,drop=FALSE]
+    vnames <- as.character(unique(unlist(dat)))
+    out <- graph.data.frame(dat, directed=TRUE, vertices=data.frame(names=vnames, dates=x$dates[vnames]))
+
+    ## SET WEIGHTS ##
+    D <- as.matrix(dist.dna(x$seq,model="raw")*ncol(x$seq))
+    temp <- mapply(function(i,j) return(D[i,j]), as.integer(from), as.integer(to))
+    E(out)$weight <- temp[isNotNA]
+
+
+    ## DATES FOR VERTICES
+    V(out)$dates <- x$date
+
+    ## SET EDGE LABELS ##
+    E(out)$label <- E(out)$weight
+
+    ## SET EDGE COLORS
+    E(out)$color <- num2col(E(out)$weight, col.pal=col.pal, reverse=TRUE)
+
+    ## SET LAYOUT ##
+    ypos <- V(out)$dates
+    ypos <- abs(ypos-max(ypos))
+    attr(out, "layout") <- layout.fruchterman.reingold(out, params=list(miny=ypos, maxy=ypos))
+
+    return(out)
+} # end as.igraph.haploGen
+
+
+
+
+
+
+#################
+## plot.haploGen
+#################
+plot.haploGen <- function(x, y=NULL, col.pal=redpal, ...){
+    if(!require(igraph)) stop("igraph is required")
+
+    ## get graph ##
+    g <- as.igraph(x, col.pal=col.pal)
+
+    ## make plot ##
+    plot(g, layout=attr(g,"layout"), ...)
+
+    ## return graph invisibly ##
+    return(invisible(g))
+
+} # end plot.haploGen
+
+
+
+
+
+
+
+
+
+
 
 
 

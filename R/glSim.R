@@ -2,8 +2,7 @@
 ##########
 ## glSim
 ##########
-glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2), ploidy=1, alpha=0,
-                  block.size=NULL, LD=FALSE){
+glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2), ploidy=1, alpha=0, block.size=NULL, LD=FALSE, ...){
 
     ## BASIC CHECKS ##
     if( any(c(n.ind, n.snp.nonstruc+n.snp.struc) <1)) stop("null numbers of individuals and/or SNPs requested")
@@ -38,7 +37,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
             Sig <- t(Sig) %*% Sig/2 # get the covariance matrix
             temp <- mvrnorm(n, rep(0,p), Sig) # continuous data
             temp <- matrix(as.integer(cut(temp, breaks=QUANT))-1, nrow=n, ncol=p)
-            return(new("genlight", temp, ploidy=ploidy))
+            return(new("genlight", temp, ploidy=ploidy, ...))
         }
 
         if(n.snp.struc > 0){
@@ -54,7 +53,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
         f1 <- function(n,p){
             temp <- sapply(1:p, function(i) rbinom(n, ploidy, runif(1)))
             if(n==1) {temp <- matrix(temp,nrow=1)}
-            return(new("genlight", temp, ploidy=ploidy))
+            return(new("genlight", temp, ploidy=ploidy, ...))
         }
 
         ## draw p snp for i indiv and convert into a genlight - differences between 2 groups
@@ -66,7 +65,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
                 if(grpA.size==1) {tempA <- matrix(tempA,nrow=1)}
                 tempB <- sapply(probB, function(i) rbinom(grpB.size, ploidy, i) )
                 if(grpB.size==1) {tempB <- matrix(tempB,nrow=1)}
-                return(new("genlight", rbind(tempA,tempB), ploidy=ploidy))
+                return(new("genlight", rbind(tempA,tempB), ploidy=ploidy, ...))
             }
         }
     }

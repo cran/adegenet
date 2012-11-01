@@ -49,6 +49,7 @@
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \seealso{\code{\link{seppop}}, \code{\link{repool}}}
 \examples{
+\dontrun{
 ## example on genind objects
 data(microbov)
 
@@ -72,5 +73,6 @@ glPlot(foo[[3]], main="3rd block") # plot 3rd block
 foo <- seploc(x, block.size=600, random=TRUE) # split data, randomize loci
 foo # note the different block sizes
 glPlot(foo[[1]])
+}
 }
 \keyword{manip}

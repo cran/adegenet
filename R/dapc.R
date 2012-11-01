@@ -11,8 +11,8 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
                             pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
 
     ## FIRST CHECKS
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quiet=TRUE)) stop("MASS library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     grp <- as.factor(grp)
     if(length(grp) != nrow(x)) stop("Inconsistent length for grp")
     pca.select <- match.arg(pca.select)
@@ -156,8 +156,8 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
                         pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
 
     ## FIRST CHECKS
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quiet=TRUE)) stop("MASS library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
 
     if(!is.genind(x)) stop("x must be a genind object.")
 
@@ -219,8 +219,8 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
                           scale=FALSE,  var.contrib=TRUE, pca.info=TRUE,
                           pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
     ## FIRST CHECKS ##
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quiet=TRUE)) stop("MASS library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     if(!inherits(x, "genlight")) stop("x must be a genlight object.")
 
     pca.select <- match.arg(pca.select)
@@ -457,7 +457,7 @@ print.dapc <- function(x, ...){
 ## summary.dapc
 ##############
 summary.dapc <- function(object, ...){
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
 
     x <- object
     res <- list()
@@ -494,7 +494,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
                          cstar = 1, cellipse = 1.5, axesell = FALSE, label = levels(grp), clabel = 1, xlim = NULL, ylim = NULL,
                          grid = FALSE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE, sub = "", csub = 1, possub = "bottomleft",
                          cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, ...){
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     ONEDIM <- xax==yax | ncol(x$ind.coord)==1
 
     ## recycle color and pch
@@ -595,7 +595,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
             box()
         }
 
-        add.scatter(inset(), posi=posi.da, ratio=ratio.da, bg=bg.inset, inset=inset.da)
+        add.scatter(inset(), posi=posi.da, ratio=ratio.da, bg.col=bg.inset, inset=inset.da)
         ##add.scatter.eig(x$eig, ncol(x$loadings), axes[1], axes[2], posi=posi, ratio=ratio, csub=csub) # does not allow for bg
     }
 
@@ -609,7 +609,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
                  type="h", xaxt="n", yaxt="n", xlab="", ylab="", lwd=2)
             mtext(side=3, "PCA eigenvalues", line=-1.2, adj=.1)
         }
-        add.scatter(inset(), posi=posi.pca, ratio=ratio.pca, bg=bg.inset, inset=inset.pca)
+        add.scatter(inset(), posi=posi.pca, ratio=ratio.pca, bg.col=bg.inset, inset=inset.pca)
     }
 
 
@@ -625,7 +625,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
 ## assignplot
 ############
 assignplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75, pch=3){
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     if(!inherits(x, "dapc")) stop("x is not a dapc object")
 
     ## handle data from predict.dapc ##
@@ -662,8 +662,8 @@ assignplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75
     Z <- Z[,ncol(Z):1,drop=FALSE ]
 
     image(x=1:n.grp, y=seq(.5, by=1, le=n.ind), Z, col=rev(heat.colors(100)), yaxt="n", ylab="", xaxt="n", xlab="Clusters")
-    axis(side=1, at=1:n.grp,tick=FALSE, label=colnames(x$posterior))
-    axis(side=2, at=seq(.5, by=1, le=n.ind), label=rev(rownames(x$posterior)), las=1, cex.axis=cex.lab)
+    axis(side=1, at=1:n.grp,tick=FALSE, labels=colnames(x$posterior))
+    axis(side=2, at=seq(.5, by=1, le=n.ind), labels=rev(rownames(x$posterior)), las=1, cex.axis=cex.lab)
     abline(h=1:n.ind, col="lightgrey")
     abline(v=seq(0.5, by=1, le=n.grp))
     box()
@@ -686,7 +686,7 @@ assignplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75
 ############
 compoplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
                       legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...){
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     if(!inherits(x, "dapc")) stop("x is not a dapc object")
 
 

@@ -25,8 +25,8 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
     invisible(validObject(obj))
     ## checkType(obj)
-    if(!require(ade4, quiet=TRUE)) stop("ade4 library is required.")
-    if(!require(spdep, quiet=TRUE)) stop("spdep library is required.")
+    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
 
 
     ## handle xy coordinates
@@ -345,21 +345,21 @@ plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
 
     # 1
     if(n<30) clab <- 1 else clab <- 0
-    s.label(xy, clab=clab, include.ori=FALSE, addaxes=FALSE, neig=neig,
+    s.label(xy, clabel=clab, include.origin=FALSE, addaxes=FALSE, neig=neig,
             cneig=1, sub="Connection network", csub=2)
 
     # 2
-    s.image(xy,z, include.ori=FALSE, grid=TRUE, kgrid=10, cgrid=1,
+    s.image(xy,z, include.origin=FALSE, grid=TRUE, kgrid=10, cgrid=1,
             sub=sub, csub=csub, possub="bottomleft")
     box()
 
     # 3
     if(n<30) {neig <- nb2neig(x$lw$neighbours)} else {neig <- NULL}
-    s.value(xy,z, include.ori=FALSE, addaxes=FALSE, clegend=0, csize=.6,
+    s.value(xy,z, include.origin=FALSE, addaxes=FALSE, clegend=0, csize=.6,
             neig=neig, sub=sub, csub=csub, possub="bottomleft")
 
     # 4
-    s.value(xy,z, include.ori=FALSE, addaxes=FALSE, clegend=0, csize=.6,
+    s.value(xy,z, include.origin=FALSE, addaxes=FALSE, clegend=0, csize=.6,
             method="greylevel", neig=neig, sub=sub, csub=csub, possub="bottomleft")
 
     # 5

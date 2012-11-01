@@ -2,7 +2,8 @@
 \name{gstat.randtest}
 \alias{gstat.randtest}
 \title{Goudet's G-statistic Monte Carlo test for genind object}
-\description{The function \code{gstat.randtest} implements Goudet's
+\description{
+  The function \code{gstat.randtest} implements Goudet's
   G-statistic Monte Carlo test (\code{g.stats.glob}, package
   \code{hierfstat}) for \code{genind} object. \cr
   The output is an object of the class \code{randtest} (package

@@ -6,6 +6,8 @@
 \alias{get.likelihood}
 \alias{get.likelihood.seqTrack}
 \alias{seqTrack-class}
+\alias{as.igraph.seqTrack}
+\alias{plot.seqTrack}
 %\alias{as,seqTrack,graphNEL-method}
 %\alias{coerce,seqTrack,graphNEL-method}
 \title{SeqTrack algorithm for reconstructing genealogies}
@@ -28,6 +30,10 @@ seqTrack(\ldots)
 
 \method{seqTrack}{matrix}(x, x.names, x.dates, best = c("min", "max"),
     prox.mat = NULL, mu = NULL, haplo.length = NULL, \dots)
+
+\method{as.igraph}{seqTrack}(x, col.pal=redpal, \dots)
+
+\method{plot}{seqTrack}(x, y=NULL, col.pal=redpal, \dots)
 
 plotSeqTrack(x, xy, use.arrows=TRUE, annot=TRUE, labels=NULL, col=NULL,
                          bg="grey", add=FALSE, quiet=FALSE,
@@ -64,7 +70,11 @@ get.likelihood(\ldots)
  \item{haplo.length}{(optional) the length of analysed sequences in
     number of nucleotides. When 'x' contains numbers of mutations, used
     to resolve ties using a maximum likelihood approach (requires
-    \code{mu} to be provided).}  
+    \code{mu} to be provided).}
+  \item{y}{unused argument, for compatibility with 'plot'.}
+  \item{col.pal}{a color palette to be used to represent weights using
+   colors on the edges of the graph. See \code{?num2col}. Note that the
+   palette is inversed by default.}
   \item{xy}{spatial coordinates of the sampled haplotypes/genotypes.}
   \item{use.arrows}{a logical indicating whether arrows should be used to
     represented ancestries (pointing from ancestor to descendent, TRUE),
@@ -131,76 +141,70 @@ get.likelihood(\ldots)
   \code{get.likelihood.seqTrack}. Note that this is only possible
   if \code{x} contained number of mutations.
 
-  
-  === Converting seqTrack objects to graphs ===\cr
-  seqTrack objects can be converted to \code{graphNEL-class} objects,
-  which can in turn be plotted and manipulated using classical graph
-  tools. Simply use 'as(x, "graphNEL")' where 'x' is a seqTrack
-  object. This functionality requires the \code{graph} package. Note
-  that this is to be installed from Bioconductor, likely using the following
-  command lines:\cr
-  source("http://bioconductor.org/biocLite.R")\cr
-  biocLite("graph")
 
-  Also note that the R package Rgraphviz (also on Bioconductor) provides
-  nice ways of plotting graphs (replace 'graph' with 'Rgraphviz' in the
-  previous command lines to install this package).
+  === Plotting/converting seqTrack objects to graphs ===\cr
+  seqTrack objects are best plotted as graphs. From adegenet_1.3-5
+  onwards, seqTrack objects can be converted to \code{igraph} objects (from the
+  package \code{igraph}), which can in turn be plotted and manipulated
+  using classical graph tools. The plot method does this operation
+  automatically, using colors to represent edge weights, and using
+  time-ordering of the data from top (ancient) to bottom (recent).
 }
 \seealso{
   \code{\link[ape]{dist.dna}} in the ape package to compute pairwise genetic distances in aligned sequences.
 }
 \examples{
 \dontrun{
-if(require(ape)){
+if(require(ape && require(igraph))){
 ## ANALYSIS OF SIMULATED DATA ##
 ## SIMULATE A GENEALOGY
 dat <- haploGen(seq.l=1e4, repro=function(){sample(1:4,1)}, gen.time=1, t.max=3)
-
+plot(dat, main="Simulated data")
 
 ## SEQTRACK ANALYSIS
 res <- seqTrack(dat, mu=0.0001, haplo.length=1e4) 
-
+plot(res, main="seqTrack reconstruction")
 
 ## PROPORTION OF CORRECT RECONSTRUCTION
 mean(dat$ances==res$ances,na.rm=TRUE)
 
 
-## PLOT RESULTS
-if(require(graph) && require(Rgraphviz)){
-## quick convertion method to graphNEL ##
-setOldClass("seqTrack")
-setAs("seqTrack", "graphNEL", def=function(from){
-    ##    if(!require(ape)) stop("package ape is required")
-    if(!require(graph)) stop("package graph is required")
+% ## PLOT RESULTS
+% if(require(graph) && require(Rgraphviz)){
+% ## quick convertion method to graphNEL ##
+% setOldClass("seqTrack")
+% setAs("seqTrack", "graphNEL", def=function(from){
+%     ##    if(!require(ape)) stop("package ape is required")
+%     if(!require(graph)) stop("package graph is required")
 
-    ori.labels <- rownames(from)
-    from <- from[!is.na(from$ances),,drop=FALSE]
-
-
-     ## CONVERT TO GRAPH
-    res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
-    return(res)
-})
-## end conversion function ##
+%     ori.labels <- rownames(from)
+%     from <- from[!is.na(from$ances),,drop=FALSE]
 
 
-
-dat.g <- as(dat, "graphNEL")
-res.g <- as(res, "graphNEL")
-
-
-## ORIGINAL DATA
-dat.annot <- as.character(unlist(edgeWeights(dat.g)))
-names(dat.annot) <- edgeNames(dat.g)
-renderGraph(layoutGraph(dat.g, edgeAttrs = list(label = dat.annot)))
+%      ## CONVERT TO GRAPH
+%     res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
+%     return(res)
+% })
+% ## end conversion function ##
 
 
-## SEQTRACK RESULTS
-res.annot <- as.character(unlist(edgeWeights(res.g)))
-names(res.annot) <- edgeNames(res.g)
-renderGraph(layoutGraph(res.g, edgeAttrs = list(label = res.annot)))
-}
-}
+
+% dat.g <- as(dat, "graphNEL")
+% res.g <- as(res, "graphNEL")
+
+
+% ## ORIGINAL DATA
+% dat.annot <- as.character(unlist(edgeWeights(dat.g)))
+% names(dat.annot) <- edgeNames(dat.g)
+% renderGraph(layoutGraph(dat.g, edgeAttrs = list(label = dat.annot)))
+
+
+% ## SEQTRACK RESULTS
+% res.annot <- as.character(unlist(edgeWeights(res.g)))
+% names(res.annot) <- edgeNames(res.g)
+% renderGraph(layoutGraph(res.g, edgeAttrs = list(label = res.annot)))
+% }
+
 
 
 
@@ -283,6 +287,7 @@ plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2, date.range=curRange, co
 title(paste(curRange, collapse=" to "))
 legend("bottom", lty=1, leg=0:8, title="number of mutations", col=1:9,lwd=2, horiz=TRUE)
 
+}
 }
 }
 }

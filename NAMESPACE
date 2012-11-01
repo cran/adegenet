@@ -8,5 +8,9 @@ exportPattern(".")
 import(
   methods,
   MASS,
-  ade4
+  ade4,
+  igraph
 )
+
+# Load DLL
+useDynLib(adegenet)
