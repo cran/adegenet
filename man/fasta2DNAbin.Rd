@@ -47,6 +47,7 @@ fasta2DNAbin(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE)
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 ## show the example file ##
 ## this is the path to the file:
 myPath <- system.file("files/usflu.fasta",package="adegenet")
@@ -55,6 +56,6 @@ myPath
 ## read the file
 obj <- fasta2DNAbin(myPath, chunk=10) # process 10 sequences at a time
 obj
-
+}
 }
 \keyword{manip}

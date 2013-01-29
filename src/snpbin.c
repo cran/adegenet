@@ -393,7 +393,6 @@ short int snpbin_isna(struct snpbin *x, int i){
 double snpbin_dotprod_int(struct snpbin *x, struct snpbin *y, double *mean, double *sd){
     /* define variables, allocate memory */
     int P = nLoc(x), i;
-    short isna;
     double res = 0.0;
     int *vecx, *vecy;
     vecx = (int *) calloc(P, sizeof(int));
@@ -415,7 +414,6 @@ double snpbin_dotprod_int(struct snpbin *x, struct snpbin *y, double *mean, doub
     /* } */
 
     /* compute dot product */
-    int count=0;
     for(i=0;i<P;i++){
 	if(snpbin_isna(x,i) == 0 && snpbin_isna(y,i) == 0){
 	    /* res += ((vecx[i]-mean[i])/sd[i]) * ((vecy[i]-mean[i])/sd[i]); */
@@ -440,7 +438,6 @@ double snpbin_dotprod_int(struct snpbin *x, struct snpbin *y, double *mean, doub
 double snpbin_dotprod_freq(struct snpbin *x, struct snpbin *y, double *mean, double *sd){
     /* define variables, allocate memory */
     int P = nLoc(x), i;
-    short isna;
     double res = 0.0;
     double *vecx, *vecy;
     vecx = (double *) calloc(P, sizeof(double));
@@ -462,7 +459,6 @@ double snpbin_dotprod_freq(struct snpbin *x, struct snpbin *y, double *mean, dou
     /* } */
 
     /* compute dot product */
-    int count=0;
     for(i=0;i<P;i++){
 	if(snpbin_isna(x,i) == 0 && snpbin_isna(y,i) == 0){
 	    /* res += ((vecx[i]-mean[i])/sd[i]) * ((vecy[i]-mean[i])/sd[i]); */
@@ -489,7 +485,7 @@ double snpbin_dotprod_freq(struct snpbin *x, struct snpbin *y, double *mean, dou
 /* and then used to create different 'snpbin' on the C side */
 struct genlightC genlightTogenlightC(unsigned char *gen, int *nbvecperind, int *byteveclength, int *nbnaperind, int *naposi, int *nind, int *nloc, int *ploidy){
     /* declare variables and allocate memory */
-    int i, j, idxByteVec=0, idxNAVec=0;
+    int i, idxByteVec=0, idxNAVec=0;
     struct genlightC out;
     out.x = (struct snpbin *) calloc(*nind, sizeof(struct snpbin));
 
@@ -502,7 +498,7 @@ struct genlightC genlightTogenlightC(unsigned char *gen, int *nbvecperind, int *
 	/* printf("\nimported genotype %i: ", i+1); */
 	/* printsnpbin(&out.x[i]); */
     }
-	
+
     /* printf("step 3"); */
 
     out.nind = nind;

@@ -76,9 +76,9 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL
 
 
 
-################
-# alignment2genind
-################
+####################
+## alignment2genind
+####################
 alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThres=1/100){
 
     ## misc checks
@@ -155,6 +155,59 @@ alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="
 
 
 
+## #################
+## ## findMutations
+## #################
+
+## ## GENERIC
+## findMutations <- function(...){
+##     UseMethod("findMutations")
+## }
+
+## ## METHOD FOR DNABIN
+## findMutations.DNAbin <- function(x, from=NULL, to=NULL, ...){
+##     ## CHECKS ##
+##     if(!require(ape)) stop("the ape package is needed")
+##     if(!inherits(x,"DNAbin")) stop("x is not a DNAbin object")
+##     x <- as.matrix(x)
+
+##     ## function to pull out mutations from sequence a to b ##
+##     NUCL <- c('a','t','g','c')
+##     f1 <- function(a,b){
+##         seqa <- as.character(x[a,])
+##         seqb <- as.character(x[b,])
+##         temp <- which(seqa != seqb)
+##         ori <- seqa[temp]
+##         mut <- seqb[temp]
+##         names(ori) <- names(mut) <- temp
+##         toRemove <- !ori %in% NUCL | !mut %in% NUCL
+##         ori <- ori[!toRemove]
+##         mut <- mut[!toRemove]
+##         if(all(toRemove)) return(NULL)
+##         res <- data.frame(ori,mut)
+##         names(res) <- rownames(x)[c(a,b)]
+##         res$short <- paste(row.names(res),":",res[,1],"->",res[,2],sep="")
+##         return(res)
+##     }
+
+##     ## GET LIST OF PAIRS TO COMPARE ##
+##     ## handle NULL
+##     if(is.null(from)) from <- 1:nrow(x)
+##     if(is.null(to)) to <- 1:nrow(x)
+
+##     ## get pairs
+##     pairs <- expand.grid(from, to)
+
+##     ## remove unwanted comparisons
+##     pairs <- pairs[pairs[,1]!=pairs[,2],,drop=FALSE]
+
+##     ## GET NUMBER OF MUTATIONS ##
+##     out <- lapply(1:nrow(pairs), function(i) f1(pairs[i,1], pairs[i,2]))
+##     names(out) <- paste(rownames(x)[pairs[,1]], rownames(x)[pairs[,2]],sep="->")
+
+##     return(out)
+
+## } # end findMutations
 
 
 
@@ -162,6 +215,39 @@ alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="
 
 
 
+## ##################
+## ## graphMutations
+## ##################
+
+## ## GENERIC
+## graphMutations <- function(...){
+##     UseMethod("graphMutations")
+## }
+
+## ## METHOD FOR DNABIN
+## graphMutations.DNAbin <- function(x, from=NULL, to=NULL, plot=TRUE, edge.curved=TRUE, ...){
+##     if(!require(igraph)) stop("igraph is required")
+
+##     ## GET MUTATIONS ##
+##     x <- findMutations(x, from=from, to=to)
+
+##     ## GET GRAPH ##
+##     from <- gsub("->.*","",names(x))
+##     to <- gsub(".*->","",names(x))
+##     vnames <- sort(unique(c(from,to)))
+##     dat <- data.frame(from,to,stringsAsFactors=FALSE)
+##     out <- graph.data.frame(dat, directed=TRUE, vertices=data.frame(vnames, label=vnames))
+
+##     ## SET ANNOTATIONS FOR THE BRANCHES ##
+##     annot <- unlist(lapply(x, function(e) paste(e$short, collapse="\n")))
+##     E(out)$label <- annot
+##     E(out)$curved <- edge.curved
+
+##     ## PLOT / RETURN ##
+##     if(plot) plot(out, ...)
+
+##     return(out)
+## } # end graphMutations
 
 
 

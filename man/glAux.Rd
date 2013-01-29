@@ -96,6 +96,7 @@ glDotProd(x, center = FALSE, scale = FALSE, alleleAsUnit = FALSE,
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
+\dontrun{
 x <- new("genlight", list(c(0,0,1,1,0), c(1,1,1,0,0,1), c(2,1,1,1,1,NA)))
 x
 as.matrix(x)
@@ -116,6 +117,6 @@ temp <- as.matrix(x)/ploidy(x)
 apply(temp,2, function(e) sum(is.na(e))) # NAs
 apply(temp,2,sum, na.rm=TRUE) # sum
 apply(temp,2,mean, na.rm=TRUE) # mean
-
+}
 }
 \keyword{multivariate}

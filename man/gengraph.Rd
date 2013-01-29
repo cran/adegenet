@@ -29,16 +29,21 @@
 \usage{
 gengraph(x, \dots)
 
-\method{gengraph}{matrix}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, \dots)
+\method{gengraph}{matrix}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
+plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
 
-\method{gengraph}{dist}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, \dots)
+\method{gengraph}{dist}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
+plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
 
-\method{gengraph}{genind}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, \dots)
+\method{gengraph}{genind}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
+plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
 
 \method{gengraph}{genpop}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
-         plot=TRUE, show.graph=TRUE, col.pal=funky, method=1, \dots)
+         plot=TRUE, show.graph=TRUE, col.pal=funky, method=1,
+         truenames=TRUE, \dots)
 
-\method{gengraph}{DNAbin}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, \dots)
+\method{gengraph}{DNAbin}(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE,
+plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, \dots)
 
 }
 \arguments{
@@ -64,6 +69,9 @@ gengraph(x, \dots)
     between populations; values from 1 to 5 are passed to the function
     \code{dist.genpop}; 6 corresponds to pairwise Fst; other values are
     not supported.}
+  \item{truenames}{a logical indicating whether original labels should
+    be used for plotting (TRUE), as opposed to indices of sequences
+    (FALSE).}
   \item{\dots}{further arguments to be used by other functions;
     currently not used.}
 }

@@ -1223,7 +1223,7 @@ fasta2DNAbin <- function(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE){
 
     ## this is the nb of lines for one genome
     ## including the first line of annotation
-    LINES.PER.IND <- diff(grep("^>.+", txt))
+    LINES.PER.IND <- diff(grep("^>.+", txt))[1]
 
     ## this is the length of a genome single
     GENOMESIZE <- sum(nchar(txt[2:LINES.PER.IND]))
