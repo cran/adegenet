@@ -37,6 +37,7 @@
   genotypes. \cr
 }
 \examples{
+\dontrun{
 ## data to be converted
 dat <- c(1,0,0,2,1,1,1,2,2,1,1,0,0,1)
 
@@ -50,5 +51,6 @@ x3 <- as(dat, "SNPbin")
 
 identical(x1,x2)
 identical(x1,x3)
+}
 }
 \keyword{classes}

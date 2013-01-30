@@ -257,6 +257,7 @@
   -  \code{\linkS4class{genind}}, for storing other types of genetic markers. \cr
 }
 \examples{
+\dontrun{
 ## TOY EXAMPLE ##
 ## create and convert data
 dat <- list(toto=c(1,1,0,0), titi=c(NA,1,1,0), tata=c(NA,0,3, NA))
@@ -286,7 +287,6 @@ x[c(TRUE,FALSE), c(TRUE,TRUE,FALSE,FALSE)] # same, using logicals
 as.list(x[c(TRUE,FALSE), c(TRUE,TRUE,FALSE,FALSE)])
 
 
-\dontrun{
 ## REAL-SIZE EXAMPLE ##
 ## 50 genotypes of 1,000,000 SNPs
 dat <- lapply(1:50, function(i) sample(c(0,1,NA), 1e6, prob=c(.5, .49, .01), replace=TRUE))
@@ -297,7 +297,7 @@ x <- new("genlight", dat) # conversion
 x
 print(object.size(x), unit="au") # size of the genlight object
 object.size(dat)/object.size(x) # conversion efficiency
-}
+
 
 
 #### cbind, rbind ####
@@ -326,6 +326,6 @@ pop(x) # no population info
 pop(x) <- c("pop1","pop1", "pop2") # set population memberships
 pop(x)
 seppop(x)
-
+}
 }
 \keyword{classes}

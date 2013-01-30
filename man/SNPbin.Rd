@@ -113,6 +113,7 @@
   -  \code{\linkS4class{genind}}, for storing other types of genetic markers. \cr
 }
 \examples{
+\dontrun{
 #### HAPLOID EXAMPLE ####
 ## create a genotype of 100,000 SNPs
 dat <- sample(c(0,1,NA), 1e5, prob=c(.495, .495, .01), replace=TRUE)
@@ -157,6 +158,6 @@ ab <- c(a,b)
 ab
 identical(c(a,b),cbind(a,b))
 as.integer(ab)
-
+}
 }
 \keyword{classes}

@@ -51,6 +51,7 @@
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \seealso{\code{\link{seploc}}, \code{\link{repool}}}
 \examples{
+\dontrun{
 data(microbov)
 
 obj <- seppop(microbov)
@@ -69,5 +70,6 @@ pop(x)
 seppop(x)
 as.matrix(seppop(x)$pop1)[,1:20]
 as.matrix(seppop(x)$pop2)[,1:20,drop=FALSE]
+}
 }
 \keyword{manip}
