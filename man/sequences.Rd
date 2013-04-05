@@ -13,8 +13,7 @@
   - alignment (seqinr package): function alignment2genind\cr
 }
 \usage{
-DNAbin2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL,
-                         polyThres=1/100)
+DNAbin2genind(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/100)
 
 alignment2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThres=1/100)
 

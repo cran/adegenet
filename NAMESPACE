@@ -6,10 +6,11 @@ exportPattern(".")
 
 # Import all packages listed as Imports or Depends
 import(
-  methods,
-  MASS,
-  ade4,
-  igraph
+       utils,
+       methods,
+       MASS,
+       ade4,
+       igraph
 )
 
 # Load DLL

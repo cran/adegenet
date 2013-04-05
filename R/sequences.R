@@ -10,61 +10,60 @@
 ################
 # DNAbin2genind
 ################
-DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char=NULL, polyThres=1/100){
+DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/100){
 
-    ## misc checks
+    ## MISC CHECKS ##
     if(!inherits(x,"DNAbin")) stop("x is not a DNAbin object")
     if(!require(ape)) stop("The package ape is required.")
-
-    ## DNA bin to matrix of characters
-    x <- as.character(x) # should output a matrix
-
-    if(is.list(x)) { # if this is a list
-        temp <- unique(sapply(x,length)) # check lengths of sequences
-        if(length(temp)>1) stop("Sequences have different length - please use alignements only.")
-        else{ # if sequences have same length, build the matrix
-            temp <- names(x)
-            x <- t(as.data.frame(x))
-            rownames(x) <- temp
-        }
+    if(is.list(x)) {
+        x <- as.matrix(x)
     }
 
     if(is.null(colnames(x))) {
         colnames(x) <- 1:ncol(x)
     }
 
-    ## replace NAs
-    if(is.null(na.char)){
-        if(is.null(exp.char)) stop("both exp.char and na.char are NULL")
-        temp <- paste(exp.char, collapse="", sep="")
-        if(any(exp.char=="-")) {
-            temp <- paste("-",temp, sep="") # string '-' must begin the regexp
-        }
-        temp <- paste("[^", temp, "]", sep="") # anything but the expected is NA
-        x <- gsub(temp,NA,x)
-    } else {
-        temp <- paste(na.char, collapse="", sep="")
-        if(any(na.char=="-")) {
-            temp <- paste("-",temp, sep="") # string '-' must start the regexp
-        }
-        temp <- paste("[", temp, "]", sep="")
-        x <- gsub(temp,NA,x)
-    }
 
-    ## keep only columns with polymorphism (i.e., SNPs)
-    isPoly <- function(vec){
+    ## FUNCTION TO PROCESS ONE LOCUS ##
+    ## INPUTS:
+    ## locus is a column of a DNAbin matrix
+    ## posi is the index of this column
+    ## OUTPUTS:
+    ## returns NULL if no polymorphism
+    ## returns a disjonctive table with named columns otherwise
+    ## column names are given as [position.allele]
+    processLocus <- function(locus, posi){
+        vec <- as.character(locus)
+        vec[!vec %in% exp.char] <- NA
         N <- sum(!is.na(vec)) # N: number of sequences
-        temp <- table(vec)/N
-        if(sum(temp > polyThres) >= 2) return(TRUE)
-        return(FALSE)
+        if(N==0 || sum(table(vec)/N >= polyThres )<2) return(NULL) # escape if untyped locus or no SNPs
+        alleles <- unique(na.omit(vec))
+        ## vec[!vec %in% alleles] <- NA # this would replace rare alleles by NAs
+        out <- sapply(alleles, function(e) 1*(vec==e))
+        colnames(out) <- paste(posi, alleles, sep=".")
+        return(out)
     }
 
-    toKeep <- apply(x, 2, isPoly)
-    if(sum(toKeep)==0) stop("No polymorphic site detected")
-    x <- x[,toKeep]
 
-    ## build output
-    res <- df2genind(x, pop=pop, ploidy=1, ncode=1, type="codom")
+    ## PROCESS ALL LOCI ##
+    ## get disjonctive matrix ##
+    ## system.time(res@tab <- Reduce(cbind, lapply(1:ncol(x), function(i) processLocus(x[,i], i)))) # works, but Reduce is real slow
+    temp <- lapply(1:ncol(x), function(i) processLocus(x[,i], i)) # process all loci, return a list
+    col.names <- unlist(sapply(temp, colnames))
+    temp <-  as.matrix(data.frame(temp[!sapply(temp, is.null)])) # remove NULL slots, list -> matrix
+    if(is.null(temp) || ncol(temp)==0){
+        cat("\nNo polymorphism detected - returning NULL.\n")
+        return(NULL)
+    }
+
+    ## sort out col/row names ##
+    colnames(temp) <- col.names # restore correct names
+    rownames(temp) <- rownames(x)
+
+    ## create genind output ##
+    res <- genind(temp, ploidy=1, type="codom")
+    rm(temp) # remove temp
+    gc() # collect garbage
     res$call <- match.call()
 
     return(res)
