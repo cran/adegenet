@@ -125,14 +125,6 @@ Then, install \textit{adegenet} with dependencies using:
 <<eval=FALSE>>=
 install.packages("adegenet", dep=TRUE)
 @
-This only installs packages on CRAN.
-However, some functions in \textit{adegenet} also use \textit{graph}, developed on Bioconductor, an
-alternative package repository.
-To install \textit{graph}, type:
-<<eval=FALSE>>=
-source("http://bioconductor.org/biocLite.R")
-biocLite("graph")
-@
 
 We can now load the package using:
 <<echo=FALSE,print=FALSE, results=hide>>=
