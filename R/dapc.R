@@ -64,7 +64,7 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
     ## keep relevant PCs - stored in XU
     X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
-    if(n.pca >= N) stop("number of retained PCs of PCA is greater than N")
+    if(n.pca >= N) n.pca <- N-1
     if(n.pca > N/3) warning("number of retained PCs of PCA may be too large (> N /3)\n results may be unstable ")
     n.pca <- round(n.pca)
 
@@ -152,7 +152,7 @@ dapc.matrix <- function(x, ...){
 ## dapc.genind
 #############
 dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
-                        scale=FALSE, scale.method=c("sigma", "binom"), truenames=TRUE, var.contrib=TRUE, pca.info=TRUE,
+                        scale=FALSE, truenames=TRUE, var.contrib=TRUE, pca.info=TRUE,
                         pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
 
     ## FIRST CHECKS
@@ -176,7 +176,7 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     ## PERFORM PCA ##
     maxRank <- min(dim(x@tab))
 
-    X <- scaleGen(x, center = TRUE, scale = scale, method = scale.method,
+    X <- scaleGen(x, center = TRUE, scale = scale,
                   missing = "mean", truenames = truenames)
 
     ## CALL DATA.FRAME METHOD ##
@@ -299,7 +299,7 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
     N <- nInd(x)
     X.rank <- sum(pcaX$eig > 1e-14)
     n.pca <- min(X.rank, n.pca)
-    if(n.pca >= N) stop("number of retained PCs of PCA is greater than N")
+    if(n.pca >= N) n.pca <- N-1
     if(n.pca > N/3) warning("number of retained PCs of PCA may be too large (> N /3)\n results may be unstable ")
 
     U <- pcaX$loadings[, 1:n.pca, drop=FALSE] # principal axes
@@ -983,17 +983,89 @@ predict.dapc <- function(object, newdata, prior = object$prior, dimen,
 
 
 
-## ############
-## ## crossval
-## ############
-## crossval <- function (x, ...) UseMethod("crossval")
+############
+## crossval
+############
 
-## crossval.dapc <- function(){
+xvalDapc <- function (x, ...) UseMethod("xvalDapc")
 
+xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 1/2,
+                                center=TRUE, scale=FALSE,
+                                n.pca=NULL, n.rep=10, ...){
+
+    ## CHECKS ##
+    grp <- factor(grp)
+    n.pca <- n.pca[n.pca>0]
+    if(is.null(n.da)) {
+        n.da <- length(levels(grp))-1
+    }
+
+    ## GET TRAINING SET SIZE ##
+    N <- nrow(x)
+    N.training <- round(N*training.set)
+
+    ## GET FULL PCA ##
+    pcaX <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
+    n.pca.max <- min(n.pca.max,pcaX$rank,N.training-1)
+
+    ## DETERMINE N.PCA IF NEEDED ##
+    if(is.null(n.pca)){
+        n.pca <- round(pretty(1:n.pca.max,10))
+    }
+    n.pca <- n.pca[n.pca>0 & n.pca<(N.training-1)]
+
+    ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
+    ## n.pca is a number of retained PCA PCs
+    get.prop.pred <- function(n.pca){
+        f1 <- function(){
+            toKeep <- sample(1:N, N.training)
+            temp.pca <- pcaX
+            temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
+            temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], n.pca=n.pca, n.da=n.da, dudi=temp.pca))
+            temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
+            return(mean(temp.pred$assign==grp[-toKeep]))
+        }
+        return(replicate(n.rep, f1()))
+    }
+
+
+    ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
+    res.all <- unlist(lapply(n.pca, get.prop.pred))
+    res <- list(success=res.all, n.pca=factor(rep(n.pca, each=n.rep)))
+    return(res)
+}
+
+
+xvalDapc.matrix <- xvalDapc.data.frame
+
+
+## There's a bunch of problems down there, commenting it for nowé
+## xval.dapc <- function(object, n.pca, n.da, training.set = 90, ...){
+##   training.set = training.set/100
+##   kept.id <- unlist(tapply(1:nInd(object), pop(object), function(e) {pop.size = length(e); pop.size.train = round(pop.size * training.set); sample(e, pop.size.train, replace=FALSE)})) # this can't work: nInd/pop not defined for DAPC objects
+##   training <- object[kept.id]
+##   validating <- object[-kept.id]
+##   post = vector(mode = 'list', length = n.pca)
+##   asgn = vector(mode = 'list', length = n.pca)
+##   ind = vector(mode = 'list', length = n.pca)
+##   mtch = vector(mode = 'list', length = n.pca)
+##   for(i in 1:n.pca){
+##     dapc.base = dapc(training, n.pca = i, n.da = 15) # Why 15??
+##     dapc.p = predict.dapc(dapc.base, newdata = validating)
+##     match.prp = mean(as.character(dapc.p$assign)==as.character(pop(validating)))
+##     post[[i]] = dapc.p$posterior
+##     asgn[[i]] = dapc.p$assign
+##     ind[[i]] = dapc.p$ind.score
+##     mtch[[i]] = match.prp
+##   }
+##   res = list(assign = asgn, posterior = post, ind.score = ind, match.prp = mtch)
+##   return(res)
+## } # end of xval.dapc
+
+## xval.genind  <- function(object, n.pca, n.da, training.set = 90, ...){
+##   res = xval.dapc(object = object, n.pca = n.pca, n.da = n.da, training.set = training.set)
+##   return(res)
 ## }
-
-
-
 ## ###############
 ## ## randtest.dapc
 ## ###############

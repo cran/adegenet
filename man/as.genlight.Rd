@@ -45,6 +45,7 @@
   -  \code{\linkS4class{genind}}
 }
 \examples{
+\dontrun{
 ## data to be converted
 dat <- list(toto=c(1,1,0,0,2,2,1,2,NA), titi=c(NA,1,1,0,1,1,1,0,0), tata=c(NA,0,3, NA,1,1,1,0,0))
 
@@ -58,7 +59,7 @@ x3 <- as(dat, "genlight")
 
 identical(x1,x2)
 identical(x1,x3)
-
+}
 
 }
 \keyword{classes}

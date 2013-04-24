@@ -15,7 +15,8 @@
 \usage{
 DNAbin2genind(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/100)
 
-alignment2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThres=1/100)
+alignment2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-",
+                 polyThres=1/100)
 
 }
 \arguments{
@@ -33,7 +34,8 @@ alignment2genind(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThre
 
 \seealso{\code{\link{import2genind}}, \code{\link{read.genetix}},
   \code{\link{read.fstat}}, \code{\link{read.structure}},
-  \code{\link{read.genepop}}, \code{\link[ape]{DNAbin}}, \code{\link[seqinr]{as.alignment}}.
+  \code{\link{read.genepop}}, \code{\link[ape]{DNAbin}},
+  \code{\link[seqinr]{as.alignment}}.
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
@@ -46,7 +48,8 @@ genind2df(x)
 }
 
 if(require(seqinr)){
-mase.res   <- read.alignment(file = system.file("sequences/test.mase",package = "seqinr"), format = "mase")
+mase.res   <- read.alignment(file=system.file("sequences/test.mase",package="seqinr"),
+format = "mase")
 mase.res
 x <- alignment2genind(mase.res)
 x

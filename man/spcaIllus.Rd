@@ -56,15 +56,20 @@ pca3 <- dudi.pca(dat3$tab,center=TRUE,scale=FALSE,scannf=FALSE,nf=2)
 pca4 <- dudi.pca(dat4$tab,center=TRUE,scale=FALSE,scannf=FALSE,nf=2)
 
 # sPCA
-spca2A <- spca(dat2A,xy=dat2A$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=0)
+spca2A <-spca(dat2A,xy=dat2A$other$xy,ask=FALSE,type=1,
+plot=FALSE,scannf=FALSE,nfposi=1,nfnega=0)
 
-spca2B <- spca(dat2B,xy=dat2B$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=0)
+spca2B <- spca(dat2B,xy=dat2B$other$xy,ask=FALSE,type=1,
+plot=FALSE,scannf=FALSE,nfposi=1,nfnega=0)
 
-spca2C <- spca(dat2C,xy=dat2C$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfposi=0,nfnega=1)
+spca2C <- spca(dat2C,xy=dat2C$other$xy,ask=FALSE,
+type=1,plot=FALSE,scannf=FALSE,nfposi=0,nfnega=1)
 
-spca3 <- spca(dat3,xy=dat3$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=1)
+spca3 <- spca(dat3,xy=dat3$other$xy,ask=FALSE,
+type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=1)
 
-spca4 <- spca(dat4,xy=dat4$other$xy,ask=FALSE,type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=1)
+spca4 <- spca(dat4,xy=dat4$other$xy,ask=FALSE,
+type=1,plot=FALSE,scannf=FALSE,nfposi=1,nfnega=1)
 
 # an auxiliary function for graphics
 plotaux <- function(x,analysis,axis=1,lab=NULL,...){
@@ -75,13 +80,14 @@ xlim <- xrange + c(-diff(xrange)*.1 , diff(xrange)*.45)
 yrange <- range(x$other$xy[,2])
 ylim <- yrange + c(-diff(yrange)*.45 , diff(yrange)*.1)
 
-s.value(x$other$xy,analysis$li[,axis],include.ori=FALSE,addaxes=FALSE,cgrid=0,grid=FALSE,neig=neig,cleg=0,xlim=xlim,ylim=ylim,
-...)
+s.value(x$other$xy,analysis$li[,axis],include.ori=FALSE,addaxes=FALSE,
+cgrid=0,grid=FALSE,neig=neig,cleg=0,xlim=xlim,ylim=ylim,...)
 
 par(mar=rep(.1,4))
 if(is.null(lab)) lab = gsub("[P]","",x$pop)
 text(x$other$xy, lab=lab, col="blue", cex=1.2, font=2)
-add.scatter({barplot(analysis$eig,col="grey");box();title("Eigenvalues",line=-1)},posi="bottomright",ratio=.3)
+add.scatter({barplot(analysis$eig,col="grey");box();
+title("Eigenvalues",line=-1)},posi="bottomright",ratio=.3)
 }
 
 # plots
@@ -100,10 +106,14 @@ plotaux(dat3,spca3,sub="dat3 - sPCA glob1",pos="bottomleft",csub=2)
 plotaux(dat3,pca3,sub="dat3 - PCA axis2",pos="bottomleft",csub=2,axis=2)
 plotaux(dat3,spca3,sub="dat3 - sPCA loc1",pos="bottomleft",csub=2,axis=2)
 
-plotaux(dat4,pca4,lab=dat4$other$sup.pop,sub="dat4 - PCA axis1",pos="bottomleft",csub=2)
-plotaux(dat4,spca4,lab=dat4$other$sup.pop,sub="dat4 - sPCA glob1",pos="bottomleft",csub=2)
-plotaux(dat4,pca4,lab=dat4$other$sup.pop,sub="dat4 - PCA axis2",pos="bottomleft",csub=2,axis=2)
-plotaux(dat4,spca4,lab=dat4$other$sup.pop,sub="dat4 - sPCA loc1",pos="bottomleft",csub=2,axis=2)
+plotaux(dat4,pca4,lab=dat4$other$sup.pop,sub="dat4 - PCA axis1",
+pos="bottomleft",csub=2)
+plotaux(dat4,spca4,lab=dat4$other$sup.pop,sub="dat4 - sPCA glob1",
+pos="bottomleft",csub=2)
+plotaux(dat4,pca4,lab=dat4$other$sup.pop,sub="dat4 - PCA axis2",
+pos="bottomleft",csub=2,axis=2)
+plotaux(dat4,spca4,lab=dat4$other$sup.pop,sub="dat4 - sPCA loc1",
+pos="bottomleft",csub=2,axis=2)
 
 # color plot
 par(opar)

@@ -50,8 +50,7 @@
               stat=c("BIC","AIC", "WSS"), choose.n.clust=TRUE,
               criterion=c("diffNgroup", "min","goesup", "smoothNgoesup",
               "goodfit"), max.n.clust=round(nrow(x@tab)/10), n.iter=1e5,
-              n.start=10, scale=FALSE, scale.method=c("sigma", "binom"),
-              truenames=TRUE, \ldots)
+              n.start=10, scale=FALSE, truenames=TRUE, \ldots)
 
 \method{find.clusters}{genlight}(x, clust=NULL, n.pca=NULL,
               n.clust=NULL, stat=c("BIC", "AIC",
@@ -118,11 +117,7 @@
     percentage (interactively, or via \code{perc.pca}).  }
   \item{perc.pca}{a \code{numeric} value between 0 and 100 indicating the
     minimal percentage of the total variance of the data to be expressed by the
-    retained axes of PCA.}  
-  \item{scale.method}{a \code{character} specifying the scaling method to be used
-    for allele frequencies, which must match "sigma" (usual estimate of standard
-    deviation) or "binom" (based on binomial distribution). See
-    \code{\link{scaleGen}} for further details.}
+    retained axes of PCA.} 
   \item{truenames}{a \code{logical} indicating whether true (i.e., user-specified)
     labels should be used in object outputs (TRUE, default) or not
     (FALSE), in which case generic labels are used.}
@@ -231,7 +226,8 @@
 data(eHGDP)
 
 ## here, n.clust is specified, so that only on K value is used
-grp <- find.clusters(eHGDP, max.n=30, n.pca=200, scale=FALSE, n.clust=4) # takes about 2 minutes
+grp <- find.clusters(eHGDP, max.n=30, n.pca=200, scale=FALSE,
+n.clust=4) # takes about 2 minutes
 names(grp)
 grp$Kstat
 grp$stat
@@ -258,7 +254,8 @@ mtext(3, tex="'X' indicates the actual number of clusters")
 
 ## DETECTION WITH AIC (less clear-cut)
 foo.AIC <- find.clusters(sim2pop, n.pca=100, choose=FALSE, stat="AIC")
-plot(foo.AIC$Kstat, type="o", xlab="number of clusters (K)", ylab="AIC", col="purple", main="Detection based on AIC")
+plot(foo.AIC$Kstat, type="o", xlab="number of clusters (K)",
+ylab="AIC", col="purple", main="Detection based on AIC")
 points(2, foo.AIC$Kstat[2], pch="x", cex=3)
 mtext(3, tex="'X' indicates the actual number of clusters")
 
@@ -276,7 +273,8 @@ x <- glSim(100,500,500)
 x
 plot(x)
 grp <- find.clusters(x, n.pca=100, choose=FALSE, stat="BIC")
-plot(grp$Kstat, type="o", xlab="number of clusters (K)",ylab="BIC",main="find.clusters on a genlight object\n(two groups)")
+plot(grp$Kstat, type="o", xlab="number of clusters (K)",
+ylab="BIC",main="find.clusters on a genlight object\n(two groups)")
 }
 }
 \keyword{multivariate}

@@ -645,13 +645,13 @@ We can seek a global picture of the genetic diversity among genotypes
 using a Principal Component Analysis (PCA, function \texttt{dudi.pca} in the \texttt{ade4}
 package).
 The analysis is performed on a table of standardized alleles
-frequencies, obtained by \texttt{scaleGen} (use the binomial scaling option).
+frequencies, obtained by \texttt{scaleGen}.
 Note that we disable the scaling option when performing the PCA, which would otherwise re-scale the
 data and therefore erase the previous scaling of \texttt{scaleGen}.
 The function \texttt{dudi.pca} displays a barplot of
 eigenvalues and asks for a number of retained principal components:
 <<results=hide, fig=TRUE>>=
-rupica.X <- scaleGen(rupica, method="binom")
+rupica.X <- scaleGen(rupica)
 rupica.pca1 <- dudi.pca(rupica.X, cent=FALSE, scale=FALSE, scannf=FALSE, nf=2)
 barplot(rupica.pca1$eig, main="Rupica dataset - PCA eigenvalues",
         col=heat.colors(length(rupica.pca1$eig)))

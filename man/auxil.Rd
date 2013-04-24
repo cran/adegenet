@@ -10,14 +10,17 @@
 \alias{corner}
 \alias{num2col}
 \alias{fac2col}
+\alias{any2col}
 \alias{transp}
 \alias{bluepal}
 \alias{redpal}
 \alias{greenpal}
 \alias{flame}
+\alias{azur}
 \alias{seasun}
 \alias{lightseasun}
 \alias{deepseasun}
+\alias{wasp}
 \alias{funky}
 
 \title{ Auxiliary functions for adegenet}
@@ -27,41 +30,51 @@
   variables (numeric or factors) onto a color scale, adding transparency
   to existing colors, pre-defined color palettes, extra functions to
   access documentation, and low-level treatment of character vectors.
-  
+
   These functions are mostly auxiliary procedures used internally in
   adegenet, with the exception of, which opens the
   adegenet website in the default navigator.\cr
 
-  These items include:\cr
-  - \code{adegenetWeb}: opens the adegenet website in a web navigator
-  - \code{num2col}: translates a numeric vector into colors. \cr
-  - \code{fac2col}: translates a numeric vector into colors. \cr
-  - \code{transp}: adds transparency to a vector of colors. Note that
-  transparent colors are not supported on some graphical devices.\cr
-  - \code{corner}: adds text to a corner of a figure. \cr
-  - \code{checkType}: checks the type of markers being used in a
-  function and issues an error if appropriate.\cr
-  - \code{.rmspaces}: remove peripheric spaces in a character string. \cr
-  - \code{.genlab}: generate labels in a correct alphanumeric ordering. \cr
-  - \code{.readExt}: read the extension of a given file. \cr
+  These items include:
+  \itemize{
+    \item \code{adegenetWeb}: opens the adegenet website in a web navigator
+    \item \code{num2col}: translates a numeric vector into colors. 
+    \item \code{fac2col}: translates a factor into colors. 
+    \item \code{any2col}: translates a vector of type numeric, character
+    or factor into colors. 
+    \item \code{transp}: adds transparency to a vector of colors. Note that
+    transparent colors are not supported on some graphical devices.
+    \item \code{corner}: adds text to a corner of a figure. 
+    \item \code{checkType}: checks the type of markers being used in a
+    function and issues an error if appropriate.
+    \item \code{.rmspaces}: remove peripheric spaces in a character string. 
+    \item \code{.genlab}: generate labels in a correct alphanumeric ordering. 
+    \item \code{.readExt}: read the extension of a given file. 
+  }
 
-  Color palettes include:\cr
-  - \code{bluepal}: white->blue\cr
-  - \code{redpal}: white->red\cr
-  - \code{greenpal}: white->green\cr
-  - \code{flame}: gold->red\cr
-  - \code{seasun}: blue->gold->red\cr
-  - \code{lightseasun}: blue->gold->red (light variant)\cr
-  - \code{deepseasun}: blue->gold->red (deep variant)\cr
-  - \code{funky}: many colors\cr
+  Color palettes include:
+  \itemize{
+    \item \code{bluepal}: white->blue
+    \item \code{redpal}: white->red
+    \item \code{greenpal}: white->green
+    \item \code{flame}: gold->red
+    \item \code{azur}: gold->blue
+    \item \code{seasun}: blue->gold->red
+    \item \code{lightseasun}: blue->gold->red (light variant)
+    \item \code{deepseasun}: blue->gold->red (deep variant)
+    \item \code{wasp}: gold->brown->black
+    \item \code{funky}: many colors
+  }
 }
 \usage{
 adegenetWeb()
 .genlab(base, n)
 corner(text, posi="topleft",  inset=0.1, \dots)
 num2col(x, col.pal=heat.colors, reverse=FALSE,
-               x.min=min(x), x.max=max(x), na.col="green")
-fac2col(x, col.pal=funky, na.col="grey", seed=1)
+        x.min=min(x,na.rm=TRUE), x.max=max(x,na.rm=TRUE),
+        na.col="transparent")
+fac2col(x, col.pal=funky, na.col="transparent", seed=NULL)
+any2col(x, col.pal=seasun, na.col="transparent")
 transp(col, alpha=.5)
 }
 \arguments{
@@ -82,13 +95,19 @@ transp(col, alpha=.5)
   \item{x.max}{the maximal value from which to start the color scale}
   \item{na.col}{the color to be used for missing values (NAs)}
   \item{seed}{a seed for R's random number generated, used to fix the
-    random permutation of colors in the palette used.}
+    random permutation of colors in the palette used; if NULL, no
+    randomization is used and the colors are taken from the palette
+    according to the ordering of the levels.}
   \item{col}{a vector of colors}
   \item{alpha}{a numeric value between 0 and 1 representing the alpha
-  coefficient; 0: total transparency; 1: no transparency.}
+    coefficient; 0: total transparency; 1: no transparency.}
 }
 \value{
   For \code{.genlab}, a character vector of size "n".
+  \code{num2col} and \code{fac2col} return a vector of
+  colors. \code{any2col} returns a list with the following components:
+  \code{$col} (a vector of colors), \code{$leg.col} (colors for the
+  legend), and \code{$leg.txt} (text for the legend).
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
@@ -108,8 +127,8 @@ plot(rnorm(1000), rnorm(1000), col=transp("blue",.3), pch=20, cex=4)
 plot(1:100, col=num2col(1:100), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=bluepal), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=flame), pch=20, cex=4)
-plot(1:100, col=num2col(1:100, col.pal=seasun), pch=20, cex=4)
-plot(1:100, col=num2col(1:100, col.pal=seasun,rev=TRUE), pch=20, cex=4)
+plot(1:100, col=num2col(1:100, col.pal=wasp), pch=20, cex=4)
+plot(1:100, col=num2col(1:100, col.pal=azur,rev=TRUE), pch=20, cex=4)
 
 ## factor as colors using fac2col
 dat <- cbind(c(rnorm(50,8), rnorm(100), rnorm(150,3),
@@ -118,6 +137,17 @@ fac <- rep(letters[1:4], c(50,100,150,50))
 plot(dat, col=fac2col(fac), pch=19, cex=4)
 plot(dat, col=transp(fac2col(fac)), pch=19, cex=4)
 plot(dat, col=transp(fac2col(fac,seed=2)), pch=19, cex=4)
+
+## use of any2col
+x <- factor(1:10)
+col.info <- any2col(x, col.pal=funky)
+plot(x, col=col.info$col, main="Use of any2col on a factor")
+legend("bottomleft", fill=col.info$leg.col, legend=col.info$leg.txt, bg="white")
+
+x <- 100:1
+col.info <- any2col(x, col.pal=wasp)
+barplot(x, col=col.info$col, main="Use of any2col on a numeric")
+legend("bottomleft", fill=col.info$leg.col, legend=col.info$leg.txt, bg="white")
 
 }
 \keyword{manip}

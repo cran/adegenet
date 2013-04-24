@@ -243,7 +243,7 @@ t.test(rupica.smry$Hexp, rupica.smry$Hobs,paired=TRUE,var.equal=TRUE)
 ###################################################
 ### code chunk number 32: adegenet-spca.Rnw:653-657
 ###################################################
-rupica.X <- scaleGen(rupica, method="binom")
+rupica.X <- scaleGen(rupica)
 rupica.pca1 <- dudi.pca(rupica.X, cent=FALSE, scale=FALSE, scannf=FALSE, nf=2)
 barplot(rupica.pca1$eig, main="Rupica dataset - PCA eigenvalues",
         col=heat.colors(length(rupica.pca1$eig)))

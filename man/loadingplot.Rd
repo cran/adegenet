@@ -13,10 +13,11 @@
 \usage{
 loadingplot(x, \dots)
 
-\method{loadingplot}{default}(x, at=NULL, threshold=quantile(x,0.75), axis=1, fac=NULL, byfac=FALSE,
+\method{loadingplot}{default}(x, at=NULL, threshold=quantile(x,0.75),
+            axis=1, fac=NULL, byfac=FALSE,
             lab=NULL, cex.lab=0.7, cex.fac=1, lab.jitter=0,
-            main="Loading plot", xlab="Variables", ylab="Loadings", srt = 0, adj = NULL, \dots)
-
+            main="Loading plot", xlab="Variables", ylab="Loadings",
+            srt = 0, adj = NULL, \dots)
 }
 \arguments{
   \item{x}{either a vector with numeric values to be plotted, or a

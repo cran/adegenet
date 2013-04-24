@@ -151,7 +151,8 @@ get.likelihood(\ldots)
   time-ordering of the data from top (ancient) to bottom (recent).
 }
 \seealso{
-  \code{\link[ape]{dist.dna}} in the ape package to compute pairwise genetic distances in aligned sequences.
+  \code{\link[ape]{dist.dna}} in the ape package to compute pairwise
+  genetic distances in aligned sequences.
 }
 \examples{
 \dontrun{
@@ -169,46 +170,13 @@ plot(res, main="seqTrack reconstruction")
 mean(dat$ances==res$ances,na.rm=TRUE)
 
 
-% ## PLOT RESULTS
-% if(require(graph) && require(Rgraphviz)){
-% ## quick convertion method to graphNEL ##
-% setOldClass("seqTrack")
-% setAs("seqTrack", "graphNEL", def=function(from){
-%     ##    if(!require(ape)) stop("package ape is required")
-%     if(!require(graph)) stop("package graph is required")
-
-%     ori.labels <- rownames(from)
-%     from <- from[!is.na(from$ances),,drop=FALSE]
-
-
-%      ## CONVERT TO GRAPH
-%     res <- ftM2graphNEL(ft=cbind(ori.labels[from$ances], ori.labels[from$id]), W=from$weight, edgemode = "directed", V=ori.labels)
-%     return(res)
-% })
-% ## end conversion function ##
-
-
-
-% dat.g <- as(dat, "graphNEL")
-% res.g <- as(res, "graphNEL")
-
-
-% ## ORIGINAL DATA
-% dat.annot <- as.character(unlist(edgeWeights(dat.g)))
-% names(dat.annot) <- edgeNames(dat.g)
-% renderGraph(layoutGraph(dat.g, edgeAttrs = list(label = dat.annot)))
-
-
-% ## SEQTRACK RESULTS
-% res.annot <- as.character(unlist(edgeWeights(res.g)))
-% names(res.annot) <- edgeNames(res.g)
-% renderGraph(layoutGraph(res.g, edgeAttrs = list(label = res.annot)))
-% }
-
-
-
-
 ## ANALYSIS OF PANDEMIC A/H1N1 INFLUENZA DATA ##
+## note:
+## this is for reproduction purpose only
+## seqTrack is best kept for the analysis
+## of densely sampled outbreaks, which
+## is not the case of this dataset.
+## 
 dat <- read.csv(system.file("files/pdH1N1-data.csv",package="adegenet"))
 ha <-  read.dna(system.file("files/pdH1N1-HA.fasta",package="adegenet"), format="fa")
 na <- read.dna(system.file("files/pdH1N1-NA.fasta",package="adegenet"), format="fa")
@@ -216,7 +184,8 @@ na <- read.dna(system.file("files/pdH1N1-NA.fasta",package="adegenet"), format="
 
 ## COMPUTE NUCLEOTIDIC DISTANCES
 nbNucl <- ncol(as.matrix(ha)) + ncol(as.matrix(na))
-D <- dist.dna(ha,model="raw")*ncol(as.matrix(ha)) + dist.dna(na,model="raw")*ncol(as.matrix(na))
+D <- dist.dna(ha,model="raw")*ncol(as.matrix(ha)) +
+dist.dna(na,model="raw")*ncol(as.matrix(na))
 D <- round(as.matrix(D))
 
 
@@ -242,13 +211,15 @@ p <- get.likelihood(res, mu=.00502/365, haplo.length=nbNucl)
 head(res)
 tail(res)
 range(res$weight, na.rm=TRUE)
-barplot(table(res$weight)/sum(!is.na(res$weight)), ylab="Frequency",xlab="Mutations between inferred ancestor and descendent", col="orange")
+barplot(table(res$weight)/sum(!is.na(res$weight)), ylab="Frequency",
+xlab="Mutations between inferred ancestor and descendent", col="orange")
 
 
 ## DISPLAY SPATIO-TEMPORAL DYNAMICS 
 if(require(maps)){
 myDates <- as.integer(difftime(dat$date, as.POSIXct("2009-01-21"), unit="day"))
-myMonth <- as.POSIXct(c("2009-02-01", "2009-03-01","2009-04-01","2009-05-01","2009-06-01","2009-07-01"))
+myMonth <- as.POSIXct(
+c("2009-02-01", "2009-03-01","2009-04-01","2009-05-01","2009-06-01","2009-07-01"))
 x.month <-  as.integer(difftime(myMonth, as.POSIXct("2009-01-21"), unit="day"))
 
 
@@ -259,9 +230,11 @@ par(bg="deepskyblue")
 map("world", fill=TRUE, col="grey")
 opal <- palette()
 palette(rev(heat.colors(10)))
-plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2, date.range=curRange, col=res$weight+1)
+plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2,date.range=curRange,
+col=res$weight+1)
 title(paste(curRange, collapse=" to "))
-legend("bottom", lty=1, leg=0:8, title="number of mutations", col=1:9, lwd=2, horiz=TRUE)
+legend("bottom", lty=1, leg=0:8, title="number of mutations", col=1:9,
+lwd=2, horiz=TRUE)
 
 
 ## SECOND STAGE:
@@ -271,9 +244,11 @@ par(bg="deepskyblue")
 map("world", fill=TRUE, col="grey")
 opal <- palette()
 palette(rev(heat.colors(10)))
-plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2, date.range=curRange, col=res$weight+1)
+plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2,
+date.range=curRange, col=res$weight+1)
 title(paste(curRange, collapse=" to "))
-legend("bottom", lty=1, leg=0:8, title="number of mutations", col=1:9,lwd=2, horiz=TRUE)
+legend("bottom", lty=1, leg=0:8, title="number of mutations",
+col=1:9,lwd=2, horiz=TRUE)
 
 
 ## THIRD STAGE:
@@ -283,9 +258,11 @@ par(bg="deepskyblue")
 map("world", fill=TRUE, col="grey")
 opal <- palette()
 palette(rev(heat.colors(10)))
-plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2, date.range=curRange, col=res$weight+1)
+plotSeqTrack(res, round(xy), add=TRUE,annot=FALSE,lwd=2, date.range=curRange,
+col=res$weight+1)
 title(paste(curRange, collapse=" to "))
-legend("bottom", lty=1, leg=0:8, title="number of mutations", col=1:9,lwd=2, horiz=TRUE)
+legend("bottom", lty=1, leg=0:8, title="number of mutations",
+col=1:9,lwd=2, horiz=TRUE)
 
 }
 }

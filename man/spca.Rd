@@ -35,8 +35,7 @@
 }
 \usage{
 spca(obj, xy=NULL, cn=NULL, matWeight=NULL,
-     scale=FALSE, scale.method=c("sigma","binom"),
-     scannf=TRUE, nfposi=1, nfnega=1,
+     scale=FALSE, scannf=TRUE, nfposi=1, nfnega=1,
      type=NULL, ask=TRUE, plot.nb=TRUE, edit.nb=FALSE,
      truenames=TRUE, d1=NULL, d2=NULL, k=NULL, a=NULL, dmin=NULL)
 
@@ -65,10 +64,7 @@ spca(obj, xy=NULL, cn=NULL, matWeight=NULL,
     spatial proximities between entities. If provided, this argument
     prevails over \code{cn} (see details).}
   \item{scale}{a logical indicating whether alleles should be scaled to
-    unit variance (TRUE) or not (FALSE, default).}
-  \item{scale.method}{a character string indicating the method used for
-    scaling allele frequencies. This argument is passed to
-    \code{\link{scaleGen}} function (see ?\code{\link{scaleGen}}).}
+    unit variance (TRUE) or not (FALSE, default).} 
   \item{scannf}{a logical stating whether eigenvalues should be chosen
     interactively (TRUE, default) or not (FALSE).}
   \item{nfposi}{an integer giving the number of positive eigenvalues retained

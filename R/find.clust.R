@@ -193,7 +193,7 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
 find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"), choose.n.clust=TRUE,
                                  criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
                           max.n.clust=round(nrow(x@tab)/10), n.iter=1e5, n.start=10,
-                          scale=FALSE, scale.method=c("sigma", "binom"), truenames=TRUE, ...){
+                          scale=FALSE, truenames=TRUE, ...){
 
     ## CHECKS ##
     if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
@@ -210,7 +210,7 @@ find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c
     ## PERFORM PCA ##
     maxRank <- min(dim(x@tab))
 
-    X <- scaleGen(x, center = TRUE, scale = scale, method = scale.method,
+    X <- scaleGen(x, center = TRUE, scale = scale,
                   missing = "mean", truenames = truenames)
 
     ## CALL DATA.FRAME METHOD
