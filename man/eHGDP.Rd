@@ -30,7 +30,7 @@ Analysis of Principal Components (DAPC, [5]).
   d'Etude du Polymorphisme Humain (CEPH). See reference [4] for Native
   American populations.
 
-  This copy of the dataset was prepared by Francois Balloux (f.balloux@imperial.ac.uk).
+  This copy of the dataset was prepared by Francois Balloux.
 }
 \references{
 [1] Rosenberg NA, Pritchard JK, Weber JL, Cann HM, Kidd KK, et
@@ -62,7 +62,8 @@ eHGDP
 
 ## PERFORM DAPC - USE POPULATIONS AS CLUSTERS
 ## to reproduce exactly analyses from the paper, use "n.pca=1000"
-dapc1 <- dapc(eHGDP, all.contrib=TRUE, scale=FALSE, n.pca=200, n.da=80) # takes 2 minutes
+dapc1 <- dapc(eHGDP, all.contrib=TRUE, scale=FALSE,
+n.pca=200, n.da=80) # takes 2 minutes
 dapc1
 
 ## (see ?dapc for details about the output)
@@ -70,7 +71,8 @@ dapc1
 
 
 ## SCREEPLOT OF EIGENVALUES
-barplot(dapc1$eig, main="eHGDP - DAPC eigenvalues", col=c("red","green","blue", rep("grey", 1000)))
+barplot(dapc1$eig, main="eHGDP - DAPC eigenvalues",
+col=c("red","green","blue", rep("grey", 1000)))
 
 
 
@@ -111,7 +113,8 @@ colorplot(xy, -dapc1$grp.coord, cex=3, add=TRUE, trans=FALSE)
 ## and then
 ## plot(grp$Kstat, type="b", col="blue")
 
-grp <- find.clusters(eHGDP, max.n=30, n.pca=200, scale=FALSE, n.clust=4) # takes about 2 minutes
+grp <- find.clusters(eHGDP, max.n=30, n.pca=200,
+scale=FALSE, n.clust=4) # takes about 2 minutes
 names(grp)
 
 ## (see ?find.clusters for details about the output)
@@ -120,7 +123,8 @@ names(grp)
 
 ## PERFORM DAPC - USE POPULATIONS AS CLUSTERS
 ## to reproduce exactly analyses from the paper, use "n.pca=1000"
-dapc2 <- dapc(eHGDP, pop=grp$grp, all.contrib=TRUE, scale=FALSE, n.pca=200, n.da=80) # takes around a 1 minute
+dapc2 <- dapc(eHGDP, pop=grp$grp, all.contrib=TRUE,
+scale=FALSE, n.pca=200, n.da=80) # takes around a 1 minute
 dapc2
 
 
@@ -131,7 +135,8 @@ scatter(dapc2,2,3) # axes 2-3
 
 ## MAP DAPC2 RESULTS
 if(require(maps)){
-xy <- cbind(eHGDP$other$popInfo$Longitude, eHGDP$other$popInfo$Latitude)
+xy <- cbind(eHGDP$other$popInfo$Longitude,
+eHGDP$other$popInfo$Latitude)
 
 myCoords <- apply(dapc2$ind.coord, 2, tapply, pop(eHGDP), mean)
 

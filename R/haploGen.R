@@ -233,8 +233,7 @@ haploGen <- function(seq.length=1e4, mu.transi=1e-4, mu.transv=mu.transi/2, t.ma
     ## PERFORM SIMULATIONS - NON SPATIAL CASE ##
     if(!geo.sim){
         ## initialization
-        res$seq <- as.matrix(seq.gen())
-        res$seq <- matrix(rep(res$seq, ini.n), byrow=TRUE, nrow=ini.n)
+        res$seq <- matrix(rep(seq.gen(), ini.n), byrow=TRUE, nrow=ini.n)
         class(res$seq) <- "DNAbin"
         rownames(res$seq) <- 1:ini.n
         res$dates[1:ini.n] <- rep(0,ini.n)
@@ -270,8 +269,7 @@ haploGen <- function(seq.length=1e4, mu.transi=1e-4, mu.transv=mu.transi/2, t.ma
         }
 
         ## initialization
-        res$seq <- as.matrix(seq.gen())
-        res$seq <- matrix(rep(res$seq, ini.n), byrow=TRUE, nrow=ini.n)
+        res$seq <- matrix(rep(seq.gen(), ini.n), byrow=TRUE, nrow=ini.n)
         class(res$seq) <- "DNAbin"
         rownames(res$seq) <- 1:ini.n
         res$dates[1:ini.n] <- rep(0,ini.n)

@@ -16,7 +16,7 @@
 # spca genind
 ################
 spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
-                 scale=FALSE, scale.method=c("sigma","binom"),
+                 scale=FALSE,
                  scannf=TRUE, nfposi=1, nfnega=1,
                  type=NULL, ask=TRUE, plot.nb=TRUE, edit.nb=FALSE,
                  truenames=TRUE, d1=NULL, d2=NULL, k=NULL, a=NULL, dmin=NULL){
@@ -89,7 +89,7 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     }
 
     ## handle NAs, centring and scaling
-    X <- scaleGen(obj, center=TRUE, scale=scale, method=scale.method, missing="mean", truenames=truenames)
+    X <- scaleGen(obj, center=TRUE, scale=scale, missing="mean", truenames=truenames)
 
     ## perform analyses
     pcaX <- dudi.pca(X, center=FALSE, scale=FALSE, scannf=FALSE)

@@ -196,8 +196,9 @@ corner <- function(text, posi="topleft",  inset=0.1, ...){
 ###########
 ## translate numeric values into colors of a palette
 num2col <- function(x, col.pal=heat.colors, reverse=FALSE,
-                    x.min=min(x), x.max=max(x), na.col="green"){
-    if(any(is.na(x))) warning("NAs detected in x")
+                    x.min=min(x,na.rm=TRUE), x.max=max(x,na.rm=TRUE),
+                    na.col="transparent"){
+    ## if(any(is.na(x))) warning("NAs detected in x")
     x[x < x.min] <- x.min
     x[x > x.max] <- x.max
     x <- x-x.min # min=0
@@ -225,17 +226,21 @@ num2col <- function(x, col.pal=heat.colors, reverse=FALSE,
 ###########
 ## translate a factor into colors of a palette
 ## colors are randomized based on the provided seed
-fac2col <- function(x, col.pal=funky, na.col="grey", seed=1){
+fac2col <- function(x, col.pal=funky, na.col="transparent", seed=NULL){
     ## get factors and levels
     x <- factor(x)
     lev <- levels(x)
     nlev <- length(lev)
 
     ## get colors corresponding to levels
-    set.seed(seed)
-    newseed <- round(runif(1,1,1e9))
-    on.exit(set.seed(newseed))
-    col <- sample(col.pal(nlev))
+    if(!is.null(seed)){
+        set.seed(seed)
+        newseed <- round(runif(1,1,1e9))
+        on.exit(set.seed(newseed))
+        col <- sample(col.pal(nlev))
+    } else {
+        col <- col.pal(nlev)
+    }
 
     ## get output colors
     res <- rep(na.col, length(x))
@@ -246,20 +251,45 @@ fac2col <- function(x, col.pal=funky, na.col="grey", seed=1){
 }
 
 
+###########
+## any2col
+###########
+any2col <- function(x, col.pal=seasun, na.col="transparent"){
+    ## handle numeric data
+    if(is.numeric(x)){
+        col <- num2col(x, col.pal=col.pal, na.col=na.col)
+        leg.col <- num2col(pretty(x), x.min=min(x, na.rm=TRUE),
+                           x.max=max(x, na.rm=TRUE), col.pal=col.pal,
+                           na.col=na.col)
+        leg.txt <- pretty(x)
+    } else{ ## handle factor
+        x <- factor(x)
+        col <- fac2col(x, col.pal=col.pal, na.col=na.col)
+        leg.col <- col.pal(length(levels(x)))
+        leg.txt <- levels(x)
+    }
+
+    return(list(col=col, leg.col=leg.col, leg.txt=leg.txt))
+} # end any2col
+
+
+
 ## pre-defined palettes ##
 ## mono color
 bluepal <- colorRampPalette(c("lightgrey","blue"))
 redpal <- colorRampPalette(c("lightgrey","red"))
-greenpal <- colorRampPalette(c("lightgrey","green"))
+greenpal <- colorRampPalette(c("lightgrey","green3"))
 
 ## bi-color
-flame <- colorRampPalette(c("gold","red"))
+flame <- colorRampPalette(c("gold","red3"))
+azur <- colorRampPalette(c("gold","royalblue"))
 
 ## tri-color
 seasun <- colorRampPalette(c("blue","gold","red"))
 lightseasun <- colorRampPalette(c("deepskyblue2","gold","red1"))
 deepseasun <- colorRampPalette(c("blue2","gold","red2"))
+wasp <-  colorRampPalette(c("yellow2","brown", "black"))
 
 ## psychedelic
-funky <- colorRampPalette(c("blue","green3","gold","orange","red","brown4","purple"))
+funky <- colorRampPalette(c("blue","green3","gold","orange","red","brown4","purple","pink2"))
 

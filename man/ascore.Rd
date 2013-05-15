@@ -10,7 +10,8 @@
 \usage{
 a.score(x, n.sim=10, \ldots)
 
-optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE, n.sim=10, n.da=length(levels(x$grp)), \ldots)
+optim.a.score(x, n.pca=1:ncol(x$tab), smart=TRUE, n=10, plot=TRUE,
+              n.sim=10, n.da=length(levels(x$grp)), \ldots)
 }
 \arguments{
 \item{x}{a \code{dapc} object.}

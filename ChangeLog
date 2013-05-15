@@ -1,3 +1,17 @@
+			CHANGES IN ADEGENET VERSION 1.3-8
+
+NEW FEATURES
+
+	o new palettes: azur, wasp
+
+	o new function any2col translates (numeric, factor, character)
+	vectors into colors, also providing information for a legend
+
+	o new function xvalDapc which performs cross-validation for a dapc
+	analysis.
+
+
+	
 			CHANGES IN ADEGENET VERSION 1.3-7
 
 NEW FEATURES

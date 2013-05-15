@@ -22,23 +22,23 @@
 }
 \usage{
 \method{scatter}{dapc}(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(grp))),
-                         pch=20, bg="lightgrey", solid=.7, scree.da=TRUE,
-                         scree.pca=FALSE, posi.da="bottomright",
-                         posi.pca="bottomleft", bg.inset="white", ratio.da=.25,
-                         ratio.pca=.25, inset.da=0.02, inset.pca=0.02,
-                         inset.solid=.5, onedim.filled=TRUE, mstree=FALSE, lwd=1,
-                         lty=1, segcol="black", legend=FALSE, posi.leg="topright",
-                         cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = 1.5,
-                         axesell = FALSE, label = levels(grp), clabel = 1, xlim =
-                         NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
-                         c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
-                         "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
-                         = NULL, \ldots)
+                       pch=20, bg="lightgrey", solid=.7, scree.da=TRUE,
+                       scree.pca=FALSE, posi.da="bottomright",
+                       posi.pca="bottomleft", bg.inset="white", ratio.da=.25,
+                       ratio.pca=.25, inset.da=0.02, inset.pca=0.02,
+                       inset.solid=.5, onedim.filled=TRUE, mstree=FALSE, lwd=1,
+                       lty=1, segcol="black", legend=FALSE, posi.leg="topright",
+                       cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = 1.5,
+                       axesell = FALSE, label = levels(grp), clabel = 1, xlim =
+                       NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
+                       c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
+                       "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
+                       = NULL, \ldots)
 
 assignplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75,pch=3)
 
 compoplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
-                  legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...)
+          legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...)
 }
 \arguments{
   \item{x}{a \code{dapc} object.}
@@ -156,7 +156,8 @@ scatter(dapc1, cell=2, pch="", cstar=0, posi.pca="topleft", posi.da="topleft", s
 inset.pca=c(.01,.3), lab=paste("year\n",2001:2006), axesel=FALSE, col=terrain.colors(10))
 
 ## without ellipses, use legend for groups
-scatter(dapc1, cell=0, cstar=0, scree.da=FALSE, clab=0, cex=3, solid=.4, bg="white", leg=TRUE, posi.leg="topleft")
+scatter(dapc1, cell=0, cstar=0, scree.da=FALSE, clab=0, cex=3,
+solid=.4, bg="white", leg=TRUE, posi.leg="topleft")
 
 ## only one axis
 scatter(dapc1,1,1,scree.da=FALSE, legend=TRUE, solid=.4,bg="white")
@@ -174,7 +175,8 @@ dapc2 <- dapc(x, n.pca=10, n.da=1)
 dapc2
 
 ## plot results
-scatter(dapc2, scree.da=FALSE, leg=TRUE, txt.leg=paste("group", c('A','B')), col=c("red","blue"))
+scatter(dapc2, scree.da=FALSE, leg=TRUE, txt.leg=paste("group",
+c('A','B')), col=c("red","blue"))
 
 ## SNP contributions
 loadingplot(dapc2$var.contr)

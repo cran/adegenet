@@ -9,6 +9,9 @@
 \alias{print.dapc}
 \alias{summary.dapc}
 \alias{predict.dapc}
+\alias{xvalDapc}
+\alias{xvalDapc.data.frame}
+\alias{xvalDapc.matrix}
 \alias{as.lda}
 \alias{as.lda.dapc}
 \title{Discriminant Analysis of Principal Components (DAPC)}
@@ -28,15 +31,20 @@
  - \code{matrix} (only numeric data)\cr
  - \code{\linkS4class{genind}} objects (genetic markers)\cr
  - \code{\linkS4class{genlight}} objects (genome-wide SNPs)
- 
+
  These methods all return an object with class \code{dapc}.
 
  Functions that can be applied to these objects are (the ".dapc" can be
  ommitted):
 
   - \code{print.dapc}: prints the content of a \code{dapc} object.\cr
-  - \code{summary.dapc}: extracts useful information from a  \code{dapc} object.\cr
-  - \code{predict.dapc}: predicts group memberships based on DAPC results.
+  - \code{summary.dapc}: extracts useful information from a \code{dapc}
+  object.\cr
+  - \code{predict.dapc}: predicts group memberships based on DAPC results.\cr
+  - \code{xvalDapc}: performs cross-validation of DAPC using varying
+  numbers of PCs (and keeping the number of discriminant functions
+  fixed); it currently has methods for \code{data.frame} and \code{matrix}.\cr
+
 
 
   DAPC implementation calls upon \code{\link[ade4]{dudi.pca}} from the
@@ -48,7 +56,6 @@
   \code{as.lda} is a generic with a method for \code{dapc} object which
   converts these objects into outputs similar to that of
   \code{lda.default}.
-  
 }
 \usage{
 \method{dapc}{data.frame}(x, grp, n.pca=NULL, n.da=NULL, center=TRUE,
@@ -58,8 +65,8 @@
 \method{dapc}{matrix}(x, \ldots)
 
 \method{dapc}{genind}(x, pop=NULL, n.pca=NULL, n.da=NULL, scale=FALSE,
-     scale.method=c("sigma", "binom"), truenames=TRUE, var.contrib=TRUE,
-     pca.info=TRUE, pca.select=c("nbEig","percVar"), perc.pca=NULL, \ldots)
+     truenames=TRUE, var.contrib=TRUE, pca.info=TRUE,
+     pca.select=c("nbEig","percVar"), perc.pca=NULL, \ldots)
 
 \method{dapc}{genlight}(x, pop = NULL, n.pca = NULL, n.da = NULL, scale
     = FALSE, var.contrib = TRUE, pca.info=TRUE, pca.select = c("nbEig", "percVar"),
@@ -73,6 +80,14 @@
 
 \method{predict}{dapc}(object, newdata, prior = object$prior, dimen,
          method = c("plug-in", "predictive", "debiased"), ...)
+
+\method{xvalDapc}{data.frame}(x, grp, n.pca.max, n.da=NULL,
+              training.set = 1/2, center=TRUE, scale=FALSE,
+              n.pca=NULL, n.rep=10, \ldots)
+
+\method{xvalDapc}{matrix}(x, grp, n.pca.max, n.da=NULL,
+              training.set = 1/2, center=TRUE, scale=FALSE,
+              n.pca=NULL, n.rep=10, \ldots)
 }
 \arguments{
   \item{x}{\code{a data.frame}, \code{matrix}, or \code{\linkS4class{genind}}
@@ -89,8 +104,7 @@
   \item{scale}{a \code{logical} indicating whether variables should be scaled
     (TRUE) or not (FALSE, default). Scaling consists in dividing variables by their
     (estimated) standard deviation to account for trivial differences in
-    variances. Further scaling options are available for \linkS4class{genind}
-    objects (see argument \code{scale.method}).}
+    variances.}
   \item{var.contrib}{a \code{logical} indicating whether the
     contribution of original variables (alleles, for \linkS4class{genind} objects)
     should be provided (TRUE, default) or not (FALSE). Such output can be useful,
@@ -116,10 +130,6 @@
     dimension reduction is not performed (saving computational time) but
     taken directly from this object.}
   \item{object}{a \code{dapc} object.}
-  \item{scale.method}{a \code{character} specifying the scaling method to be used
-    for allele frequencies, which must match "sigma" (usual estimate of standard
-    deviation) or "binom" (based on binomial distribution). See \code{\link{scaleGen}} for
-    further details.}
   \item{truenames}{a \code{logical} indicating whether true (i.e., user-specified)
     labels should be used in object outputs (TRUE, default) or not (FALSE).}
   \item{dudi}{optionally, a multivariate analysis with the class
@@ -132,6 +142,11 @@
     original ('training') data. In particular, variables must be exactly
     the same as in the original data. For  \linkS4class{genind}
     objects, see \code{\link{repool}} to ensure matching of alleles.}
+  \item{n.pca.max}{maximum number of PCA components to retain.}
+  \item{training.set}{the proportion of data (individuals) to be used
+    for the training set; defaults to one half.}
+  \item{n.rep}{the number of replicate to be used for each number of PCA
+    components retained.}
   \item{prior,dimen,method}{see \code{?predict.lda}.}
 }
 \details{
@@ -164,14 +179,17 @@
   \item{tab}{matrix of retained principal components of PCA}
   \item{loadings}{principal axes of DAPC, giving coefficients of the linear
     combination of retained PCA axes.}
-  \item{ind.coord}{principal components of DAPC, giving the coordinates of individuals onto
-    principal axes of DAPC; also called the discriminant functions.}
+  \item{ind.coord}{principal components of DAPC, giving the coordinates
+    of individuals onto principal axes of DAPC; also called the
+    discriminant functions.}
   \item{grp.coord}{coordinates of the groups onto the principal axes of DAPC.}
   \item{posterior}{a data.frame giving posterior membership probabilities for
     all individuals and all clusters.}
   \item{var.contr}{(optional) a data.frame giving the contributions of original
     variables (alleles in the case of genetic data) to the principal components
     of DAPC.}
+  \item{match.prp}{a list, where each item is the proportion of individuals 
+    correctly matched to their original population in cross-validation.}
 
   
   === other outputs ===\cr
@@ -181,7 +199,13 @@
   \code{assign.prop} (proportion of overall correct assignment),
   \code{assign.per.pop} (proportion of correct assignment per group),
   \code{prior.grp.size} (prior group sizes), and \code{post.grp.size} (posterior
-  group sizes).
+  group sizes),  \code{xval.dapc}, \code{xval.genind} and \code{xval}
+  (all return a list of four lists, each one with as many items as
+  cross-validation runs.  The first item is a list of \code{assign}
+  components, the secon is a list of \code{posterior} components, the
+  thirs is a list of \code{ind.score} components and the fourth is a
+  list of \code{match.prp} items, i.e. the prortion of the validation
+  set correctly matched to its original population)
 }
 \references{
   Jombart T, Devillard S and Balloux F  (2010) Discriminant analysis of
@@ -291,6 +315,14 @@ title("30 indiv popA, 30 indiv pop B, 30 hybrids")
 ## image using compoplot
 compoplot(dapc1, new.pred=hyb.pred, ncol=2)
 title("30 indiv popA, 30 indiv pop B, 30 hybrids")
+
+## CROSS-VALIDATION ##
+data(sim2pop)
+xval <- xvalDapc(sim2pop@tab, pop(sim2pop), n.pca.max=100, n.rep=3)
+xval
+boxplot(xval$success~xval$n.pca, xlab="Number of PCA components",
+ylab="Classification succes", main="DAPC - cross-validation")
+
 }
 
 

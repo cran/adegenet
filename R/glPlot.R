@@ -31,6 +31,9 @@ glPlot <- function(x, col=NULL, legend=TRUE, posi="bottomleft", bg=rgb(1,1,1,.5)
 
 
 
+## hack to remove the NOTE in R CMD check about:
+## "plot,genlight: no visible binding for global variable ‘y’"
+if(getRversion() >= "2.15.1")  utils::globalVariables("y")
 
 ## plot method
 setMethod("plot", signature(x="genlight", y="ANY"), function(x, y=NULL, col=NULL, legend=TRUE,

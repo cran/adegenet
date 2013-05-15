@@ -11,7 +11,8 @@
   1 is acceptable.
 }
 \usage{
-inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample", "function"), N = 200, M = N * 10)
+inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample","function"),
+           N = 200, M = N * 10)
 }
 \arguments{
   \item{x}{an object of class \linkS4class{genind}.}
@@ -22,9 +23,9 @@ inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample", "function"), 
     used (TRUE, default) instead of generic labels (FALSE); used if
     res.type is "matrix".}
  \item{res.type}{a character string matching "sample" or "function",
-   specifying whether the output should be a function giving the density of probability
-   of F values ("function") or a sample of F values taken from this
-   distribution ("sample", default).}
+   specifying whether the output should be a function giving the density
+   of probability of F values ("function") or a sample of F values taken
+   from this distribution ("sample", default).}
  \item{N}{an integer indicating the size of the sample to be taken from
    the distribution of F values.}
  \item{M}{an integer indicating the number of different F values to be
@@ -43,10 +44,10 @@ inbreeding(x, pop = NULL, truenames = TRUE, res.type = c("sample", "function"), 
   probability for an individual to inherit two identical alleles from a
   single ancestor.
 
-  Let \eqn{p_i} refer to the frequency of allele \eqn{i} in the population. Let
-  \eqn{h} be an variable which equates 1 if the individual is
-  homozygote, and 0 otherwise. For one locus, the probability of being
-  homozygote is computed as:
+  Let \eqn{p_i} refer to the frequency of allele \eqn{i} in the
+  population. Let \eqn{h} be an variable which equates 1 if the
+  individual is homozygote, and 0 otherwise. For one locus, the
+  probability of being homozygote is computed as:
 
   \eqn{ F + (1-F) \sum_i p_i^2}
 
@@ -72,11 +73,13 @@ lagun <- seppop(microbov)$Lagunaire
 Fsamp <- inbreeding(lagun, N=30)
 
 ## plot the first 10 results
-invisible(sapply(Fsamp[1:10], function(e) plot(density(e), xlab="F", xlim=c(0,1), main="Density of the sampled F values")))
+invisible(sapply(Fsamp[1:10], function(e) plot(density(e), xlab="F",
+xlim=c(0,1), main="Density of the sampled F values")))
 
 ## compute means for all individuals
 Fmean=sapply(Fsamp, mean)
-hist(Fmean, col="orange", xlab="mean value of F", main="Distribution of mean F across individuals")
+hist(Fmean, col="orange", xlab="mean value of F",
+main="Distribution of mean F across individuals")
 
 ## estimate inbreeding - return proba density functions
 Fdens <- inbreeding(lagun, res.type="function")
@@ -85,6 +88,7 @@ Fdens <- inbreeding(lagun, res.type="function")
 Fdens[[1]]
 
 ## plot the first 10 functions
-invisible(sapply(Fdens[1:10], plot, ylab="Density", main="Density of probability of F values"))
+invisible(sapply(Fdens[1:10], plot, ylab="Density",
+main="Density of probability of F values"))
 }
 }

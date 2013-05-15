@@ -190,14 +190,14 @@
   \tabular{ll}{
     Package: \tab adegenet\cr
     Type: \tab Package\cr
-    Version: \tab 1.3-7\cr
-    Date: \tab 2013-04-05 \cr
+    Version: \tab 1.3-8\cr
+    Date: \tab 2013-04-24 \cr
     License: \tab GPL (>=2)
   } 
 }
 \author{
   Thibaut Jombart <t.jombart@imperial.ac.uk>\cr
-  Developpers: Ismail Ahmed <ismail.ahmed@inserm.fr>, Tobias Erik Reiners, Peter Solymos, Anne Cori\cr
+  Developers: Ismail Ahmed <ismail.ahmed@inserm.fr>, Federico Calboli <f.calboli@imperial.ac.uk>,Tobias Erik Reiners, Peter Solymos, Anne Cori\cr
   and contributed datasets from: Katayoun Moazami-Goudarzi, Denis Laloë,
   Dominique Pontier, Daniel Maillard, Francois Balloux.
 }

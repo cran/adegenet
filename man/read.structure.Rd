@@ -17,7 +17,9 @@
    \code{\link{df2genind}}.
  }
 \usage{
-read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL, NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE)
+read.structure(file, n.ind=NULL, n.loc=NULL, onerowperind=NULL,
+               col.lab=NULL, col.pop=NULL, col.others=NULL, row.marknames=NULL,
+               NA.char="-9", pop=NULL, missing=NA, ask=TRUE, quiet=FALSE)
 }
 \arguments{
   \item{file}{ a character string giving the path to the file to
@@ -31,9 +33,9 @@ read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, c
     labels of genotypes. '0' if absent.}
   \item{col.pop}{an integer giving the index of the column containing
     population to which genotypes belong. '0' if absent.}
-  \item{col.others}{an vector of integers giving the indexes of the columns containing
-    other informations to be read. Will be available in @other of the
-    created object.}
+  \item{col.others}{an vector of integers giving the indexes of the
+    columns containing other informations to be read. Will be available
+    in @other of the created object.}
  \item{row.marknames}{an integer giving the index of the row containing
     the names of the markers. '0' if absent.}
   \item{NA.char}{the character string coding missing data. "-9" by
@@ -60,11 +62,14 @@ read.structure(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL, col.lab=NULL, c
 }
 \value{an object of the class \code{genind}}
 \references{
-  Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of population structure using multilocus genotype data. \emph{Genetics}, \bold{155}: 945-959
+  Pritchard, J.; Stephens, M. & Donnelly, P. (2000) Inference of
+  population structure using multilocus genotype data. \emph{Genetics},
+  \bold{155}: 945-959
 }
 \seealso{
   \code{\link{import2genind}}, \code{\link{df2genind}},
-  \code{\link{read.fstat}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}
+  \code{\link{read.fstat}}, \code{\link{read.genetix}},
+  \code{\link{read.genepop}}
 }
 \author{Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
