@@ -44,11 +44,10 @@ barplot(table(nancycats@pop),ylab="Number of genotypes",main="Number of genotype
 # are cats structured among colonies ?
 if(require(hierfstat)){
 
-if(require(ade4)){
 gtest <- gstat.randtest(nancycats,nsim=99)
 gtest
 plot(gtest)
-}
+
 
 dat <- genind2hierfstat(nancycats)
 

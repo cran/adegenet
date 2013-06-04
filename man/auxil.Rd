@@ -15,11 +15,13 @@
 \alias{bluepal}
 \alias{redpal}
 \alias{greenpal}
+\alias{greypal}
 \alias{flame}
 \alias{azur}
 \alias{seasun}
 \alias{lightseasun}
 \alias{deepseasun}
+\alias{spectral}
 \alias{wasp}
 \alias{funky}
 
@@ -54,17 +56,22 @@
 
   Color palettes include:
   \itemize{
-    \item \code{bluepal}: white->blue
-    \item \code{redpal}: white->red
-    \item \code{greenpal}: white->green
-    \item \code{flame}: gold->red
-    \item \code{azur}: gold->blue
-    \item \code{seasun}: blue->gold->red
-    \item \code{lightseasun}: blue->gold->red (light variant)
-    \item \code{deepseasun}: blue->gold->red (deep variant)
-    \item \code{wasp}: gold->brown->black
+    \item \code{bluepal}: white -> dark blue
+    \item \code{redpal}: white -> dark red
+    \item \code{greenpal}: white -> dark green
+    \item \code{greypal}: white -> dark grey
+    \item \code{flame}: gold -> red
+    \item \code{azur}: gold -> blue
+    \item \code{seasun}: blue -> gold -> red
+    \item \code{lightseasun}: blue -> gold -> red (light variant)
+    \item \code{deepseasun}: blue -> gold -> red (deep variant)
+    \item \code{spectral}: red -> yellow -> blue (RColorBrewer variant)
+    \item \code{wasp}: gold -> brown -> black
     \item \code{funky}: many colors
   }
+}
+\seealso{
+  The R package RColorBrewer, proposing a nice selection of color palettes.
 }
 \usage{
 adegenetWeb()
@@ -129,6 +136,7 @@ plot(1:100, col=num2col(1:100, col.pal=bluepal), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=flame), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=wasp), pch=20, cex=4)
 plot(1:100, col=num2col(1:100, col.pal=azur,rev=TRUE), pch=20, cex=4)
+plot(1:100, col=num2col(1:100, col.pal=spectral), pch=20, cex=4)
 
 ## factor as colors using fac2col
 dat <- cbind(c(rnorm(50,8), rnorm(100), rnorm(150,3),

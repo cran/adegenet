@@ -340,7 +340,6 @@ get.likelihood.seqTrack <- function(x, mu, haplo.length,...){
 ## as.igraph.seqTrack
 ######################
 as.igraph.seqTrack <- function(x, col.pal=redpal, ...){
-    if(!require(igraph)) stop("package igraph is required")
 
     ## GET DAG ##
     from.old <- x$ances
@@ -385,7 +384,6 @@ as.igraph.seqTrack <- function(x, col.pal=redpal, ...){
 ## plot.seqTrack
 #################
 plot.seqTrack <- function(x, y=NULL, col.pal=redpal, ...){
-    if(!require(igraph)) stop("igraph is required")
 
     ## get graph ##
     g <- as.igraph(x, col.pal=col.pal)

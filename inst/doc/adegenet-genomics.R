@@ -17,7 +17,7 @@ getClassDef("SNPbin")
 ###################################################
 ### code chunk number 3: adegenet-genomics.Rnw:124-125
 ###################################################
-new("SNPbin", multicore=FALSE)
+new("SNPbin", parallel=FALSE)
 
 
 ###################################################
@@ -30,7 +30,7 @@ new("SNPbin", multicore=FALSE)
 ###################################################
 ### code chunk number 5: adegenet-genomics.Rnw:135-137
 ###################################################
-x <- new("SNPbin", c(0,1,1,2,0,0,1), multicore=FALSE)
+x <- new("SNPbin", c(0,1,1,2,0,0,1), parallel=FALSE)
 x
 
 
@@ -64,7 +64,7 @@ print(object.size(dat),unit="auto")
 ###################################################
 ### code chunk number 10: adegenet-genomics.Rnw:166-167 (eval = FALSE)
 ###################################################
-## x <- new("SNPbin", dat, multicore=FALSE)
+## x <- new("SNPbin", dat, parallel=FALSE)
 
 
 ###################################################
@@ -100,7 +100,7 @@ getClassDef("genlight")
 ###################################################
 ### code chunk number 16: adegenet-genomics.Rnw:230-231
 ###################################################
-new("genlight", multicore=FALSE)
+new("genlight", parallel=FALSE)
 
 
 ###################################################
@@ -112,7 +112,7 @@ new("genlight", multicore=FALSE)
 ###################################################
 ### code chunk number 18: adegenet-genomics.Rnw:247-248
 ###################################################
-x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)), multicore=FALSE)
+x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)), parallel=FALSE)
 
 
 ###################################################
@@ -167,7 +167,7 @@ rm(dat)
 ###################################################
 dat <- lapply(1:3, function(i) sample(0:2, 10, replace=TRUE))
 dat
-x <- new("genlight", dat, multicore=FALSE)
+x <- new("genlight", dat, parallel=FALSE)
 x
 indNames(x)
 indNames(x) <- paste("individual", 1:3)
@@ -212,14 +212,14 @@ as.matrix(x[1:2, c(1,1,1,2,2,2,3,3,3)])
 ###################################################
 x
 as.matrix(x)
-seploc(x, n.block=2, multicore=FALSE)
-lapply(seploc(x, n.block=2, multicore=FALSE),as.matrix)
+seploc(x, n.block=2, parallel=FALSE)
+lapply(seploc(x, n.block=2, parallel=FALSE),as.matrix)
 
 
 ###################################################
 ### code chunk number 32: adegenet-genomics.Rnw:417-418
 ###################################################
-lapply(seploc(x, n.block=2, random=TRUE, multicore=FALSE),as.matrix)
+lapply(seploc(x, n.block=2, random=TRUE, parallel=FALSE),as.matrix)
 
 
 ###################################################
@@ -231,9 +231,9 @@ lapply(seploc(x, n.block=2, random=TRUE, multicore=FALSE),as.matrix)
 ###################################################
 ### code chunk number 34: readsnp
 ###################################################
-obj <- read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2, multicore=FALSE)
+obj <- read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2, parallel=FALSE)
 obj
-as.matrix(obj, multicore=FALSE)
+as.matrix(obj, parallel=FALSE)
 alleles(obj)
 pop(obj)
 indNames(obj)
@@ -249,7 +249,7 @@ indNames(obj)
 ### code chunk number 36: adegenet-genomics.Rnw:583-586
 ###################################################
 myPath <- system.file("files/usflu.fasta",package="adegenet")
-flu <- fasta2genlight(myPath, chunk=10, multicore=FALSE)
+flu <- fasta2genlight(myPath, chunk=10, parallel=FALSE)
 flu
 
 
@@ -274,7 +274,7 @@ points(position(flu), rep(0, nLoc(flu)), pch="|", col="blue")
 ###################################################
 ### code chunk number 39: adegenet-genomics.Rnw:619-621
 ###################################################
-flu <- fasta2genlight(myPath, chunk=10,saveNbAlleles=TRUE, quiet=TRUE, multicore=FALSE)
+flu <- fasta2genlight(myPath, chunk=10,saveNbAlleles=TRUE, quiet=TRUE, parallel=FALSE)
 flu
 
 
@@ -366,14 +366,14 @@ points(glNA(flu), rep(0, nLoc(flu)), pch="|", col="blue")
 ###################################################
 ### code chunk number 51: adegenet-genomics.Rnw:819-821
 ###################################################
-x <- glSim(40, 1e4, LD=FALSE, multicore=FALSE)
+x <- glSim(40, 1e4, LD=FALSE, parallel=FALSE)
 x
 
 
 ###################################################
 ### code chunk number 52: adegenet-genomics.Rnw:824-828
 ###################################################
-x <- seploc(x, n.block=10, multicore=FALSE)
+x <- seploc(x, n.block=10, parallel=FALSE)
 class(x)
 names(x)
 x[1:2]
@@ -405,7 +405,7 @@ title("A simple NJ tree of simulated genlight data")
 ###################################################
 ### code chunk number 56: adegenet-genomics.Rnw:869-873
 ###################################################
-x <- new("genlight", list(a=c(0,0,1,1), b=c(1,1,0,0), c=c(1,1,1,1)), multicore=FALSE)
+x <- new("genlight", list(a=c(0,0,1,1), b=c(1,1,0,0), c=c(1,1,1,1)), parallel=FALSE)
 locNames(x) <- 1:4
 x
 as.matrix(x)
@@ -420,7 +420,7 @@ glMean(x)
 ###################################################
 ### code chunk number 58: adegenet-genomics.Rnw:881-886
 ###################################################
-x <- new("genlight", list(a=c(0,0,2,2), b=c(1,1,0,0), c=c(1,1,1,1)), multicore=FALSE)
+x <- new("genlight", list(a=c(0,0,2,2), b=c(1,1,0,0), c=c(1,1,1,1)), parallel=FALSE)
 locNames(x) <- 1:4
 x
 as.matrix(x)

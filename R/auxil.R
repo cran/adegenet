@@ -276,9 +276,18 @@ any2col <- function(x, col.pal=seasun, na.col="transparent"){
 
 ## pre-defined palettes ##
 ## mono color
-bluepal <- colorRampPalette(c("lightgrey","blue"))
-redpal <- colorRampPalette(c("lightgrey","red"))
-greenpal <- colorRampPalette(c("lightgrey","green3"))
+bluepal <- colorRampPalette(c("#F7FBFF","#DEEBF7","#C6DBEF",
+                              "#9ECAE1","#6BAED6","#4292C6",
+                              "#2171B5","#08519C","#08306B"))
+redpal <- colorRampPalette(c("#FFF5F0","#FEE0D2","#FCBBA1",
+                             "#FC9272","#FB6A4A","#EF3B2C",
+                             "#CB181D","#A50F15","#67000D"))
+greenpal <- colorRampPalette(c("#F7FCF5","#E5F5E0","#C7E9C0",
+                               "#A1D99B","#74C476","#41AB5D",
+                               "#238B45","#006D2C","#00441B"))
+greypal <- colorRampPalette(c("#FFFFFF","#F0F0F0","#D9D9D9",
+                              "#BDBDBD","#969696","#737373",
+                              "#525252","#252525","#000000"))
 
 ## bi-color
 flame <- colorRampPalette(c("gold","red3"))
@@ -289,7 +298,12 @@ seasun <- colorRampPalette(c("blue","gold","red"))
 lightseasun <- colorRampPalette(c("deepskyblue2","gold","red1"))
 deepseasun <- colorRampPalette(c("blue2","gold","red2"))
 wasp <-  colorRampPalette(c("yellow2","brown", "black"))
+spectral <- colorRampPalette(c("#D53E4F","#F46D43","#FDAE61",
+                               "#FEE08B","#FFFFBF","#E6F598",
+                               "#ABDDA4","#66C2A5","#3288BD"))
 
 ## psychedelic
-funky <- colorRampPalette(c("blue","green3","gold","orange","red","brown4","purple","pink2"))
-
+funky <- colorRampPalette(c("#A6CEE3","#1F78B4","#B2DF8A",
+                            "#33A02C","#FB9A99","#E31A1C",
+                            "#FDBF6F","#FF7F00","#CAB2D6",
+                            "#6A3D9A","#FFFF99","#B15928"))

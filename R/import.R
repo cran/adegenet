@@ -722,13 +722,13 @@ import2genind <- function(file,missing=NA,quiet=FALSE, ...){
 # Function read.snp
 #######################
 read.snp <- function(file, quiet=FALSE, chunkSize=1000,
-                  multicore=require("multicore"), n.cores=NULL, ...){
+                     parallel=require("parallel"), n.cores=NULL, ...){
     ext <- .readExt(file)
     ext <- toupper(ext)
     if(ext != "SNP") warning("wrong file extension - '.snp' expected")
     if(!quiet) cat("\n Reading biallelic SNP data file into a genlight object... \n\n")
-    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-    if(multicore && is.null(n.cores)){
+    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    if(parallel && is.null(n.cores)){
         n.cores <- parallel:::detectCores()
     }
 
@@ -801,7 +801,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
         ind.lab <- gsub("(^[[:space:]]+)|([[:space:]]+$)", "", ind.lab)
         temp <- strsplit(txt[ID.INDIV+1], "")
         temp <- lapply(temp, function(e) suppressWarnings(as.integer(e)))
-        if(multicore){
+        if(parallel){
             res <- c(res, mclapply(temp, function(e) new("SNPbin", e),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
@@ -861,7 +861,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
         other <- list(chromosome = misc.info$chromosome)
     }
 
-    res <- new("genlight", gen=res, ind.names=ind.names, position=misc.info$position, loc.all=misc.info$allele, ploidy=misc.info$ploidy, pop=misc.info$population, other=other, multicore=multicore)
+    res <- new("genlight", gen=res, ind.names=ind.names, position=misc.info$position, loc.all=misc.info$allele, ploidy=misc.info$ploidy, pop=misc.info$population, other=other, parallel=parallel)
 
     if(!quiet) cat("\n...done.\n\n")
 
@@ -923,14 +923,14 @@ extract.PLINKmap <- function(file, x=NULL){
 ## Function read.PLINK
 ########################
 read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
-                       multicore=require("multicore"), n.cores=NULL, ...){
+                       parallel=require("parallel"), n.cores=NULL, ...){
     ## HANDLE ARGUMENTS ##
     ext <- .readExt(file)
     ext <- toupper(ext)
     if(ext != "RAW") warning("wrong file extension - '.raw' expected")
     if(!quiet) cat("\n Reading PLINK raw format into a genlight object... \n\n")
-    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-    if(multicore && is.null(n.cores)){
+    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    if(parallel && is.null(n.cores)){
         n.cores <- parallel:::detectCores()
     }
 
@@ -978,7 +978,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
         ## build SNPbin objects
         txt <- lapply(txt, function(e) suppressWarnings(as.integer(e[-(1:6)])))
 
-        if(multicore){
+        if(parallel){
             res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
@@ -1000,7 +1000,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
     ## BUILD FINAL OBJECT ##
     if(!quiet) cat("\n Building final object... \n")
 
-    res <- new("genlight",res, ploidy=2, multicore=multicore)
+    res <- new("genlight",res, ploidy=2, parallel=parallel)
     indNames(res) <- misc.info$IID
     pop(res) <- misc.info$FID
     locNames(res) <- loc.names
@@ -1037,14 +1037,14 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
 ## Function fasta2genlight
 ###########################
 fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALSE,
-                       multicore=require("multicore"), n.cores=NULL, ...){
+                       parallel=require("parallel"), n.cores=NULL, ...){
     ## HANDLE ARGUMENTS ##
     ext <- .readExt(file)
     ext <- toupper(ext)
     if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
     if(!quiet) cat("\n Converting FASTA alignment into a genlight object... \n\n")
-    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-    if(multicore && is.null(n.cores)){
+    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    if(parallel && is.null(n.cores)){
         n.cores <- parallel:::detectCores()
     }
 
@@ -1089,7 +1089,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
         nb.ind <- length(grep("^>", txt))
         IND.LAB <- c(IND.LAB, sub(">","",txt[grep("^>", txt)])) # find individuals' labels
         txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
-        if(multicore){
+        if(parallel){
             txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split=""),
                             mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one vector
         } else {
@@ -1147,7 +1147,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
         ## read SNPs
         nb.ind <- length(grep("^>", txt))
         txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
-        if(multicore){
+        if(parallel){
             txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi],
                                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one SNP vector
         } else {
@@ -1167,7 +1167,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
     ## BUILD FINAL OBJECT ##
     if(!quiet) cat("\n Building final object... \n")
 
-    res <- new("genlight",res, ploidy=1, multicore=multicore)
+    res <- new("genlight",res, ploidy=1, parallel=parallel)
     indNames(res) <- IND.LAB
     alleles(res) <- sapply(POOL[snp.posi], paste, collapse="/")
     position(res) <- which(snp.posi)
@@ -1191,7 +1191,6 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
 ## Function fasta2DNAbin
 ###########################
 fasta2DNAbin <- function(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE){
-    if(!require(ape)) stop("ape package is needed")
 
     ## HANDLE ARGUMENTS ##
     ext <- .readExt(file)

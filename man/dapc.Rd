@@ -9,9 +9,6 @@
 \alias{print.dapc}
 \alias{summary.dapc}
 \alias{predict.dapc}
-\alias{xvalDapc}
-\alias{xvalDapc.data.frame}
-\alias{xvalDapc.matrix}
 \alias{as.lda}
 \alias{as.lda.dapc}
 \title{Discriminant Analysis of Principal Components (DAPC)}
@@ -80,14 +77,6 @@
 
 \method{predict}{dapc}(object, newdata, prior = object$prior, dimen,
          method = c("plug-in", "predictive", "debiased"), ...)
-
-\method{xvalDapc}{data.frame}(x, grp, n.pca.max, n.da=NULL,
-              training.set = 1/2, center=TRUE, scale=FALSE,
-              n.pca=NULL, n.rep=10, \ldots)
-
-\method{xvalDapc}{matrix}(x, grp, n.pca.max, n.da=NULL,
-              training.set = 1/2, center=TRUE, scale=FALSE,
-              n.pca=NULL, n.rep=10, \ldots)
 }
 \arguments{
   \item{x}{\code{a data.frame}, \code{matrix}, or \code{\linkS4class{genind}}
@@ -142,11 +131,6 @@
     original ('training') data. In particular, variables must be exactly
     the same as in the original data. For  \linkS4class{genind}
     objects, see \code{\link{repool}} to ensure matching of alleles.}
-  \item{n.pca.max}{maximum number of PCA components to retain.}
-  \item{training.set}{the proportion of data (individuals) to be used
-    for the training set; defaults to one half.}
-  \item{n.rep}{the number of replicate to be used for each number of PCA
-    components retained.}
   \item{prior,dimen,method}{see \code{?predict.lda}.}
 }
 \details{
@@ -213,15 +197,21 @@
   structured populations. BMC Genetics11:94. doi:10.1186/1471-2156-11-94
 }
 \seealso{
-  - \code{\link{scatter.dapc}}, \code{\link{assignplot}},
+  \itemize{
+  \item \code{\link{xvalDapc}}: selection of the optimal numbers of PCA axes
+  retained in DAPC using cross-validation.
+
+  \item \code{\link{scatter.dapc}}, \code{\link{assignplot}},
   \code{\link{compoplot}}: graphics for DAPC.
 
-  - \code{\link{find.clusters}}: to identify clusters without prior.
+  \item \code{\link{find.clusters}}: to identify clusters without prior.
 
-  - \code{\link{dapcIllus}}: a set of simulated data illustrating the DAPC
+  \item \code{\link{dapcIllus}}: a set of simulated data illustrating
+  the DAPC
 
-  - \code{\link{eHGDP}}, \code{\link{H3N2}}: empirical datasets illustrating
-  DAPC
+  \item \code{\link{eHGDP}}, \code{\link{H3N2}}: empirical datasets
+  illustrating DAPC
+  }
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{

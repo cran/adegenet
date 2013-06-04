@@ -163,9 +163,9 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
 ########################
 ## genlight constructor
 ########################
-setMethod("initialize", "genlight", function(.Object, ..., multicore=require("multicore"), n.cores=NULL) {
-    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-    if(multicore && is.null(n.cores)){
+setMethod("initialize", "genlight", function(.Object, ..., parallel=require("parallel"), n.cores=NULL) {
+    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    if(parallel && is.null(n.cores)){
         n.cores <- parallel:::detectCores()
     }
 
@@ -206,7 +206,7 @@ setMethod("initialize", "genlight", function(.Object, ..., multicore=require("mu
                 }
             }
             ##input$gen <- lapply(1:nrow(input$gen), function(i) as.integer(input$gen[i,]))
-            if(multicore){
+            if(parallel){
                 x@gen <- mclapply(1:nrow(input$gen), function(i) new("SNPbin", as.integer(input$gen[i,])),
                                   mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
             } else {
@@ -234,7 +234,7 @@ setMethod("initialize", "genlight", function(.Object, ..., multicore=require("mu
             }
 
             ## create SNPbin list
-            if(multicore){
+            if(parallel){
                 x@gen <- mclapply(input$gen, function(e) new("SNPbin",e), mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
             } else {
                 x@gen <- lapply(input$gen, function(e) new("SNPbin",e))
@@ -261,7 +261,7 @@ setMethod("initialize", "genlight", function(.Object, ..., multicore=require("mu
                 }
 
                 ## create SNPbin list
-                if(multicore){
+                if(parallel){
                     x@gen <- mclapply(1:nrow(input$gen), function(i) f1(input$gen[i,]), mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
                 } else {
                     x@gen <- lapply(1:nrow(input$gen), function(i) f1(input$gen[i,]))

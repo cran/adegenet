@@ -81,7 +81,7 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
         x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
                  ind.names=old.ind.names, loc.names=new.loc.names,
-                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, multicore=FALSE,...)
+                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
     }
 
     return(x)
@@ -248,12 +248,12 @@ setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TR
 ## seploc
 ##########
 setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.size=NULL, random=FALSE,
-                               multicore=require(multicore), n.cores=NULL){
+                               parallel=require(parallel), n.cores=NULL){
     ## CHECKS ##
     if(is.null(n.block) & is.null(block.size)) stop("n.block and block.size are both missing.")
     if(!is.null(n.block) & !is.null(block.size)) stop("n.block and block.size are both provided.")
-    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-    if(multicore && is.null(n.cores)){
+    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    if(parallel && is.null(n.cores)){
         n.cores <- parallel:::detectCores()
     }
 
@@ -285,7 +285,7 @@ setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.siz
         fac.block <- sample(fac.block)
     }
 
-    if(multicore){
+    if(parallel){
         if(random){
             res <- mclapply(levels(fac.block), function(lev) x[,sample(which(fac.block==lev))],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)

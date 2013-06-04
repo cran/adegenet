@@ -14,7 +14,6 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/
 
     ## MISC CHECKS ##
     if(!inherits(x,"DNAbin")) stop("x is not a DNAbin object")
-    if(!require(ape)) stop("The package ape is required.")
     if(is.list(x)) {
         x <- as.matrix(x)
     }

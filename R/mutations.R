@@ -14,7 +14,6 @@ findMutations <- function(...){
 ## METHOD FOR DNABIN
 findMutations.DNAbin <- function(x, from=NULL, to=NULL, allcomb=TRUE, ...){
     ## CHECKS ##
-    if(!require(ape)) stop("the ape package is needed")
     if(!inherits(x,"DNAbin")) stop("x is not a DNAbin object")
     x <- as.matrix(x)
 
@@ -86,7 +85,6 @@ graphMutations <- function(...){
 
 ## METHOD FOR DNABIN
 graphMutations.DNAbin <- function(x, from=NULL, to=NULL, allcomb=TRUE, plot=TRUE, curved.edges=TRUE, ...){
-    if(!require(igraph)) stop("igraph is required")
 
     ## GET MUTATIONS ##
     x <- findMutations(x, from=from, to=to, allcomb=allcomb)
