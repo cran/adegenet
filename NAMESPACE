@@ -6,7 +6,12 @@ exportPattern(".")
 exportClassPattern(".")
 
 ## Import all packages listed as Imports or Depends
-import(utils,methods,MASS,ade4,igraph,ape)
+import(utils,methods)
+importFrom(MASS, lda)
+importFrom(ade4, scatter)
+importFrom(ape, as.igraph, edges)
+importFrom(igraph, E, "E<-", V, "V<-", clusters, graph.data.frame,
+           graph.adjacency, layout.fruchterman.reingold)
 
 ## Declare S3 methods
 S3method(scatter, dapc)
