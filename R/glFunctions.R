@@ -172,12 +172,12 @@ glVar <- function(x, alleleAsUnit=TRUE){
 ## between centred/scaled vectors
 ## of SNPs
 glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
-                      multicore=require("multicore"), n.cores=NULL){
+                      parallel=require("parallel"), n.cores=NULL){
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
     ## SOME CHECKS ##
-    if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-    if(multicore && is.null(n.cores)){
+    if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+    if(parallel && is.null(n.cores)){
         n.cores <- parallel:::detectCores()
     }
 
@@ -187,7 +187,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
     ind.names <- indNames(x)
 
 
-    if(!multicore){ # DO NOT USE MULTIPLE CORES
+    if(!parallel){ # DO NOT USE MULTIPLE CORES
         ## GET INPUTS TO C PROCEDURE ##
         if(center){
             mu <- glMean(x,alleleAsUnit=alleleAsUnit)
@@ -277,7 +277,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
 ## PCA for genlight objects
 ##
 glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsUnit=FALSE,
-                  useC=TRUE, multicore=require("multicore"), n.cores=NULL,
+                  useC=TRUE, parallel=require("parallel"), n.cores=NULL,
                   returnDotProd=FALSE, matDotProd=NULL){
     if(!inherits(x, "genlight")) stop("x is not a genlight object")
 
@@ -300,8 +300,8 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
 
         ## == if non-C code is used ==
         if(!useC){
-            if(multicore && !require(multicore)) stop("multicore package requested but not installed")
-            if(multicore && is.null(n.cores)){
+            if(parallel && !require(parallel)) stop("parallel package requested but not installed")
+            if(parallel && is.null(n.cores)){
                 n.cores <- parallel:::detectCores()
             }
 
@@ -358,7 +358,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
 
             ## COMPUTE ALL POSSIBLE DOT PRODUCTS (XX^T / n) ##
             allComb <- combn(1:nInd(x), 2)
-            if(multicore){
+            if(parallel){
                 allProd <- unlist(mclapply(1:ncol(allComb), function(i) dotProd(x@gen[[allComb[1,i]]], x@gen[[allComb[2,i]]], myPloidy[allComb[1,i]], myPloidy[allComb[2,i]]),
                                            mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE))
             } else {
@@ -374,7 +374,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
             allProd <- as.matrix(allProd)
 
             ## compute the diagonal
-            if(multicore){
+            if(parallel){
                 temp <- unlist(mclapply(1:nInd(x), function(i) dotProd(x@gen[[i]], x@gen[[i]], myPloidy[i], myPloidy[i]),
                                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE))/nInd(x)
             } else {
@@ -382,7 +382,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
             }
             diag(allProd) <- temp
         } else { # === use C computations ====
-            allProd <- glDotProd(x, center=center, scale=scale, alleleAsUnit=alleleAsUnit, multicore=multicore, n.cores=n.cores)/nInd(x)
+            allProd <- glDotProd(x, center=center, scale=scale, alleleAsUnit=alleleAsUnit, parallel=parallel, n.cores=n.cores)/nInd(x)
         }
     } else { # END NEED TO COMPUTE DOTPROD
         if(!all(dim(matDotProd)==nInd(x))) stop("matDotProd has wrong dimensions.")
@@ -511,7 +511,7 @@ scatter.glPca <- function(x, xax=1, yax=2, posi="bottomleft", bg="white", ratio=
                           grid = TRUE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE,
                           sub = "", csub = 1, possub = "bottomleft", cgrid = 1,
                           pixmap = NULL, contour = NULL, area = NULL, ...){
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
 
 
     ## set par
@@ -757,20 +757,20 @@ loadingplot.glPca <- function(x, at=NULL, threshold=NULL, axis=1, fac=NULL, byfa
 ## TEST PARALLELE C COMPUTATIONS IN GLPCA ##
 ## first dataset
 ## x <- new("genlight", lapply(1:50, function(i) sample(c(0,1,2,NA), 1e5, prob=c(.5, .40, .09, .01), replace=TRUE)))
-## system.time(pca1 <- glPca(x, multi=FALSE, useC=FALSE, nf=1)) # no C, no multicore: 43 sec
+## system.time(pca1 <- glPca(x, multi=FALSE, useC=FALSE, nf=1)) # no C, no parallel: 43 sec
 ## system.time(pca2 <- glPca(x, multi=FALSE, useC=TRUE, nf=1)) # just C: 248 sec
-## system.time(pca3 <- glPca(x, multi=TRUE, useC=FALSE, nf=1, n.core=7)) # just multicore: 16 sec
-## system.time(pca4 <- glPca(x, multi=TRUE, useC=TRUE, nf=1, n.core=7)) # C and multicore: 65 sec
+## system.time(pca3 <- glPca(x, multi=TRUE, useC=FALSE, nf=1, n.core=7)) # just parallel: 16 sec
+## system.time(pca4 <- glPca(x, multi=TRUE, useC=TRUE, nf=1, n.core=7)) # C and parallel: 65 sec
 ## all.equal(pca1$scores^2, pca2$scores^2) # must be TRUE
 ## all.equal(pca1$scores^2, pca3$scores^2) # must be TRUE
 ## all.equal(pca1$scores^2, pca4$scores^2) # must be TRUE
 
 ## second dataset
 ## x <- new("genlight", lapply(1:500, function(i) sample(c(0,1,2,NA), 1e4, prob=c(.5, .40, .09, .01), replace=TRUE)))
-## system.time(pca1 <- glPca(x, multi=FALSE, useC=FALSE, nf=1)) # no C, no multicore: 418 sec
+## system.time(pca1 <- glPca(x, multi=FALSE, useC=FALSE, nf=1)) # no C, no parallel: 418 sec
 ## system.time(pca2 <- glPca(x, multi=FALSE, useC=TRUE, nf=1)) # just C:  496 sec
-## system.time(pca3 <- glPca(x, multi=TRUE, useC=FALSE, nf=1, n.core=7)) # just multicore: 589 sec
-## system.time(pca4 <- glPca(x, multi=TRUE, useC=TRUE, nf=1, n.core=7)) # C and multicore: 315 sec
+## system.time(pca3 <- glPca(x, multi=TRUE, useC=FALSE, nf=1, n.core=7)) # just parallel: 589 sec
+## system.time(pca4 <- glPca(x, multi=TRUE, useC=TRUE, nf=1, n.core=7)) # C and parallel: 315 sec
 ## all.equal(pca1$scores^2, pca2$scores^2) # must be TRUE
 ## all.equal(pca1$scores^2, pca3$scores^2) # must be TRUE
 ## all.equal(pca1$scores^2, pca4$scores^2) # must be TRUE

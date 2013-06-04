@@ -122,7 +122,7 @@ If no argument is provided, an empty object is created:
 new("SNPbin")
 @
 <<echo=FALSE>>=
-new("SNPbin", multicore=FALSE)
+new("SNPbin", parallel=FALSE)
 @
 In practice, only the \texttt{snp} information and possibly the ploidy has to be provided; various
 formats are accepted for the \texttt{snp} component, but the simplest is a vector of integers (or
@@ -133,7 +133,7 @@ x <- new("SNPbin", c(0,1,1,2,0,0,1))
 x
 @
 <<echo=FALSE>>=
-x <- new("SNPbin", c(0,1,1,2,0,0,1), multicore=FALSE)
+x <- new("SNPbin", c(0,1,1,2,0,0,1), parallel=FALSE)
 x
 @
 
@@ -164,7 +164,7 @@ dat <- sample(0:1, 1e6, replace=TRUE)
 print(object.size(dat),unit="auto")
 @
 <<eval=FALSE>>=
-x <- new("SNPbin", dat, multicore=FALSE)
+x <- new("SNPbin", dat, parallel=FALSE)
 @
 <<echo=FALSE>>=
 load("Robjects/x.snpbin.RData")
@@ -228,7 +228,7 @@ When none is provided, an empty object is created:
 new("genlight")
 @
 <<echo=FALSE>>=
-new("genlight", multicore=FALSE)
+new("genlight", parallel=FALSE)
 @
 The most important information to provide is obviously the genotypes (argument \texttt{gen}); these
 can be provided as:
@@ -245,7 +245,7 @@ diploid, and tetraploid individuals in the same dataset; for instance:
 x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)))
 @
 <<echo=FALSE>>=
-x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)), multicore=FALSE)
+x <- new("genlight", list(indiv1=c(1,1,0,1,1,0), indiv2=c(2,1,1,0,0,0), toto=c(2,2,0,0,4,4)), parallel=FALSE)
 @
 <<>>=
 x
@@ -297,7 +297,7 @@ This however is minimized by three ways:
 While this makes implementing methods more complicated.
 In practice, routines are implemented so as to minimize
 the amount of data converted back to integers, use C code where possible, and use multiple cores
-if the package \textit{multicore} is installed an multiple cores are available.
+if the package \textit{parallel} is installed an multiple cores are available.
 Fortunately, these underlying technical issues are oblivious to the user, and one merely needs to
 know how to manipulate \texttt{genlight} objects using a few key functions to be able to analyze data.
 
@@ -343,7 +343,7 @@ where $^{\dagger}$ indicates that a replacement method is available using \textt
 <<>>=
 dat <- lapply(1:3, function(i) sample(0:2, 10, replace=TRUE))
 dat
-x <- new("genlight", dat, multicore=FALSE)
+x <- new("genlight", dat, parallel=FALSE)
 x
 indNames(x)
 indNames(x) <- paste("individual", 1:3)
@@ -405,17 +405,17 @@ This can be achieved by specifying either a number of blocks (argument \texttt{n
 of the blocks (argument \texttt{block.size}). The function also allows for randomizing the
 distribution of the SNPs in the blocks (argument \texttt{random=TRUE}), which is especially useful
 to replace computations that cannot be achieved on the whole dataset with parallelized computations
-performed on random blocks (for parallelization, remove the argument \texttt{multicore=FALSE}).
+performed on random blocks (for parallelization, remove the argument \texttt{parallel=FALSE}).
 For instance:
 <<seploc>>=
 x
 as.matrix(x)
-seploc(x, n.block=2, multicore=FALSE)
-lapply(seploc(x, n.block=2, multicore=FALSE),as.matrix)
+seploc(x, n.block=2, parallel=FALSE)
+lapply(seploc(x, n.block=2, parallel=FALSE),as.matrix)
 @
 splits the data into two blocks of contiguous SNPs, while:
 <<>>=
-lapply(seploc(x, n.block=2, random=TRUE, multicore=FALSE),as.matrix)
+lapply(seploc(x, n.block=2, random=TRUE, parallel=FALSE),as.matrix)
 @
 generates blocks of randomly selected SNPs.
 
@@ -519,9 +519,9 @@ Brit Brit Fren monster NA
 \end{verbatim}
 We read the file in using:
 <<readsnp>>=
-obj <- read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2, multicore=FALSE)
+obj <- read.snp(system.file("files/exampleSnpDat.snp",package="adegenet"), chunk=2, parallel=FALSE)
 obj
-as.matrix(obj, multicore=FALSE)
+as.matrix(obj, parallel=FALSE)
 alleles(obj)
 pop(obj)
 indNames(obj)
@@ -582,7 +582,7 @@ alongside the package.
 The file is first located using \texttt{system.file}, and then processed using \texttt{fasta2genlight}:
 <<>>=
 myPath <- system.file("files/usflu.fasta",package="adegenet")
-flu <- fasta2genlight(myPath, chunk=10, multicore=FALSE)
+flu <- fasta2genlight(myPath, chunk=10, parallel=FALSE)
 flu
 @
 
@@ -617,7 +617,7 @@ with more than 2 alleles are discarded from the data.
 It is however possible to ask \texttt{fasta2genlight} to keep track of the number of alleles for
 each site of the original alignment, by specifying:
 <<>>=
-flu <- fasta2genlight(myPath, chunk=10,saveNbAlleles=TRUE, quiet=TRUE, multicore=FALSE)
+flu <- fasta2genlight(myPath, chunk=10,saveNbAlleles=TRUE, quiet=TRUE, parallel=FALSE)
 flu
 @
 
@@ -817,12 +817,12 @@ dataset, and results are finally reunited.
 
 Let us illustrate this procedure using 40 simulated individuals with 10,000 SNPs each:
 <<>>=
-x <- glSim(40, 1e4, LD=FALSE, multicore=FALSE)
+x <- glSim(40, 1e4, LD=FALSE, parallel=FALSE)
 x
 @
 \texttt{seploc} is used to create a list of smaller objects (here, 10 blocks of 10,000 SNPs):
 <<>>=
-x <- seploc(x, n.block=10, multicore=FALSE)
+x <- seploc(x, n.block=10, parallel=FALSE)
 class(x)
 names(x)
 x[1:2]
@@ -867,7 +867,7 @@ This distinction is most of the time overlooked when analysing genetic data.
 As a matter of fact, it does not matter when all individuals have the same ploidy.
 For instance, if we take the following data:
 <<>>=
-x <- new("genlight", list(a=c(0,0,1,1), b=c(1,1,0,0), c=c(1,1,1,1)), multicore=FALSE)
+x <- new("genlight", list(a=c(0,0,1,1), b=c(1,1,0,0), c=c(1,1,1,1)), parallel=FALSE)
 locNames(x) <- 1:4
 x
 as.matrix(x)
@@ -879,7 +879,7 @@ glMean(x)
 @
 Let us no consider a sightly different case:
 <<>>=
-x <- new("genlight", list(a=c(0,0,2,2), b=c(1,1,0,0), c=c(1,1,1,1)), multicore=FALSE)
+x <- new("genlight", list(a=c(0,0,2,2), b=c(1,1,0,0), c=c(1,1,1,1)), parallel=FALSE)
 locNames(x) <- 1:4
 x
 as.matrix(x)

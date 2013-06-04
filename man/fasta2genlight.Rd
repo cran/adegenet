@@ -15,11 +15,11 @@
   required to read data in, while increasing memory requirements.
 
   Multiple cores can be used to decrease the overall computational time
-  on multicore architectures (needs the package \code{multicore}).
+  on parallel architectures (needs the package \code{parallel}).
 }
 \usage{
 fasta2genlight(file, quiet=FALSE, chunkSize = 1000, saveNbAlleles=FALSE,
-               multicore = require("multicore"), n.cores = NULL, \dots)
+               parallel = require("parallel"), n.cores = NULL, \dots)
 }
 \arguments{
   \item{file}{ a character string giving the path to the file to
@@ -34,11 +34,11 @@ fasta2genlight(file, quiet=FALSE, chunkSize = 1000, saveNbAlleles=FALSE,
     \code{other} slot (TRUE), or not (FALSE, default). In large genomes,
     this takes some space but allows for tracking SNPs with more than 2
     alleles, lost during the conversion.}
-  \item{multicore}{a logical indicating whether multiple cores -if
+  \item{parallel}{a logical indicating whether multiple cores -if
     available- should be used for the computations (TRUE, default), or
-    not (FALSE); requires the package \code{multicore} to be installed
+    not (FALSE); requires the package \code{parallel} to be installed
     (see details).}
-  \item{n.cores}{if \code{multicore} is TRUE, the number of cores to be
+  \item{n.cores}{if \code{parallel} is TRUE, the number of cores to be
     used in the computations; if NULL, then the maximum number of cores
     available on the computer is used.}
   \item{\dots}{other arguments to be passed to other functions -
@@ -50,14 +50,11 @@ fasta2genlight(file, quiet=FALSE, chunkSize = 1000, saveNbAlleles=FALSE,
 
   Most recent machines have one or several processors with multiple
   cores. R processes usually use one single core. The package
-  \code{multicore} allows for parallelizing some computations on
+  \code{parallel} allows for parallelizing some computations on
   multiple cores, which decreases drastically computational time.
 
   To use this functionality, you need to have the last version of the
-  \code{multicore} package installed. To install it, type:
-  install.packages("multicore",,"http://rforge.net/",type="source")
-
-  DO NOT use the version on CRAN, which is slightly outdated.
+  \code{parallel} package installed.
 }
 \value{an object of the class \linkS4class{genlight}}
 \seealso{

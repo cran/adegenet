@@ -27,7 +27,7 @@ gengraph.default <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=T
 gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
                             truenames=TRUE, ...){
     ## CHECKS ##
-    if(!require("igraph")) stop("igraph is required")
+    ## if(!require("igraph")) stop("igraph is required")
 
     ## IF COMPUTEALL IS TRUE ##
     if(computeAll){
@@ -145,7 +145,7 @@ gengraph.matrix <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 ############
 gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, truenames=TRUE, ...){
     ## CHECKS ##
-    if(!require("igraph")) stop("igraph is required")
+    ## if(!require("igraph")) stop("igraph is required")
 
     ## USE MATRIX METHOD ##
     res <- gengraph(as.matrix(x), cutoff=cutoff, ngrp=ngrp, computeAll=computeAll, plot=plot, show.graph=show.graph, col.pal=col.pal,
@@ -165,7 +165,7 @@ gengraph.dist <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE
 gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
                             truenames=TRUE, ...){
     ## CHECKS ##
-    if(!require("igraph")) stop("igraph is required")
+    ## if(!require("igraph")) stop("igraph is required")
 
     ## COMPUTE DISTANCES ##
     x$tab[is.na(x$tab)] <- 0
@@ -194,7 +194,7 @@ gengraph.genind <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky, method=1,
                             truenames=TRUE, ...){
     ## CHECKS ##
-    if(!require("igraph")) stop("igraph is required")
+    ## if(!require("igraph")) stop("igraph is required")
 
     ## COMPUTE DISTANCES ##
     x$tab[is.na(x$tab)] <- 0
@@ -226,8 +226,8 @@ gengraph.genpop <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TR
 gengraph.DNAbin <- function(x, cutoff=NULL, ngrp=NULL, computeAll=FALSE, plot=TRUE, show.graph=TRUE, col.pal=funky,
                             truenames=TRUE, ...){
     ## CHECKS ##
-    if(!require("igraph")) stop("igraph is required")
-    if(!require("ape")) stop("ape is required")
+    ## if(!require("igraph")) stop("igraph is required")
+    ## if(!require("ape")) stop("ape is required")
 
     ## COMPUTE DISTANCES ##
     D <- as.matrix(round(dist.dna(x,model="raw", pairwise.deletion = TRUE)*ncol(x)))

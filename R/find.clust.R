@@ -12,9 +12,9 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
                                      pca.select=c("nbEig","percVar"), perc.pca=NULL,..., dudi=NULL){
 
     ## CHECKS ##
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
-    if(!require(stats)) stop("package stats is required")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
+    ## if(!require(stats)) stop("package stats is required")
 
     stat <- match.arg(stat)
     pca.select <- match.arg(pca.select)
@@ -192,13 +192,13 @@ find.clusters.data.frame <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, st
 ########################
 find.clusters.genind <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat=c("BIC", "AIC", "WSS"), choose.n.clust=TRUE,
                                  criterion=c("diffNgroup", "min","goesup", "smoothNgoesup", "goodfit"),
-                          max.n.clust=round(nrow(x@tab)/10), n.iter=1e5, n.start=10,
-                          scale=FALSE, truenames=TRUE, ...){
+                                 max.n.clust=round(nrow(x@tab)/10), n.iter=1e5, n.start=10,
+                                 scale=FALSE, truenames=TRUE, ...){
 
     ## CHECKS ##
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
-    if(!require(stats)) stop("package stats is required")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
+    ## if(!require(stats)) stop("package stats is required")
     if(!is.genind(x)) stop("x must be a genind object.")
     stat <- match.arg(stat)
 
@@ -246,9 +246,9 @@ find.clusters.genlight <- function(x, clust=NULL, n.pca=NULL, n.clust=NULL, stat
                                    scale=FALSE, pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
 
     ## CHECKS ##
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
-    if(!require(stats)) stop("package stats is required")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
+    ## if(!require(stats)) stop("package stats is required")
     if(!inherits(x, "genlight")) stop("x is not a genlight object.")
     stat <- match.arg(stat)
     pca.select <- match.arg(pca.select)

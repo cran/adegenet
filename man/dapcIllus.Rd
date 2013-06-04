@@ -47,7 +47,6 @@
 }
 \examples{
 \dontrun{
-if(require(MASS) & require(ade4)){
 
 data(dapcIllus)
 attach(dapcIllus)
@@ -87,7 +86,6 @@ lapply(lres, scatter)
 
 # detach data
 detach(dapcIllus)
-}
 }
 }
 \keyword{datasets}

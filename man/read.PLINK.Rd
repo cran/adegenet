@@ -24,7 +24,7 @@
 }
 \usage{
 read.PLINK(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
-           multicore=require("multicore"), n.cores=NULL, \dots)
+           parallel=require("parallel"), n.cores=NULL, \dots)
 
 extract.PLINKmap(file, x=NULL)
 }
@@ -42,11 +42,11 @@ extract.PLINKmap(file, x=NULL)
   \item{chunkSize}{an integer indicating the number of genomes to be
     read at a time; larger values require more RAM but decrease the time
     needed to read the data.}
-   \item{multicore}{a logical indicating whether multiple cores -if
+   \item{parallel}{a logical indicating whether multiple cores -if
     available- should be used for the computations (TRUE, default), or
-    not (FALSE); requires the package \code{multicore} to be installed
+    not (FALSE); requires the package \code{parallel} to be installed
     (see details).}
-  \item{n.cores}{if \code{multicore} is TRUE, the number of cores to be
+  \item{n.cores}{if \code{parallel} is TRUE, the number of cores to be
     used in the computations; if NULL, then the maximum number of cores
     available on the computer is used.}
   \item{\dots}{other arguments to be passed to other functions -
@@ -66,19 +66,6 @@ extract.PLINKmap(file, x=NULL)
   topic, please look at this webpage:
   \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
 
-  
-  === Using multiple cores ===
-  
-  Most recent machines have one or several processors with multiple
-  cores. R processes usually use one single core. The package
-  \code{multicore} allows for parallelizing some computations on
-  multiple cores, which decreases drastically computational time.
-
-  To use this functionality, you need to have the last version of the
-  \code{multicore} package installed. To install it, type:
-  install.packages("multicore",,"http://rforge.net/",type="source")
-
-  DO NOT use the version on CRAN, which is slightly outdated.
 }
 \value{
   - read.PLINK: an object of the class \linkS4class{genlight}

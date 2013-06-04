@@ -29,7 +29,7 @@ glSim <- function(n.ind, n.snp.nonstruc, n.snp.struc=0, grp.size=round(n.ind/2),
 
     ## AUXIL FUNCTIONS ##
     if(LD) { # LD - use mvrnorm
-        if(!require(MASS)) stop("MASS package is missing.")
+        ## if(!require(MASS)) stop("MASS package is missing.")
         QUANT <- qnorm(seq(0,1, le=ploidy+2), 0,1) # quantiles needed for continuous->discrete
 
         f1 <- function(n,p){

@@ -123,7 +123,7 @@ Manni, F., Guerard, E. and Heyer, E. (2004) Geographic patterns of (genetic, mor
 \seealso{\code{\link{spca}},\code{\link[spdep]{edit.nb}}}
 
 \examples{
-if(require(spdep) & require(ade4)){
+if(require(spdep)){
 
 ### non-interactive example
 

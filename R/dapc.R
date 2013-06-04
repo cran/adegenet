@@ -11,8 +11,8 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
                             pca.select=c("nbEig","percVar"), perc.pca=NULL, ..., dudi=NULL){
 
     ## FIRST CHECKS
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     grp <- as.factor(grp)
     if(length(grp) != nrow(x)) stop("Inconsistent length for grp")
     pca.select <- match.arg(pca.select)
@@ -88,8 +88,8 @@ dapc.data.frame <- function(x, grp, n.pca=NULL, n.da=NULL,
         n.da <- as.integer(readLines(n = 1))
     }
 
-    n.da <- min(n.da, length(levels(grp))-1, n.pca) # can't be more than K-1 disc. func., or more than n.pca
-    n.da <- round(n.da)
+    ##n.da <- min(n.da, length(levels(grp))-1, n.pca) # can't be more than K-1 disc. func., or more than n.pca
+    n.da <- round(min(n.da, lda.dim)) # can't be more than K-1 disc. func., or more than n.pca
     predX <- predict(ldaX, dimen=n.da)
 
 
@@ -156,8 +156,8 @@ dapc.genind <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
                         pca.select=c("nbEig","percVar"), perc.pca=NULL, ...){
 
     ## FIRST CHECKS
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
 
     if(!is.genind(x)) stop("x must be a genind object.")
 
@@ -219,8 +219,8 @@ dapc.genlight <- function(x, pop=NULL, n.pca=NULL, n.da=NULL,
                           scale=FALSE,  var.contrib=TRUE, pca.info=TRUE,
                           pca.select=c("nbEig","percVar"), perc.pca=NULL, glPca=NULL, ...){
     ## FIRST CHECKS ##
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-    if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(MASS, quietly=TRUE)) stop("MASS library is required.")
     if(!inherits(x, "genlight")) stop("x must be a genlight object.")
 
     pca.select <- match.arg(pca.select)
@@ -457,7 +457,7 @@ print.dapc <- function(x, ...){
 ## summary.dapc
 ##############
 summary.dapc <- function(object, ...){
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
 
     x <- object
     res <- list()
@@ -486,7 +486,7 @@ summary.dapc <- function(object, ...){
 ##############
 ## scatter.dapc
 ##############
-scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(grp))), pch=20, bg="lightgrey", solid=.7,
+scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(grp))), pch=20, bg="white", solid=.7,
                          scree.da=TRUE, scree.pca=FALSE, posi.da="bottomright", posi.pca="bottomleft", bg.inset="white",
                          ratio.da=.25, ratio.pca=.25, inset.da=0.02, inset.pca=0.02, inset.solid=.5,
                          onedim.filled=TRUE, mstree=FALSE, lwd=1, lty=1, segcol="black",
@@ -494,7 +494,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
                          cstar = 1, cellipse = 1.5, axesell = FALSE, label = levels(grp), clabel = 1, xlim = NULL, ylim = NULL,
                          grid = FALSE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE, sub = "", csub = 1, possub = "bottomleft",
                          cgrid = 1, pixmap = NULL, contour = NULL, area = NULL, ...){
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     ONEDIM <- xax==yax | ncol(x$ind.coord)==1
 
     ## recycle color and pch
@@ -514,8 +514,8 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
         par(mar = c(0.1, 0.1, 0.1, 0.1), bg=bg)
         on.exit(par(opar))
         axes <- c(xax,yax)
+
         ## basic empty plot
-        ## s.label(x$ind.coord[,axes], clab=0, cpoint=0, grid=FALSE, addaxes = FALSE, cgrid = 1, include.origin = FALSE, ...)
         s.class(x$ind.coord[,axes], fac=grp, col=col, cpoint=0, cstar = cstar, cellipse = cellipse, axesell = axesell, label = label,
                 clabel = clabel, xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, origin = origin, include.origin = include.origin,
                 sub = sub, csub = csub, possub = possub, cgrid = cgrid, pixmap = pixmap, contour = contour, area = area)
@@ -535,7 +535,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
                 sub = sub, csub = csub, possub = possub, cgrid = cgrid, pixmap = pixmap, contour = contour, area = area)
 
         ## add minimum spanning tree if needed
-        if(mstree && require(ade4)){
+        if(mstree){
             meanposi <- apply(x$tab,2, tapply, grp, mean)
             D <- dist(meanposi)^2
             tre <- ade4::mstree(D)
@@ -547,6 +547,8 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
         }
 
     } else {
+        ## set screeplot of DA to FALSE (just 1 bar)
+        scree.da <- FALSE
 
         ## get plotted axis
         if(ncol(x$ind.coord)==1) {
@@ -625,7 +627,7 @@ scatter.dapc <- function(x, xax=1, yax=2, grp=x$grp, col=rainbow(length(levels(g
 ## assignplot
 ############
 assignplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75, pch=3){
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     if(!inherits(x, "dapc")) stop("x is not a dapc object")
 
     ## handle data from predict.dapc ##
@@ -686,7 +688,7 @@ assignplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75
 ############
 compoplot <- function(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
                       legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...){
-    if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
+    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     if(!inherits(x, "dapc")) stop("x is not a dapc object")
 
 
@@ -984,18 +986,19 @@ predict.dapc <- function(object, newdata, prior = object$prior, dimen,
 
 
 ############
-## crossval
+## xvalDapc
 ############
 
 xvalDapc <- function (x, ...) UseMethod("xvalDapc")
 
-xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 1/2,
-                                center=TRUE, scale=FALSE,
-                                n.pca=NULL, n.rep=10, ...){
+xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 0.9,
+                                result=c("groupMean","overall"),
+                                center=TRUE, scale=FALSE, n.pca=NULL, n.rep=10, ...){
 
     ## CHECKS ##
     grp <- factor(grp)
     n.pca <- n.pca[n.pca>0]
+    result <- match.arg(result)
     if(is.null(n.da)) {
         n.da <- length(levels(grp))-1
     }
@@ -1005,6 +1008,7 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 1/2
     N.training <- round(N*training.set)
 
     ## GET FULL PCA ##
+    if(missing(n.pca.max)) n.pca.max <- min(dim(x))
     pcaX <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
     n.pca.max <- min(n.pca.max,pcaX$rank,N.training-1)
 
@@ -1016,14 +1020,22 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 1/2
 
     ## FUNCTION GETTING THE % OF ACCURATE PREDICTION FOR ONE NUMBER OF PCA PCs ##
     ## n.pca is a number of retained PCA PCs
+    VOID.GRP <- FALSE # will be TRUE if empty group happened
     get.prop.pred <- function(n.pca){
         f1 <- function(){
             toKeep <- sample(1:N, N.training)
+            if(!(all(table(grp[toKeep])>0) & all(table(grp[-toKeep])>0))) VOID.GRP <<- TRUE
             temp.pca <- pcaX
             temp.pca$li <- temp.pca$li[toKeep,,drop=FALSE]
             temp.dapc <- suppressWarnings(dapc(x[toKeep,,drop=FALSE], grp[toKeep], n.pca=n.pca, n.da=n.da, dudi=temp.pca))
             temp.pred <- predict.dapc(temp.dapc, newdata=x[-toKeep,,drop=FALSE])
-            return(mean(temp.pred$assign==grp[-toKeep]))
+            if(result=="overall"){
+                out <- mean(temp.pred$assign==grp[-toKeep])
+            }
+            if(result=="groupMean"){
+                out <- mean(tapply(temp.pred$assign==grp[-toKeep], grp[-toKeep], mean), na.rm=TRUE)
+            }
+            return(out)
         }
         return(replicate(n.rep, f1()))
     }
@@ -1031,12 +1043,63 @@ xvalDapc.data.frame <- function(x, grp, n.pca.max, n.da=NULL, training.set = 1/2
 
     ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
     res.all <- unlist(lapply(n.pca, get.prop.pred))
-    res <- list(success=res.all, n.pca=factor(rep(n.pca, each=n.rep)))
+    if(VOID.GRP) warning("At least one group was absent from the training / validating sets.\nTry using smaller training sets.")
+    res <- data.frame(n.pca=rep(n.pca, each=n.rep), success=res.all)
     return(res)
-}
+} # end xvalDapc.data.frame
 
 
 xvalDapc.matrix <- xvalDapc.data.frame
+
+
+
+
+
+
+## #############
+## ## discriVal
+## #############
+
+## discriVal <- function (x, ...) UseMethod("discriVal")
+
+## discriVal.data.frame <- function(x, grp, n.pca.max, n.da=NULL, center=TRUE, scale=FALSE, n.pca=NULL, ...){
+
+##     ## CHECKS ##
+##     grp <- factor(grp)
+##     n.pca <- n.pca[n.pca>0]
+##     if(is.null(n.da)) {
+##         n.da <- length(levels(grp))-1
+##     }
+
+##     ## GET FULL PCA ##
+##     if(missing(n.pca.max)) n.pca.max <- min(dim(x))
+##     pcaX <- dudi.pca(x, nf=n.pca.max, scannf=FALSE, center=center, scale=scale)
+##     n.pca.max <- min(n.pca.max,pcaX$rank)
+
+##     ## DETERMINE N.PCA IF NEEDED ##
+##     if(is.null(n.pca)){
+##         n.pca <- round(pretty(1:n.pca.max,10))
+##     }
+##     n.pca <- n.pca[n.pca>0 & n.pca<n.pca.max]
+
+##     ## FUNCTION GETTING THE TOTAL DISCRIMINATION (SUM OF EIGENVALUES) FOR ONE GIVEN NB OF PCA PCs ##
+##     ## n.pca is a number of retained PCA PCs
+##     get.totdiscr <- function(n.pca){
+##             temp.dapc <- suppressWarnings(dapc(x, grp, n.pca=n.pca, n.da=n.da, dudi=pcaX))
+##             return(sum(temp.dapc$eig))
+##     }
+
+
+##     ## GET %SUCCESSFUL OF ACCURATE PREDICTION FOR ALL VALUES ##
+##     res.all <- sapply(n.pca, get.totdiscr)
+##     res <- data.frame(n.pca=n.pca, success=res.all)
+##     return(res)
+## } # end discriVal.data.frame
+
+
+## discriVal.matrix <- discriVal.data.frame
+
+
 
 
 ## There's a bunch of problems down there, commenting it for nowé

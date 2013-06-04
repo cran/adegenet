@@ -13,7 +13,7 @@
 # global.rtest
 ###############
 global.rtest <- function(X, listw, k=1, nperm=499){
-  if (!require(ade4)) stop("Package ade4 is required.")
+  ## if (!require(ade4)) stop("Package ade4 is required.")
   if (!require(spdep)) stop("Package spdep is required.")
   if (!inherits(listw, "listw")) stop("object of class 'listw' expected")
   if (listw$style != "W") stop("object of class 'listw' with style 'W' expected")
@@ -55,7 +55,7 @@ global.rtest <- function(X, listw, k=1, nperm=499){
 # local.rtest
 ###############
 local.rtest <- function(X, listw, k=1, nperm=499){
-  if (!require(ade4)) stop("Package ade4 is required.")
+  ## if (!require(ade4)) stop("Package ade4 is required.")
   if (!require(spdep)) stop("Package spdep is required.")
   if (!inherits(listw, "listw")) stop("object of class 'listw' expected")
   if (listw$style != "W") stop("object of class 'listw' with style 'W' expected")

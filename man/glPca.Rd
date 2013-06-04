@@ -10,7 +10,7 @@
   massive SNP datasets stored as \linkS4class{genlight} object. This
   implementation has the advantage of never representing to complete data
   matrix, therefore making huge economies in terms of rapid access
-  memory (RAM). When the \code{multicore} package is available,
+  memory (RAM). When the \code{parallel} package is available,
   \code{glPca} uses multiple-core ressources for more efficient
   computations. \code{glPca} returns lists with the class \code{glPca}
   (see 'value'). 
@@ -27,7 +27,7 @@
 }
 \usage{
 glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE, 
-    alleleAsUnit = FALSE, useC = TRUE, multicore = require("multicore"),
+    alleleAsUnit = FALSE, useC = TRUE, parallel = require("parallel"),
   n.cores = NULL, returnDotProd=FALSE, matDotProd=NULL)
 
 \method{print}{glPca}(x, \dots)
@@ -65,12 +65,12 @@ glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE,
     units of information.}
   \item{useC}{a logical indicating whether compiled C code should be
     used for faster computations; this option cannot be used alongside
-    multicore option.}
-  \item{multicore}{a logical indicating whether multiple cores -if
+    parallel option.}
+  \item{parallel}{a logical indicating whether multiple cores -if
     available- should be used for the computations (TRUE, default), or
-    not (FALSE); requires the package \code{multicore} to be installed
+    not (FALSE); requires the package \code{parallel} to be installed
     (see details); this option cannot be used alongside useCoption.}
-  \item{n.cores}{if \code{multicore} is TRUE, the number of cores to be
+  \item{n.cores}{if \code{parallel} is TRUE, the number of cores to be
     used in the computations; if NULL, then the maximum number of cores
     available on the computer is used.}
   \item{returnDotProd}{a logical indicating whether the matrix of dot
@@ -119,18 +119,12 @@ glPca(x, center = TRUE, scale = FALSE, nf = NULL, loadings = TRUE,
   
   Most recent machines have one or several processors with multiple
   cores. R processes usually use one single core. The package
-  \code{multicore} allows for parallelizing some computations on
-  multiple cores, which decreases drastically computational time.
-
-  To use this functionality, you need to have the last version of the
-  \code{multicore} package installed. To install it, type:
-  install.packages("multicore",,"http://rforge.net/",type="source")
-
-  DO NOT use the version on CRAN, which is slightly outdated.
+  \code{parallel} allows for parallelizing some computations on
+  multiple cores, which can decrease drastically computational time.
 
   Lastly, note that using compiled C code (\code{useC=TRUE})is an
   alternative for speeding up computations, but cannot be used together
-  with the multicore option.
+  with the parallel option.
 }
 \value{
   === glPca objects ===

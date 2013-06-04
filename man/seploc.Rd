@@ -20,7 +20,7 @@
 \S4method{seploc}{genind}(x,truenames=TRUE,res.type=c("genind","matrix"))
 \S4method{seploc}{genpop}(x,truenames=TRUE,res.type=c("genpop","matrix"))
 \S4method{seploc}{genlight}(x, n.block=NULL, block.size=NULL, random=FALSE,
-       multicore=require(multicore), n.cores=NULL)
+       parallel=require(parallel), n.cores=NULL)
 }
 \arguments{
     \item{x}{a \linkS4class{genind} or a \linkS4class{genpop} object.}
@@ -35,10 +35,10 @@
       of the blocks to be returned.}
     \item{random}{should blocks be formed of contiguous SNPs, or should
       they be made or randomly chosen SNPs.}
-    \item{multicore}{a logical indicating whether multiple cores -if
+    \item{parallel}{a logical indicating whether multiple cores -if
       available- should be used for the computations (TRUE, default), or
-      not (FALSE); requires the package \code{multicore} to be installed.}
-    \item{n.cores}{if \code{multicore} is TRUE, the number of cores to be
+      not (FALSE); requires the package \code{parallel} to be installed.}
+    \item{n.cores}{if \code{parallel} is TRUE, the number of cores to be
       used in the computations; if NULL, then the maximum number of cores
       available on the computer is used.}
 }

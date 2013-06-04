@@ -32,7 +32,7 @@ glNA(x, alleleAsUnit = TRUE)
 glMean(x, alleleAsUnit = TRUE)
 glVar(x, alleleAsUnit = TRUE)
 glDotProd(x, center = FALSE, scale = FALSE, alleleAsUnit = FALSE,
-                multicore = require("multicore"), n.cores = NULL)
+                parallel = require("parallel"), n.cores = NULL)
 }
 \arguments{
   \item{x}{a \linkS4class{genlight} object}
@@ -46,11 +46,11 @@ glDotProd(x, center = FALSE, scale = FALSE, alleleAsUnit = FALSE,
     unit variance.}
   \item{useC}{a logical indicating whether compiled C code should be
     used (TRUE) or not (FALSE, default).}
-  \item{multicore}{a logical indicating whether multiple cores -if
+  \item{parallel}{a logical indicating whether multiple cores -if
     available- should be used for the computations (TRUE, default), or
-    not (FALSE); requires the package \code{multicore} to be installed
+    not (FALSE); requires the package \code{parallel} to be installed
     (see details); this option cannot be used alongside useCoption.}
-  \item{n.cores}{if \code{multicore} is TRUE, the number of cores to
+  \item{n.cores}{if \code{parallel} is TRUE, the number of cores to
     be used in the computations; if NULL, then the maximum number of
     cores available on the computer is used.}
 }
