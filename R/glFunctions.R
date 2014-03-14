@@ -178,7 +178,7 @@ glDotProd <- function(x, center=FALSE, scale=FALSE, alleleAsUnit=FALSE,
     ## SOME CHECKS ##
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
-        n.cores <- parallel:::detectCores()
+        n.cores <- parallel::detectCores()
     }
 
 
@@ -302,7 +302,7 @@ glPca <- function(x, center=TRUE, scale=FALSE, nf=NULL, loadings=TRUE, alleleAsU
         if(!useC){
             if(parallel && !require(parallel)) stop("parallel package requested but not installed")
             if(parallel && is.null(n.cores)){
-                n.cores <- parallel:::detectCores()
+                n.cores <- parallel::detectCores()
             }
 
 
@@ -511,8 +511,6 @@ scatter.glPca <- function(x, xax=1, yax=2, posi="bottomleft", bg="white", ratio=
                           grid = TRUE, addaxes = TRUE, origin = c(0,0), include.origin = TRUE,
                           sub = "", csub = 1, possub = "bottomleft", cgrid = 1,
                           pixmap = NULL, contour = NULL, area = NULL, ...){
-    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
-
 
     ## set par
     opar <- par(mar = par("mar"))

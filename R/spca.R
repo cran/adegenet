@@ -25,7 +25,6 @@ spca <- function(obj, xy=NULL, cn=NULL, matWeight=NULL,
     if(!any(inherits(obj,c("genind","genpop")))) stop("obj must be a genind or genpop object.")
     invisible(validObject(obj))
     ## checkType(obj)
-    ## if(!require(ade4, quietly=TRUE)) stop("ade4 library is required.")
     if(!require(spdep, quietly=TRUE)) stop("spdep library is required.")
 
 
@@ -190,7 +189,6 @@ print.spca <- function(x, ...){
 ########################
 summary.spca <- function (object, ..., printres=TRUE) {
   if (!inherits(object, "spca"))stop("to be used with 'spca' object")
-  ## if(!require(ade4,quietly=TRUE)) stop("the library ade4 is required; please install this package")
   if(!require(spdep,quietly=TRUE)) stop("the library spdep is required; please install this package")
 
   #util <- function(n) { ## no longer used
@@ -246,7 +244,9 @@ summary.spca <- function (object, ..., printres=TRUE) {
   n <- nrow(X)
   I0 <- -1/(n-1)
   L <- listw2mat(lw)
-  eigL <- eigen(0.5*(L+t(L)))$values
+  ## use 'as.numeric' to avoid possible bug with large matrices,
+  ## returning complex numbers with zero imaginary parts
+  eigL <- suppressWarnings(as.numeric(eigen(0.5*(L+t(L)))$values))
   Imin <- min(eigL)
   Imax <- max(eigL)
   Ival <- data.frame(I0=I0,Imin=Imin,Imax=Imax)
@@ -313,7 +313,6 @@ summary.spca <- function (object, ..., printres=TRUE) {
 plot.spca <- function (x, axis = 1, useLag=FALSE, ...){
     if (!inherits(x, "spca")) stop("Use only with 'spca' objects.")
 
-    ## if(!require(ade4)) stop("ade4 package is required.")
     if(!require(spdep)) stop("spdep package is required.")
     if(axis>ncol(x$li)) stop("wrong axis required.")
 
