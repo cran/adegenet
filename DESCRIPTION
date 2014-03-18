@@ -1,6 +1,6 @@
 Package: adegenet
-Version: 1.4-0
-Date: 2014/03/14
+Version: 1.4-1
+Date: 2014/03/18
 Title: adegenet: an R package for the exploratory analysis of genetic
         and genomic data.
 Author: Thibaut Jombart, Caitlin Collins, Peter Solymos, Ismail Ahmed, Federico Calboli, Anne Cori
@@ -9,6 +9,7 @@ Suggests: genetics, spdep, tripack, pegas, seqinr, adehabitat,
         parallel, akima, maps, splancs, hierfstat
 Depends: R (>= 2.14), methods, ade4
 Imports: utils, stats, MASS, igraph, ape, shiny, ggplot2
+URL: http://adegenet.r-forge.r-project.org/
 Description: Classes and functions for genetic data analysis within the multivariate framework.
 Collate: classes.R basicMethods.R handling.R auxil.R setAs.R SNPbin.R
         glHandle.R glFunctions.R glSim.R find.clust.R hybridize.R
@@ -21,7 +22,7 @@ Collate: classes.R basicMethods.R handling.R auxil.R setAs.R SNPbin.R
         snpposi.R snpzip.R servers.R zzz.R
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2014-03-14 12:53:51 UTC; thibaut
+Packaged: 2014-03-18 16:36:41 UTC; thibaut
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2014-03-14 15:29:15
+Date/Publication: 2014-03-18 18:20:45

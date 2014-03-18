@@ -1,11 +1,11 @@
-45d4c9ad0741cd1906985d36180c18f5 *ChangeLog
-d3bdb9e63b03b56051e5bf819ec89dec *DESCRIPTION
+31ad614512d2664f568e1bbe44b0faa6 *ChangeLog
+53151c09c0e33c07492afbae45912127 *DESCRIPTION
 f4db368541fcc86f4fe3bb809a6206fd *NAMESPACE
 2e85df27af11caacf4aca584f89f44d6 *R/HWE.R
 c4ec9813a75fe87d9df1060b0f68727d *R/Hs.R
 33a612fe584815666b9bc9082557ce1a *R/PCtest.R
 70380bb07bc32f8baed0784b808fb161 *R/SNPbin.R
-d795ff7ac8d1cec70ecf4a30a9e78600 *R/auxil.R
+040aa8a918384ccc4af4fb23ddeca031 *R/auxil.R
 66c02a9fe856fc841140944c19cb89e0 *R/basicMethods.R
 6e8fbe4e4ec0cfd1b84f623e172439e3 *R/chooseCN.R
 89021ab270ff84b701b0710af47a0ec8 *R/classes.R
@@ -77,7 +77,7 @@ bbd131ded665b6e9e7b0b594233a396e *man/H3N2.Rd
 8b27280a471dc80e2b2f1dbe1a848f63 *man/Hs.Rd
 558bf931887089f9d93eb6a86c155bf3 *man/SNPbin.Rd
 a506aa9edafd7bc628d9cd618f197da7 *man/accessors.Rd
-28d5c974d64663d3ce8fd73bc1b41538 *man/adegenet.package.Rd
+de344f98ffb4d6579069607b1eac359b *man/adegenet.package.Rd
 b53e75a2d9f3926e53a8807cf233acd8 *man/as-methods.Rd
 f7797181705e63eb7e49617c382190d8 *man/as.SNPbin.Rd
 09a0f073df2247c1073adcdff0767705 *man/as.genind.Rd
