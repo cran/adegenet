@@ -27,7 +27,7 @@ propShared(obj)
 \dontrun{
 ## make a small object
 data(microbov)
-obj <- microbov[1:5,microbov@loc.fac \%in\% c("L01","L02")]
+obj <- microbov[1:5, loc = locNames(microbov)[1:2]]
 
 ## verify results
 propShared(obj)
@@ -41,7 +41,7 @@ matSimil <- propShared(microbov)
 matDist <- exp(-matSimil)
 D <- cailliez(as.dist(matDist))
 pcoa1 <- dudi.pco(D,scannf=FALSE,nf=3)
-s.class(pcoa1$li,microbov$pop,lab=microbov$pop.names)
+s.class(pcoa1$li,microbov$pop,lab=popNames(microbov))
 
 }
 }

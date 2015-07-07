@@ -1,13 +1,54 @@
 
-###############
-## '[' operators
-###############
-## SNPbin
-setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+# Function to subset raw vectors
+.subsetbin <- function(x, i){
+    xint <- as.integer(rawToBits(x))[i]
+    zeroes <- 8 - (length(xint) %% 8)
+    return(packBits(c(xint, rep(0L, zeroes))))
+}
+
+# old method for [] for SNPbin
+.oldSNPbinset <- function(x, i){
     if (missing(i)) i <- TRUE
     temp <- .SNPbin2int(x) # data as integers with NAs
     x <- new("SNPbin", snp=temp[i], label=x@label, ploidy=x@ploidy)
     return(x)
+}
+
+.SNPbinset <- function(x, i){
+    if (missing(i)) i <- TRUE
+    n.loc     <- x@n.loc
+    if (length(x@NA.posi) > 0){
+        namatches <- match(i, x@NA.posi, nomatch = 0)
+        nas.kept  <- x@NA.posi[namatches]
+        if (length(nas.kept) > 0){
+            old.posi  <- 1:n.loc
+            x@NA.posi <- match(nas.kept, old.posi[i])
+        } else {
+            x@NA.posi <- nas.kept
+        }
+    }
+    if (length(i) == 1 && is.logical(i) && i){
+        return(x)
+    } else if (all(is.logical(i))){
+        n.loc <- sum(i)
+    } else if (any(i < 0)){
+        n.loc <- n.loc - length(i)
+    } else {
+        n.loc <- length(i)
+    }
+    x@snp     <- lapply(x@snp, .subsetbin, i)
+    x@n.loc   <- n.loc
+
+    return(x)
+}
+
+###############
+## '[' operators
+###############
+## SNPbin
+
+setMethod("[", signature(x="SNPbin", i="ANY"), function(x, i) {
+    .SNPbinset(x, i)
 }) # end [] for SNPbin
 
 
@@ -19,6 +60,11 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
     if (missing(j)) j <- TRUE
 
     ori.n <- nInd(x)
+    ori.p <- nLoc(x)
+
+    ## recycle logicals if needed
+    if(!is.null(i) && is.logical(i)) i <- rep(i, length=ori.n)
+    if(!is.null(j) && is.logical(j)) j <- rep(j, length=ori.p)
 
 
     ## SUBSET INDIVIDUALS ##
@@ -40,6 +86,12 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
         ori.pop <- pop(x) <- factor(pop(x)[i])
     } else {
         ori.pop <- NULL
+    }
+    ## strata
+    if(!is.null(x@strata)) {
+        ori.strata <- x@strata <- x@strata[i, , drop = FALSE]
+    } else {
+        ori.strata <- NULL
     }
 
 
@@ -66,23 +118,14 @@ setMethod("[", signature(x="genlight", i="ANY", j="ANY", drop="ANY"), function(x
 
 
     ## SUBSET LOCI ##
-    if(length(j)==1 && is.logical(j) && j){ # no need to subset SNPs
-        return(x)
-    } else { # need to subset SNPs
-        old.other <- other(x)
-        old.ind.names <- indNames(x)
 
-        ## handle ind.names, loc.names, chromosome, position, and alleles
-        new.loc.names <- locNames(x)[j]
-        new.chr <- chr(x)[j]
-        new.position <- position(x)[j]
-        new.alleles <- alleles(x)[j]
-        new.gen <- lapply(x@gen, function(e) e[j])
-        ##x <- as.matrix(x)[, j, drop=FALSE] # maybe need to process one row at a time
-        x <- new("genlight", gen=new.gen, pop=ori.pop, ploidy=ori.ploidy,
-                 ind.names=old.ind.names, loc.names=new.loc.names,
-                 chromosome=new.chr, position=new.position, alleles=new.alleles, other=old.other, parallel=FALSE,...)
-    }
+    ## handle ind.names, loc.names, chromosome, position, and alleles
+    x@loc.names   <- x@loc.names[j]
+    x@chromosome  <- chr(x)[j]
+    x@position    <- position(x)[j]
+    x@loc.all     <- alleles(x)[j]
+    x@gen       <- lapply(x@gen, function(e) e[j])
+    x@n.loc      <- x@gen[[1]]@n.loc
 
     return(x)
 }) # end [] for genlight
@@ -139,7 +182,15 @@ c.SNPbin <- function(...){
 ##################
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
 cbind.genlight <- function(...){
-    myList <- list(...)
+      ## store arguments
+    dots <- list(...)
+
+    ## extract arguments which are genlight objects
+    myList <- dots[sapply(dots, inherits, "genlight")]
+
+    ## keep the rest in 'dots'
+    dots <- dots[!sapply(dots, inherits, "genlight")]
+
     if(length(myList)==1 && is.list(myList[[1]])) myList <- myList[[1]]
     if(!all(sapply(myList, class)=="genlight")) stop("some objects are not genlight objects")
     ## remove empty objects
@@ -168,13 +219,16 @@ cbind.genlight <- function(...){
         res[[i]] <- Reduce(function(a,b) {cbind(a,b,checkPloidy=FALSE)}, lapply(myList, function(e) e@gen[[i]]) )
     }
 
-    res <- new("genlight",res,...)
+    dots$gen <- res
+    dots$Class <- "genlight"
+    res <- do.call(new, dots)
 
     ## handle loc.names, alleles, etc. ##
     indNames(res) <- indNames(myList[[1]])
     locNames(res) <- unlist(lapply(myList, locNames))
     alleles(res) <- unlist(lapply(myList, alleles))
     pop(res) <- pop(myList[[1]])
+    res@strata <- myList[[1]]@strata
     ploidy(res) <- ori.ploidy
 
     ## return object ##
@@ -191,9 +245,19 @@ cbind.genlight <- function(...){
 ## rbind genlight
 ##################
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
+#' @importFrom dplyr bind_rows
 rbind.genlight <- function(...){
-    myList <- list(...)
+    ## store arguments
+    dots <- list(...)
+
+    ## extract arguments which are genlight objects
+    myList <- dots[sapply(dots, inherits, "genlight")]
+
+    ## keep the rest in 'dots'
+    dots <- dots[!sapply(dots, inherits, "genlight")]
+
     if(!all(sapply(myList, class)=="genlight")) stop("some objects are not genlight objects")
+
     ## remove empty objects
     myList <- myList[sapply(myList,nLoc)>0 & sapply(myList,nInd)>0]
     if(length(myList)==0) {
@@ -203,13 +267,17 @@ rbind.genlight <- function(...){
 
     if(length(unique(sapply(myList, nLoc))) !=1 ) stop("objects have different numbers of SNPs")
 
-
     ## build output
-    res <- new("genlight", Reduce(c, lapply(myList, function(e) e@gen)), ...)
+    dots$Class <- "genlight"
+    dots$gen <- Reduce(c, lapply(myList, function(e) e@gen))
+    res <- do.call(new, dots)
     locNames(res) <- locNames(myList[[1]])
-    alleles(res) <- alleles(myList[[1]])
+    alleles(res)  <- alleles(myList[[1]])
     indNames(res) <- unlist(lapply(myList, indNames))
-    pop(res) <- factor(unlist(lapply(myList, pop)))
+    pop(res)      <- factor(unlist(lapply(myList, pop)))
+
+    # Hierarchies are tricky. Using dplyr's bind_rows.
+    res <- .rbind_strata(myList, res)
 
     ## return object ##
     return(res)
@@ -287,17 +355,17 @@ setMethod("seploc", signature(x="genlight"), function(x, n.block=NULL, block.siz
 
     if(parallel){
         if(random){
-            res <- mclapply(levels(fac.block), function(lev) x[,sample(which(fac.block==lev))],
+            res <- mclapply(levels(fac.block), function(lev) x[, sample(which(fac.block==lev))],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
         } else {
-            res <- mclapply(levels(fac.block), function(lev) x[,which(fac.block==lev)],
+            res <- mclapply(levels(fac.block), function(lev) x[, which(fac.block==lev)],
                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE)
         }
     } else {
          if(random){
-             res <- lapply(levels(fac.block), function(lev) x[,sample(which(fac.block==lev))])
+             res <- lapply(levels(fac.block), function(lev) x[, sample(which(fac.block==lev))])
          } else {
-             res <- lapply(levels(fac.block), function(lev) x[,which(fac.block==lev)])
+             res <- lapply(levels(fac.block), function(lev) x[, which(fac.block==lev)])
          }
     }
 

@@ -113,6 +113,18 @@ adegenetTutorial <- function(which=c("basics","spca","dapc","genomics")){
 
 
 
+##########################
+# Function adegenetIssues
+##########################
+adegenetIssues <- function(){
+    cat("Opening url \"https://github.com/thibautjombart/adegenet/issues\" ...\n")
+    browseURL("https://github.com/thibautjombart/adegenet/issues")
+}
+
+
+
+
+
 ############
 # checkType
 ############
@@ -204,6 +216,25 @@ corner <- function(text, posi="topleft",  inset=0.1, ...){
 }
 
 
+
+.listenToTheBrood <- function(){
+    char <- c("?","??","?!?!?")
+    for(i in 1:3){
+        cat("\nGrind",  char[i], " (y/N): ")
+        x <- readLines(n=1)
+        if(x!="y") {
+            cat("\n =( \n")
+            return(invisible())
+        }
+    }
+
+    cat("\nGRIIIINNND !!!\n")
+    cat("\n\\m/ ^o^ \\m/\n\n")
+    url.vec <- c("http://thebrooduk.bandcamp.com/album/swallowed-by-the-earth-single",
+                 "http://thebrooduk.bandcamp.com/album/the-brood")
+    Sys.sleep(2)
+    browseURL(sample(url.vec,1))
+}
 
 
 

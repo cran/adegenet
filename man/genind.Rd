@@ -5,6 +5,7 @@
 \alias{show,genind-method}
 \alias{names,genind-method}
 \alias{summary,genind-method}
+\alias{is.genind}
 \alias{.valid.genind}
 \title{adegenet formal class (S4) for individual genotypes}
 \description{The S4 class \code{genind} is used to store individual genotypes.\cr
@@ -18,29 +19,27 @@
 }
 \section{Slots}{
   \describe{
-    \item{\code{tab}:}{matrix of genotypes (in rows) for all alleles (in
-      columns). The table differs depending on the \code{@type} slot:\cr
-      - 'codom': values are frequencies ; '0' if the genotype does not have
-      the corresponding allele, '1' for an homozygote and 0.5 for an
-      heterozygte.\cr
+    \item{\code{tab}:}{
+      matrix integers containing genotypes data for
+      individuals (in rows) for all alleles (in columns). The table
+      differs depending on the \code{@type} slot:\cr
+      - 'codom': values
+      are numbers of alleles, summing up to the
+      individuals' ploidies.\cr
       - 'PA': values are presence/absence of alleles.\cr
       In all cases, rows and columns are given generic names.}
-    \item{\code{loc.names}:}{character vector containing the real names of the loci}
     \item{\code{loc.fac}:}{locus factor for the columns of \code{tab}}
-    \item{\code{loc.nall}:}{integer vector giving the number of alleles per locus}
+    \item{\code{loc.n.all}:}{integer vector giving the number of alleles per locus}
     \item{\code{all.names}:}{list having one component per locus, each containing a character vector of alleles names}
-    \item{\code{call}:}{the matched call}
-    \item{\code{ind.names}:}{character vector containing the real names of the
-      individuals. Note that as Fstat does not store these names, objects
-      converted from .dat files will contain empty \code{ind.names}.}
     \item{\code{ploidy}:}{ an integer indicating the degree of ploidy of
       the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
     \item{\code{type}:}{ a character string indicating the type of
       marker: 'codom' stands for 'codominant' (e.g. microstallites,
       allozymes); 'PA' stands for 'presence/absence' (e.g. AFLP).}
+    \item{\code{call}:}{the matched call}
+    \item{\code{strata}:}{(optional) data frame giving levels of population stratification for each individual}
+    \item{\code{hierarchy}:}{(optional) a hierarchical \code{\link{formula}} defining the hierarchical levels in the \code{@@strata} slot.}
     \item{\code{pop}:}{(optional) factor giving the population of each individual}
-    \item{\code{pop.names}:}{(optional) vector giving the real names of the
-      populations}
     \item{\code{other}:}{(optional) a list containing other information}
   }
 }
@@ -57,13 +56,13 @@ Class \code{"\linkS4class{indInfo}"}, directly.
     \item{show}{\code{signature(object = "genind")}: shows a genind
       object (same as print)}
     \item{summary}{\code{signature(object = "genind")}: summarizes a
-      genind object, invisibly returning its content}
+      genind object, invisibly returning its content or suppress printing of auxiliary information by specifying \code{verbose = FALSE}}
   }
 }
-\seealso{\code{\link{as.genind}}, \code{\link{is.genind}}, \code{\link{genind2genpop}},
+\seealso{\code{\link{as.genind}}, \code{\link{genind2genpop}},
   \code{\link{genpop}}, \code{\link{import2genind}},
   \code{\link{read.genetix}}, \code{\link{read.genepop}},
-  \code{\link{read.fstat}}, \code{\link{na.replace}}\cr
+  \code{\link{read.fstat}}\cr
 
   Related classes:\cr
   - \linkS4class{genpop} for storing data per populations\cr
@@ -74,7 +73,7 @@ Class \code{"\linkS4class{indInfo}"}, directly.
 \examples{
 showClass("genind")
 
-obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"),missing="mean")
+obj <- read.genetix(system.file("files/nancycats.gtx",package="adegenet"))
 obj
 validObject(obj)
 summary(obj)
@@ -88,7 +87,7 @@ plot(gtest)
 }
 
 # perform a between-class PCA
-pca1 <- dudi.pca(obj@tab,scannf=FALSE,scale=FALSE)
+pca1 <- dudi.pca(scaleGen(obj, NA.method="mean"),scannf=FALSE,scale=FALSE)
 pcabet1 <- between(pca1,obj@pop,scannf=FALSE)
 pcabet1
 

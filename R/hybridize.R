@@ -5,73 +5,68 @@
 ##
 
 hybridize <- function(x1, x2, n, pop=NULL,
-                      res.type=c("genind","df","STRUCTURE"), file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
+                      res.type=c("genind","df","STRUCTURE"),
+                      file=NULL, quiet=FALSE, sep="/", hyb.label="h"){
     ## checks
     if(!is.genind(x1)) stop("x1 is not a valid genind object")
     if(!is.genind(x2)) stop("x2 is not a valid genind object")
-    if(x1@ploidy %% 2 != 0) stop("not implemented for odd levels of ploidy")
-    if(x2@ploidy != x1@ploidy) stop("not implemented for genotypes with different ploidy levels")
+    if(!all(ploidy(x1)==ploidy(x1)[1])) stop("varying ploidy (in x1) is not supported for this function")
+    if(!all(ploidy(x2)==ploidy(x2)[1])) stop("varying ploidy (in x2) is not supported for this function")
+    if(ploidy(x1)[1] %% 2 != 0) stop("not implemented for odd levels of ploidy")
+    if(ploidy(x1)[1] != ploidy(x2)[1]) stop("x1 and x2 have different ploidy")
     checkType(x1)
     checkType(x2)
 
+    ## store a few variables
     n <- as.integer(n)
-    ploidy <- x1@ploidy
+    ploidy <- ploidy(x1)[1]
     res.type <- match.arg(res.type)
-    if(!all(x1@loc.names==x2@loc.names)) stop("names of markers in x1 and x2 do not correspond")
+
+    ## repool data
+    x1x2 <- repool(x1, x2)
+    x1 <- x1x2[pop=1]
+    x2 <- x1x2[pop=2]
 
     ## used variables
-    n1 <- nrow(x1$tab)
-    n2 <- nrow(x2$tab)
-    k <- length(x1$loc.names)
+    n1 <- nInd(x1)
+    n2 <- nInd(x2)
+    k <- nLoc(x1)
 
     #### get frequencies for each locus
-    y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),missing="0",quiet=TRUE)
-    freq1 <- makefreq(y1,quiet=TRUE)$tab
-    freq1 <- split(freq1, y1@loc.fac)
+    y1 <- genind2genpop(x1,pop=factor(rep(1,n1)),quiet=TRUE)
+    freq1 <- tab(y1, freq=TRUE) # get frequencies
+    freq1 <- split(freq1, y1@loc.fac) # split by locus
+    freq1 <- freq1[locNames(x1)] # ensure right order
 
-    y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),missing="0",quiet=TRUE)
-    freq2 <- makefreq(y2,quiet=TRUE)$tab
-    freq2 <- split(freq2, y2@loc.fac)
+    y2 <- genind2genpop(x2,pop=factor(rep(1,n2)),quiet=TRUE)
+    freq2 <- tab(y2, freq=TRUE) # get frequencies
+    freq2 <- split(freq2, y2@loc.fac) # split by locus
+    freq2 <- freq2[locNames(x2)] # ensure right order
 
     #### sampling of gametes
     ## kX1 / kX2 are lists of tables of sampled gametes
     kX1 <- lapply(freq1, function(v) t(rmultinom(n,ploidy/2,v)))
-    names(kX1) <- x1$loc.names
-    for(i in 1:k) { colnames(kX1[[i]]) <- x1$all.names[[i]]}
+    names(kX1) <- locNames(x1)
+    for(i in 1:k) { colnames(kX1[[i]]) <- alleles(x1)[[i]]}
     kX2 <- lapply(freq2, function(v) t(rmultinom(n,ploidy/2,v)))
-    names(kX2) <- x2$loc.names
-    for(i in 1:k) { colnames(kX2[[i]]) <- x2$all.names[[i]]}
-
-    ## tab1 / tab2 are cbinded tables
-    ## tab1 <- cbind.data.frame(kX1)
-    ## gam 1/2 are genind containing gametes
-    ## gam 1
-    ##    gam1 <- genind(tab1, ploidy=ploidy/2)
-    ##     gam1@loc.names <- x1@loc.names
-    ##     gam1@loc.fac <- x1@loc.fac
-    ##     gam1@all.names <- x1@all.names
-    ##     gam1@loc.nall <- x1@loc.nall
-    ##     gam1 <- genind2df(gam1,sep="/",usepop=FALSE)
-    ##     gam1 <- as.matrix(gam1)
-
-    ##     ## gam 2
-    ##     tab2 <- cbind.data.frame(kX2)
-    ##     ## gam 1/2 are genind containing gametes
-    ##     gam2 <- genind(tab2, ploidy=ploidy/2)
-    ##     gam2@loc.names <- x2@loc.names
-    ##     gam2@loc.fac <- x2@loc.fac
-    ##     gam2@all.names <- x2@all.names
-    ##     gam2@loc.nall <- x2@loc.nall
-    ##     gam2 <- genind2df(gam2,sep="/",usepop=FALSE)
-    ##     gam2 <- as.matrix(gam2)
+    names(kX2) <- locNames(x2)
+    for(i in 1:k) { colnames(kX2[[i]]) <- alleles(x2)[[i]]}
 
     ## construction of zygotes ##
-    ## gam1 <-  gsub("/.*$","",gam1)
-    ## gam2 <-  gsub("/.*$","",gam2)
-    tab1 <- cbind.data.frame(kX1)
-    tab2 <- cbind.data.frame(kX2)
-    zyg <- (tab1 + tab2)/ploidy
-    row.names(zyg) <- .genlab(hyb.label,n)
+    ## individual gamete tables
+    tab1 <- as.matrix(cbind.data.frame(kX1))
+    tab2 <- as.matrix(cbind.data.frame(kX2))
+
+    ## make empty matrix with all alleles in tab1 and tab2
+    zyg.rownames <- .genlab(hyb.label,n)
+    zyg.colnames <- sort(unique(c(colnames(tab1),colnames(tab2))))
+    zyg <- matrix(0, nrow=n, ncol=length(zyg.colnames),
+                  dimnames=list(zyg.rownames, zyg.colnames))
+
+    ## add in the alleles
+    zyg[, colnames(tab1)] <- zyg[, colnames(tab1)] + tab1
+    zyg[, colnames(tab2)] <- zyg[, colnames(tab2)] + tab2
+    zyg <- zyg
     zyg <- genind(zyg, type="codom", ploidy=ploidy)
 
     ## res.type=="STRUCTURE"

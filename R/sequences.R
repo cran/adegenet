@@ -56,11 +56,13 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/
     }
 
     ## sort out col/row names ##
+    ## check if col.names is in matrix format and change to vector format
+    if(class(col.names)=="matrix") col.names <- as.vector(col.names)
     colnames(temp) <- col.names # restore correct names
     rownames(temp) <- rownames(x)
 
     ## create genind output ##
-    res <- genind(temp, ploidy=1, type="codom")
+    res <- genind(temp, ploidy=1, pop=pop, type="codom")
     rm(temp) # remove temp
     gc() # collect garbage
     res$call <- match.call()
@@ -80,7 +82,7 @@ DNAbin2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), polyThres=1/
 alignment2genind <- function(x, pop=NULL, exp.char=c("a","t","g","c"), na.char="-", polyThres=1/100){
 
     ## misc checks
-    if(!require(seqinr)) stop("The package seqinr is required.")
+    ## if(!require(seqinr)) stop("The package seqinr is required.")
     if(!inherits(x,"alignment")) stop("x is not a alignment object")
     N <- length(x$seq)
     if(!is.null(x$nam) && length(x$nam)!=N) stop("Inconsistent names in x (length of x$nam and x$seq do not match). ")

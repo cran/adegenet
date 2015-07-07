@@ -5,6 +5,7 @@
 \alias{names,genpop-method}
 \alias{show,genpop-method}
 \alias{summary,genpop-method}
+\alias{is.genpop}
 \title{adegenet formal class (S4) for allele counts in populations}
 \description{An object of class \code{genpop} contain alleles counts
   for several loci.\cr
@@ -19,13 +20,11 @@
 \section{Slots}{
          \describe{
     \item{\code{tab}:}{matrix of alleles counts for each combinaison of population
-    -in rows- and alleles -in columns-. Rows and columns are given generic names.}
-    \item{\code{loc.names}:}{character vector containing the real names of the loci}
+    (in rows) and alleles (in columns).}
     \item{\code{loc.fac}:}{locus factor for the columns of \code{tab}}
-    \item{\code{loc.nall}:}{integer vector giving the number of alleles per locus}
+    \item{\code{loc.n.all}:}{integer vector giving the number of alleles per locus}
     \item{\code{all.names}:}{list having one component per locus, each containing a character vector of alleles names}
     \item{\code{call}:}{the matched call}
-    \item{\code{pop.names}:}{character vector containing the real names of the populations}
     \item{\code{ploidy}:}{ an integer indicating the degree of ploidy of
       the genotypes. Beware: 2 is not an integer, but as.integer(2) is.}
     \item{\code{type}:}{ a character string indicating the type of
@@ -46,10 +45,10 @@ Class \code{"\linkS4class{popInfo}"}, directly.
     \item{show}{\code{signature(object = "genpop")}: shows a genpop
       object (same as print)}
     \item{summary}{\code{signature(object = "genpop")}: summarizes a
-      genpop object, invisibly returning its content}
+      genpop object, invisibly returning its content or suppress printing of auxiliary information by specifying \code{verbose = FALSE}}
   }
 }
-\seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}, \code{\link{na.replace}}
+\seealso{\code{\link{as.genpop}}, \code{\link{is.genpop}},\code{\link{makefreq}}, \code{\link{genind}}, \code{\link{import2genind}}, \code{\link{read.genetix}}, \code{\link{read.genepop}}, \code{\link{read.fstat}}
 }
 \author{ Thibaut Jombart \email{t.jombart@imperial.ac.uk} }
 \examples{
@@ -68,8 +67,6 @@ obj3 <- as.genpop(microsatt$tab)
 obj3
 
 all(obj3@tab==microsatt$tab)
-all(obj3@pop.names==rownames(microsatt$tab))
-# it worked
 
 # perform a correspondance analysis
 obj4 <- genind2genpop(obj1,missing="chi2")
