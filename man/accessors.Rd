@@ -105,6 +105,10 @@
   populations 2, 3 and 4, using \code{popNames(obj)} as reference;
   logicals, or named populations also work; this overrides other
   subsetting of individuals.\cr
+
+  \item "obj[i=1:2, drop=TRUE]" returns an object keeping only the first
+  two individuals (or populations), dropping the alleles no longer
+  present in the data.\cr
 }
   The argument \code{treatOther} handles the treatment of objects in the
   \code{@other} slot (see details). The argument \code{drop} can be set
@@ -128,6 +132,7 @@
     \item{locNames}{returns the names of markers and/or alleles.}
     \item{locNames<-}{sets the names of markers using a vector of
       length \code{nLoc(x)}.}
+    \item{locFac}{returns a factor that defines which locus each column of the \code{@tab} slot belongs to}
     \item{ploidy}{returns the ploidy of the data.}
     \item{ploidy<-}{sets the ploidy of the data using an integer.}
     \item{alleles}{returns the alleles of each locus.}

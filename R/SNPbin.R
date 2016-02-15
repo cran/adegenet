@@ -108,7 +108,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
             }
             x@n.loc <- length(input$snp)
             x@NA.posi <- which(is.na(input$snp))
-            x@ploidy <- input$ploidy
+            x@ploidy <- as.integer(input$ploidy)
             return(x)
         }
     }
@@ -120,7 +120,7 @@ setMethod("initialize", "SNPbin", function(.Object, ...) {
         x@snp[[1]] <- .bin2raw(rep(0L, length(input$snp)))$snp
         x@NA.posi <- 1:length(input$snp)
         if(!is.null(input$ploidy)){
-            x@ploidy <- input$ploidy
+            x@ploidy <- as.integer(input$ploidy)
         } else {
             x@ploidy <- as.integer(NA)
         }
@@ -169,6 +169,9 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
     if(parallel && !require(parallel)) stop("parallel package requested but not installed")
     if(parallel && is.null(n.cores)){
         n.cores <- parallel::detectCores()
+    }
+    if( .Platform$OS.type == "windows" ){
+        n.cores <- 1
     }
 
     x <- .Object
@@ -259,7 +262,7 @@ setMethod("initialize", "genlight", function(.Object, ..., parallel=require("par
                     res <- as.integer(x)
                     res[res==0] <- NA
                     res <- res-1
-                    return(new("SNPbin", as.integer(res), ploidy=2))
+                    return(new("SNPbin", as.integer(res), ploidy=2L))
                 }
 
                 ## create SNPbin list
@@ -518,7 +521,7 @@ setMethod ("show", "genlight", function(object){
 
     temp <- sapply(object@gen, function(e) length(e@NA.posi))
     if(length(temp>1)){
-        cat("\n ", sum(temp), " (", round(sum(temp)/(nInd(object)*nLoc(object)),2)," %) missing data", sep="")
+        cat("\n ", sum(temp), " (", round((sum(temp)/(nInd(object)*nLoc(object))) *100,2)," %) missing data", sep="")
     }
 
     ## BASIC CONTENT

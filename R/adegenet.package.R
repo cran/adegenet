@@ -149,7 +149,7 @@
 #' For more information, visit the adegenet website using the function
 #' \code{\link{adegenetWeb}}.\cr
 #'
-#' Tutorials are available via the command \code{\link{adegenetTutorials}}.\cr
+#' Tutorials are available via the command \code{adegenetTutorial}.\cr
 #'
 #' To cite adegenet, please use the reference given by
 #' \code{citation("adegenet")} (or see references below).
@@ -264,6 +264,8 @@
 #' @S3method snpposi.test numeric
 #' @S3method summary dapc
 #' @S3method summary spca
+#' @S3method print genindSummary
+#' @S3method print genpopSummary
 #'
 #' @import methods
 #'

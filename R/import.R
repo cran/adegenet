@@ -43,12 +43,12 @@
 #' @param ncode an optional integer giving the number of characters used for
 #'   coding one genotype at one locus. If not provided, this is determined from
 #'   data.
-#' @param ind.names an optional character vector giving the individuals names;
-#'   if NULL, taken from rownames of X.
+#' @param ind.names optinal, a vector giving the individuals names; if NULL, taken
+#' from rownames of X. If factor or numeric, vector is converted to character.
 #' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
-#' @param NA.char a vector of character strings which are to be treated as NA
+#' @param NA.char a character string corresponding to missing allele (to be treated as NA)
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
 #' @param type a character string indicating the type of marker: 'codom' stands
 #'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
@@ -80,7 +80,7 @@
 #'
 #' obj <- df2genind(df, ploidy=2, ncode=1)
 #' obj
-#' obj@@tab
+#' tab(obj)
 #'
 #'
 #' ## converting a genind as data.frame
@@ -100,6 +100,15 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     type <- match.arg(type)
     if (is.null(sep) && is.null(ncode) && any(ploidy > 1)){
         stop("Not enough information to convert data: please indicate the separator (sep=...) or the number of characters coding an allele (ncode=...)")
+    }
+    if(length(NA.char)>1) {
+        warning("NA.char has several values; only the first one will be considered")
+        NA.char <- NA.char[1]
+    }
+
+    # If by any chance provided ind.names are of class int/factor, they are (silently?) converted to characters.
+    if (!is.character(ind.names) & !is.null(ind.names)) {
+      ind.names <- as.character(ind.names)
     }
 
 
@@ -123,31 +132,29 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     }
     if(any(ploidy < 1L)) stop("ploidy cannot be less than 1")
-    ind.test <- FALSE -> loc.test
-    if (is.null(ind.names) || (ind.test <- length(unique(ind.names)) != nrow(X))){
-      ind.names <- rownames(X)
-      if (!is.null(ind.names) & ind.test){
-        warning("duplicate labels detected for some individuals; using row names")
-      }
-      if (is.null(ind.names) || any(duplicated(ind.names))){
+
+    ## check individual labels
+    if(is.null(ind.names)) ind.names <- rownames(X)
+    if(is.null(ind.names)) ind.names <- .genlab("",n)
+    if(any(duplicated(ind.names))){
         warning("duplicate labels detected for some individuals; using generic labels")
-        rownames(X) <- ind.names <- .genlab("", n)
-      }
-    } else {
-      rownames(X) <- ind.names
+        ind.names <- .genlab("",n)
     }
-    if (is.null(loc.names) || (loc.test <- length(unique(loc.names)) != ncol(X))){
-      loc.names <- colnames(X)
-      if (!is.null(loc.names) & loc.test){
-        warning("duplicate labels detected for some individuals; using column names")
-      }
-      if (is.null(loc.names) || any(duplicated(loc.names))){
+    rownames(X) <- ind.names
+
+    ## check locus labels
+    if(is.null(loc.names)) loc.names <- colnames(X)
+    if(is.null(loc.names)) loc.names <- .genlab("loc",nloc)
+    if(any(duplicated(loc.names))){
         warning("duplicate labels detected for some loci; using generic labels")
-        colnames(X) <- loc.names <- .genlab("L", nloc)
-      }
-    } else {
-      colnames(X) <- loc.names
+        loc.names <- .genlab("loc",nloc)
     }
+    if(length(grep("[.]", loc.names))>0L){
+        warning("character '.' detected in names of loci; replacing with '_'")
+        gsub("[.]","_", loc.names)
+    }
+    colnames(X) <- loc.names
+
 
     ## pop argument
     if(!is.null(pop)){
@@ -215,7 +222,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
 
     ## HANDLE NAs
     ## find all strings which are in fact NAs
-    NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse="/")))
+    NA.list <- unlist(lapply(unique(ploidy), function(nrep) paste(rep(NA.char, nrep), collapse=sep)))
     NA.list <- unique(c(NA.list, NA.char))
 
     ## replace NAs
@@ -241,7 +248,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     }
 
 
-    ## TRANSLATE DATA INTO ALLELE FREQUENCIES ##
+    ## TRANSLATE DATA INTO ALLELE COUNTS ##
     ## get dimensions of X
     nloc <- ncol(X)
     nind <- nrow(X)
@@ -284,13 +291,40 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-     if(length(NA.posi)>0){
-         out.colnames <- colnames(out)
-         for(i in 1:length(NA.ind)){
-            loc <- paste0(NA.locus[i], "\\.")
-            out[NA.ind[i], grep(loc, out.colnames)] <- NA
-         }
-     }
+    ## 
+    ## Thanks to Klaus Schliep for the proposed speedup:
+    ## 
+    # if (length(NA.posi) > 0) {
+    #     out.colnames <- colnames(out)
+    #     NA.row <- match(NA.ind, rownames(out))
+    #     loc <- paste0(NA.locus, "\\.")
+    #     uloc <- unique(loc)
+    #     loc.list <- lapply(uloc, grep, out.colnames)
+    #     NA.col <- match(loc, uloc)
+    #     out[cbind(rep(NA.row, unlist(lapply(loc.list, length))[NA.col]), unlist(loc.list[NA.col]))] <- NA
+    #  }  
+    ## This one is modified from above to make everything more explicit. 
+    if (length(NA.posi) > 0) {
+      out.colnames <- colnames(out)
+      NA.row <- match(NA.ind, rownames(out))
+      loc <- paste0(NA.locus, "\\.")
+      uloc <- unique(loc)
+      loc.list <- lapply(uloc, grep, out.colnames)
+      NA.col <- match(loc, uloc)
+      
+      # Coordinates for missing rows
+      missing.ind <- vapply(loc.list, length, integer(1))[NA.col]
+      missing.ind <- rep(NA.row, missing.ind)
+      # Coordinates for missing columns
+      missing.loc <- unlist(loc.list[NA.col], use.names = FALSE)
+      
+      missing_coordinates <- matrix(0L, nrow = length(missing.ind), ncol = 2L)
+      missing_coordinates[, 1] <- missing.ind
+      missing_coordinates[, 2] <- missing.loc
+      
+      out[missing_coordinates] <- NA
+    }
+
 
     ## call upon genind constructor
     prevcall <- match.call()
@@ -442,7 +476,7 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
 #' obj
 #'
 #' @export read.fstat
-read.fstat <- function(file,quiet=FALSE){
+read.fstat <- function(file, quiet=FALSE){
     ##if(!file.exists(file)) stop("Specified file does not exist.") <- not needed
     if(toupper(.readExt(file)) != "DAT") stop("File extension .dat expected")
 
@@ -454,7 +488,7 @@ read.fstat <- function(file,quiet=FALSE){
 
     ## read length of allele
     ncode <- as.integer(unlist(strsplit(txt[1], " "))[4])
-    NA.char <- sapply(1:ncode, function(i) paste(rep("0",i),collapse=""))
+    NA.char <- paste(rep("0",ncode),collapse="")
 
     ## read first infos
     info <- unlist(strsplit(txt[1],"([[:space:]]+)"))
@@ -475,10 +509,12 @@ read.fstat <- function(file,quiet=FALSE){
     colnames(X) <- loc.names
     rownames(X) <- 1:nrow(X)
 
+    ## replace all possible missing data coding by NA.char
+    allNAs <- sapply(1:8, function(i) paste(rep("0",i),collapse=""))
+    X[X %in% allNAs] <- NA.char
+
+    ## call df2genind
     res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
-    ## beware : fstat files do not yield ind names
-    ## res@ind.names <- rep("",length(res@ind.names))
-    ## names(res@ind.names) <- rownames(res@tab)
     res@call <- call
 
     if(!quiet) cat("\n...done.\n\n")
@@ -536,17 +572,18 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     if(!quiet) cat("\nFile description: ",txt[1], "\n")
     txt <- txt[-1]
     txt <- gsub("\t", " ", txt)
+    NA.char <- paste(rep("0",ncode), collapse="")
 
-  # two cases for locus names:
-  # 1) all on the same row, separated by ","
-  # 2) one per row
-  # ! spaces and tab allowed
-  # a bug was reported by S. Devillard, occuring
-  # when the two cases occur together,
-  # that is:
-  # loc1,
-  # loc2,
-  # ...
+    ## two cases for locus names:
+    ## 1) all on the same row, separated by ","
+    ## 2) one per row
+    ## ! spaces and tab allowed
+    ## a bug was reported by S. Devillard, occuring
+    ## when the two cases occur together,
+    ## that is:
+    ## loc1,
+    ## loc2,
+    ## ...
 
 
     ## new strategy (shorter): isolate the 'locus names' part and then parse it.
@@ -598,7 +635,14 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     ## X is a individual x locus genotypes matrix
     X <- matrix(unlist(strsplit(vec.genot,"[[:space:]]+")),ncol=nloc,byrow=TRUE)
 
-    rownames(X) <- 1:nrow(X)
+    # If there are any duplicate names, make them unique and issue a warning. Else
+    # use existing individual names.
+    if (any(duplicated(ind.names))) {
+      rownames(X) <- .genlab("", nrow(X))
+      warning("Duplicate individual names detected. Coercing them to be unique.")
+    } else {
+      rownames(X) <- ind.names
+    }
     colnames(X) <- loc.names
 
     ## give right pop names
@@ -607,7 +651,11 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     pop.names <- ind.names[pop.names.idx]
     levels(pop) <- pop.names
 
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode)
+    ## check that data are consistent with NCODE and ploidy=2
+    if(!all(unique(nchar(X))==(ncode*2))) stop(paste("some alleles are not encoded with", ncode,
+                                                     "characters\nCheck 'ncode' argument"))
+
+    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")
@@ -926,7 +974,7 @@ import2genind <- function(file, quiet=FALSE, ...){
         return(read.fstat(file, quiet=quiet))
 
     if(ext == "GEN")
-        return(read.genepop(file, quiet=quiet))
+        return(read.genepop(file, quiet=quiet, ...))
 
     if(ext %in% c("STR","STRU"))
         return(read.structure(file, quiet=quiet, ...))
@@ -1036,7 +1084,6 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
     }
 
     call <- match.call()
-
 
     ## HANDLE THE COMMENTS ##
     if(!quiet) cat("\n Reading comments... \n")
@@ -1366,10 +1413,10 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
         txt <- lapply(txt, function(e) suppressWarnings(as.integer(e[-(1:6)])))
 
         if(parallel){
-            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2),
+            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
-            res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2)) )
+            res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L)) )
         }
 
         lines.to.skip <-lines.to.skip + length(txt)
@@ -1387,7 +1434,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
     ## BUILD FINAL OBJECT ##
     if(!quiet) cat("\n Building final object... \n")
 
-    res <- new("genlight",res, ploidy=2, parallel=parallel)
+    res <- new("genlight",res, ploidy=2L, parallel=parallel)
     indNames(res) <- misc.info$IID
     pop(res) <- misc.info$FID
     locNames(res) <- loc.names
