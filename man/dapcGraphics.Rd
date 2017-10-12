@@ -2,7 +2,6 @@
 \name{dapc graphics}
 \alias{scatter.dapc}
 \alias{assignplot}
-\alias{compoplot}
 \title{Graphics for Discriminant Analysis of Principal Components (DAPC)}
 \description{
   These functions provide graphic outputs for Discriminant Analysis of
@@ -16,29 +15,24 @@
     'discriminant functions'), with a screeplot of eigenvalues as inset.\cr
   - \code{assignplot}: plot showing the probabilities of assignment of
   individuals to the different clusters.\cr
- - \code{compoplot}: barplot showing the probabilities of assignment of
-  individuals to the different clusters.\cr
 
 }
 \usage{
 \method{scatter}{dapc}(x, xax=1, yax=2, grp=x$grp, col=seasun(length(levels(grp))),
-                       pch=20, bg="white", solid=.7, scree.da=TRUE,
-                       scree.pca=FALSE, posi.da="bottomright",
-                       posi.pca="bottomleft", bg.inset="white", ratio.da=.25,
-                       ratio.pca=.25, inset.da=0.02, inset.pca=0.02,
-                       inset.solid=.5, onedim.filled=TRUE, mstree=FALSE, lwd=1,
-                       lty=1, segcol="black", legend=FALSE, posi.leg="topright",
-                       cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = 1.5,
-                       axesell = FALSE, label = levels(grp), clabel = 1, xlim =
-                       NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
-                       c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
-                       "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
-                       = NULL, label.inds = NULL, \ldots)
+      pch=20, bg="white", solid=.7, scree.da=TRUE,
+      scree.pca=FALSE, posi.da="bottomright",
+      posi.pca="bottomleft", bg.inset="white", ratio.da=.25,
+      ratio.pca=.25, inset.da=0.02, inset.pca=0.02,
+      inset.solid=.5, onedim.filled=TRUE, mstree=FALSE, lwd=1,
+      lty=1, segcol="black", legend=FALSE, posi.leg="topright",
+      cleg=1, txt.leg=levels(grp), cstar = 1, cellipse = 1.5,
+      axesell = FALSE, label = levels(grp), clabel = 1, xlim =
+      NULL, ylim = NULL, grid = FALSE, addaxes = TRUE, origin =
+      c(0,0), include.origin = TRUE, sub = "", csub = 1, possub =
+      "bottomleft", cgrid = 1, pixmap = NULL, contour = NULL, area
+      = NULL, label.inds = NULL, \ldots)
 
 assignplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, cex.lab=.75,pch=3)
-
-compoplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
-          legend=TRUE, txt.leg=NULL, ncol=4, posi=NULL, cleg=.8, bg=transp("white"), ...)
 }
 \arguments{
   \item{x}{a \code{dapc} object.}
@@ -103,16 +97,9 @@ compoplot(x, only.grp=NULL, subset=NULL, new.pred=NULL, col=NULL, lab=NULL,
     at the bottom of the plot. To visualize these individuals only, specify
     \code{only.grp="unknown"}.}
   \item{cex.lab}{a \code{numeric} indicating the size of labels.}
-  \item{lab}{a vector of characters (recycled if necessary) of labels
-    for the individuals; if left to NULL, the row names of \code{x$tab}
-    are used.}
   \item{txt.leg}{a character vector indicating the text to be used in
     the legend; if not provided, group names stored in \code{x$grp} are
     used.}
-  \item{ncol}{an integer indicating the number of columns of the legend,
-    defaulting to 4.}
-  \item{posi}{a characther string indicating the position of the legend; can match
-    any combination of "top/bottom" and "left/right". See \code{?legend}.}
   \item{label.inds}{Named list of arguments passed to the 
     \code{\link[vegan]{orditorp}} function. This will label individual points 
     witout overlapping. Arguments \code{x} and \code{display} are hardcoded and 

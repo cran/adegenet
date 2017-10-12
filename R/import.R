@@ -22,19 +22,22 @@
 #'
 #' The function \code{df2genind} converts a data.frame (or a matrix) into a
 #' \linkS4class{genind} object. The data.frame must meet the following
-#' requirements:\cr
-#' - genotypes are in row (one row per genotype)\cr
-#' - markers/loci are in columns\cr
-#' - each element is a string of characters coding alleles, ideally separated by a character string (argument \code{sep});
-#' if no separator is used, the number of characters coding alleles must be indicated (argument \code{ncode}).\cr
+#' requirements:
+#' \itemize{
+#' \item genotypes are in row (one row per genotype)
+#' \item markers/loci are in columns
+#' \item each element is a string of characters coding alleles, ideally
+#' separated by a character string (argument \code{sep}); if no separator is
+#' used, the number of characters coding alleles must be indicated (argument
+#' \code{ncode}).}
 #'
-#' See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to such a
-#' data.frame.
+#' See \code{\link{genind2df}} to convert \linkS4class{genind} objects back to
+#' such a data.frame.
 #'
 #' === Details for the \code{sep} argument ===\cr this character is directly
-#' used in reguar expressions like \code{gsub}, and thus require some
-#' characters to be preceeded by double backslashes. For instance, "/" works
-#' but "|" must be coded as "\\|".
+#' used in reguar expressions like \code{gsub}, and thus require some characters
+#' to be preceeded by double backslashes. For instance, "/" works but "|" must
+#' be coded as "\\|".
 #'
 #' @aliases df2genind
 #' @param X a matrix or a data.frame containing allelle data only (see
@@ -43,12 +46,14 @@
 #' @param ncode an optional integer giving the number of characters used for
 #'   coding one genotype at one locus. If not provided, this is determined from
 #'   data.
-#' @param ind.names optinal, a vector giving the individuals names; if NULL, taken
-#' from rownames of X. If factor or numeric, vector is converted to character.
+#' @param ind.names optinal, a vector giving the individuals names; if NULL,
+#'   taken from rownames of X. If factor or numeric, vector is converted to
+#'   character.
 #' @param loc.names an optional character vector giving the markers names; if
 #'   NULL, taken from colnames of X.
 #' @param pop an optional factor giving the population of each individual.
-#' @param NA.char a character string corresponding to missing allele (to be treated as NA)
+#' @param NA.char a character string corresponding to missing allele (to be
+#'   treated as NA)
 #' @param ploidy an integer indicating the degree of ploidy of the genotypes.
 #' @param type a character string indicating the type of marker: 'codom' stands
 #'   for 'codominant' (e.g. microstallites, allozymes); 'PA' stands for
@@ -60,7 +65,7 @@
 #'   levels in your strata. see \code{\link{hierarchy}} for details.
 #'
 #' @return an object of the class \linkS4class{genind} for \code{df2genind}; a
-#' matrix of biallelic genotypes for \code{genind2df}
+#'   matrix of biallelic genotypes for \code{genind2df}
 #'
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}, Zhian N. Kamvar
 #'   \email{kamvarz@@science.oregonstate.edu}
@@ -156,12 +161,17 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     colnames(X) <- loc.names
 
 
-    ## pop argument
-    if(!is.null(pop)){
-        if(length(pop)!= n) stop("length of factor pop differs from nrow(X)")
-        pop <- as.factor(pop)
+    ## check alleles for periods
+    if (length(grep("[.]", X)) > 0L){
+      if (is.null(sep) || sep != "_"){
+        warning("character '.' detected in names of loci; replacing with '_'")
+        replacement <- "_"
+      } else {
+        warning("character '.' detected in names of loci; replacing with 'p'")
+        replacement <- "p"
+      }
+      X <- apply(X, 2, function(i) gsub("[.]", replacement, i))
     }
-
 
     ## PRESENCE/ABSENCE MARKERS ##
     if(toupper(type)=="PA"){
@@ -291,9 +301,9 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     dimnames(out) <- list(rownames(out), colnames(out))
 
     ## restore NAs
-    ## 
+    ##
     ## Thanks to Klaus Schliep for the proposed speedup:
-    ## 
+    ##
     # if (length(NA.posi) > 0) {
     #     out.colnames <- colnames(out)
     #     NA.row <- match(NA.ind, rownames(out))
@@ -302,27 +312,40 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     #     loc.list <- lapply(uloc, grep, out.colnames)
     #     NA.col <- match(loc, uloc)
     #     out[cbind(rep(NA.row, unlist(lapply(loc.list, length))[NA.col]), unlist(loc.list[NA.col]))] <- NA
-    #  }  
-    ## This one is modified from above to make everything more explicit. 
+    #  }
+    ## This one is modified from above to make everything more explicit.
     if (length(NA.posi) > 0) {
       out.colnames <- colnames(out)
       NA.row <- match(NA.ind, rownames(out))
       loc <- paste0(NA.locus, "\\.")
       uloc <- unique(loc)
-      loc.list <- lapply(uloc, grep, out.colnames)
+      loc.list <- lapply(uloc, FUN = function(x, y) {
+        grep(pattern = paste("^", x, sep = ""), x = out.colnames, perl = TRUE)
+      }, y = out.colnames)
       NA.col <- match(loc, uloc)
-      
+
       # Coordinates for missing rows
       missing.ind <- vapply(loc.list, length, integer(1))[NA.col]
       missing.ind <- rep(NA.row, missing.ind)
       # Coordinates for missing columns
       missing.loc <- unlist(loc.list[NA.col], use.names = FALSE)
-      
+
       missing_coordinates <- matrix(0L, nrow = length(missing.ind), ncol = 2L)
       missing_coordinates[, 1] <- missing.ind
       missing_coordinates[, 2] <- missing.loc
-      
+      #      [,1] [,2]
+      # [1,]    2    1
+      # [2,]    3    1
+      # [3,]    4   13
+      # [4,]    4   14
+
       out[missing_coordinates] <- NA
+
+      #          X1401_25.33
+      # A_KH1584           1
+      # C_KH1059           1
+      # M_KH1834           1
+      # M_KH1837           1
     }
 
 
@@ -429,8 +452,9 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
 
     colnames(X) <- loc.names
 
-    ## make a factor "pop" if there is more than one population
-    pop <- factor(rep(pop.names,pop.nind))
+    ## pop is kept as character; treatment and conversion to a factor belongs to the constructor
+    ## (otherwise there is potential for inconsistencies across different import functions
+    pop <- as.character(rep(pop.names,pop.nind))
 
     ## pass X to df2genind
     res <- df2genind(X=X, ncode=3, pop=pop, ploidy=2, NA.char="000")
@@ -502,8 +526,8 @@ read.fstat <- function(file, quiet=FALSE){
     txt <- .rmspaces(txt)
     txt <- sapply(1:length(txt),function(i) unlist(strsplit(txt[i],"([[:space:]]+)|([[:blank:]]+)")) )
     X <- t(txt)
-    pop <- factor(X[,1])
-    if(length(levels(pop)) == 1 ) pop <- NULL
+    pop <- as.character(X[,1])
+    if(length(unique(pop)) == 1 ) pop <- NULL
     X <- X[,-1]
 
     colnames(X) <- loc.names
@@ -514,7 +538,7 @@ read.fstat <- function(file, quiet=FALSE){
     X[X %in% allNAs] <- NA.char
 
     ## call df2genind
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
+    res <- df2genind(X=X, pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- call
 
     if(!quiet) cat("\n...done.\n\n")
@@ -655,7 +679,7 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     if(!all(unique(nchar(X))==(ncode*2))) stop(paste("some alleles are not encoded with", ncode,
                                                      "characters\nCheck 'ncode' argument"))
 
-    res <- df2genind(X=X,pop=pop, ploidy=2, ncode=ncode, NA.char=NA.char)
+    res <- df2genind(X=X, pop=as.character(pop), ploidy=2, ncode=ncode, NA.char=NA.char)
     res@call <- prevcall
 
     if(!quiet) cat("\n...done.\n\n")
@@ -745,22 +769,22 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
     ## required questions
     if(is.null(n.ind)){
         cat("\n How many genotypes are there? ")
-        n.ind <- as.integer(readLines(n = 1))
+        n.ind <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(n.loc)){
         cat("\n How many markers are there? ")
-        n.loc <- as.integer(readLines(n = 1))
+        n.loc <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(col.lab)){
         cat("\n Which column contains labels for genotypes ('0' if absent)? ")
-        col.lab <- as.integer(readLines(n = 1))
+        col.lab <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(col.pop)){
         cat("\n Which column contains the population factor ('0' if absent)? ")
-        col.pop <- as.integer(readLines(n = 1))
+        col.pop <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(col.others) & ask){
@@ -771,12 +795,12 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     if(is.null(row.marknames)){
         cat("\n Which row contains the marker names ('0' if absent)? ")
-        row.marknames <- as.integer(readLines(n = 1))
+        row.marknames <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     if(is.null(onerowperind)){
         cat("\n Are genotypes coded by a single row (y/n)? ")
-        onerowperind <- toupper(readLines(n = 1))
+        onerowperind <- toupper(readLines(con = getOption('adegenet.testcon'), n = 1))
         if(onerowperind == "Y") {
             onerowperind <- TRUE
         } else {
@@ -786,7 +810,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     if(is.null(NA.char)){
         cat("\n What is the code for missing data (default is '-9')? ")
-        NA.char <- as.character(readLines(n = 1))
+        NA.char <- as.character(readLines(con = getOption('adegenet.testcon'), n = 1))
     }
 
     ## message to console
@@ -837,7 +861,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     ## population factor
     if(col.pop !=0) {
-        pop <- factor(mat[, col.pop])
+        pop <- as.character(mat[, col.pop])
     } else {
         pop <- NULL
     }
@@ -881,7 +905,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
     rownames(X) <- ind.names
     colnames(X) <- loc.names
 
-    res <- df2genind(X=X,pop=pop, ploidy=2,sep=sep,ncode=ncode)
+    res <- df2genind(X=X, pop=pop, ploidy=2, sep=sep, ncode=ncode)
 
     res@call <- match.call()
 
@@ -1073,7 +1097,7 @@ import2genind <- function(file, quiet=FALSE, ...){
 #' @export read.snp
 #'
 read.snp <- function(file, quiet=FALSE, chunkSize=1000,
-                     parallel=require("parallel"), n.cores=NULL, ...){
+                     parallel=FALSE, n.cores=NULL, ...){
     ext <- .readExt(file)
     ext <- toupper(ext)
     if(ext != "SNP") warning("wrong file extension - '.snp' expected")
@@ -1152,7 +1176,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
         temp <- strsplit(txt[ID.INDIV+1], "")
         temp <- lapply(temp, function(e) suppressWarnings(as.integer(e)))
         if(parallel){
-            res <- c(res, mclapply(temp, function(e) new("SNPbin", e),
+            res <- c(res, parallel::mclapply(temp, function(e) new("SNPbin", e),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
             res <- c(res, lapply(temp, function(e) new("SNPbin", e)) )
@@ -1238,7 +1262,7 @@ read.snp <- function(file, quiet=FALSE, chunkSize=1000,
 #' provided, a list of two components is returned, containing chromosome and
 #' position information.
 #'
-extract.PLINKmap <- function(file, x=NULL){
+extract.PLINKmap <- function(file, x = NULL){
     ## CHECK EXTENSION ##
     ext <- .readExt(file)
     ext <- toupper(ext)
@@ -1247,28 +1271,33 @@ extract.PLINKmap <- function(file, x=NULL){
 
     ## READ FILE ##
     ## find nb of columns
-    txt <- scan(file,what="character",sep="\n",quiet=TRUE,  nlines=1)
+    txt <- scan(file, what = "character", sep = "\n", quiet = TRUE,  nlines = 1)
     nb.col <- length( unlist(strsplit(txt,"[[:blank:]]+")))
 
     ## read file
-    txt <- scan(file,what="character",sep="\t",quiet=TRUE)
+    txt <- scan(file, what = "character", sep= "\n", quiet = TRUE)
+    txt <- unlist(strsplit(as.vector(txt), split = "[[:blank:]]"))
     txt <- matrix(txt, ncol=4, byrow=TRUE)
 
 
     ## EXTRACT INFO AND RETURN OBJECT ##
     ## return a genlight
-    if(!is.null(x)){
-        ## match data
-        ord <- match(locNames(x), txt[,2]) # check that it is the 2nd column
+    if (!is.null(x)) {
         if(!inherits(x, "genlight")) stop("x is not a genlight object")
-        other(x)$chromosome <- factor(txt[ord,1])
-        other(x)$position <- as.integer(txt[ord,4])
+
+        ## match data: we need remove the potential alleles added to locus names
+        marker_id <- sub("_.*$", "", locNames(x))
+        ord <- match(marker_id, txt[,2])
+
+        chromosome(x) <- factor(txt[ord, 1])
+        position(x) <- as.integer(txt[ord, 4])
 
         return(x)
     }
 
     ## return a list
-    res <- list(chromosome=factor(txt[ord,1]), position=as.integer(txt[ord,4]))
+    res <- list(chromosome = factor(txt[ord, 1]),
+                position = as.integer(txt[ord, 4]))
 
     return(res)
 } # end extract.PLINKmap
@@ -1306,7 +1335,7 @@ extract.PLINKmap <- function(file, x=NULL){
 #' Data need to be exported from PLINK using the option "--recodeA" (and NOT
 #' "--recodeAD"). The PLINK command should therefore look like: \code{plink
 #' --file data --recodeA}. For more information on this topic, please look at
-#' this webpage: \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
+#' this webpage: \url{http://zzz.bwh.harvard.edu/plink/}
 #'
 #' @aliases read.PLINK read.plink
 #' @param file for \code{read.PLINK} a character string giving the path to the
@@ -1413,7 +1442,7 @@ read.PLINK <- function(file, map.file=NULL, quiet=FALSE, chunkSize=1000,
         txt <- lapply(txt, function(e) suppressWarnings(as.integer(e[-(1:6)])))
 
         if(parallel){
-            res <- c(res, mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L),
+            res <- c(res, parallel::mclapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L),
                                    mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) )
         } else {
             res <- c(res, lapply(txt, function(e) new("SNPbin", snp=e, ploidy=2L)) )
@@ -1524,7 +1553,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
         IND.LAB <- c(IND.LAB, sub(">","",txt[grep("^>", txt)])) # find individuals' labels
         txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
         if(parallel){
-            txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split=""),
+            txt <- parallel::mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split=""),
                             mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one vector
         } else {
             txt <- lapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")) # each genome -> one vector
@@ -1582,7 +1611,7 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
         nb.ind <- length(grep("^>", txt))
         txt <- split(txt, rep(1:nb.ind, each=LINES.PER.IND)) # split per individuals
         if(parallel){
-            txt <- mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi],
+            txt <- parallel::mclapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi],
                                         mc.cores=n.cores, mc.silent=TRUE, mc.cleanup=TRUE, mc.preschedule=FALSE) # each genome -> one SNP vector
         } else {
             txt <- lapply(txt, function(e) strsplit(paste(e[-1], collapse=""), split="")[[1]][snp.posi]) # each genome -> one SNP vector
@@ -1627,9 +1656,11 @@ fasta2genlight <- function(file, quiet=FALSE, chunkSize=1000, saveNbAlleles=FALS
 fasta2DNAbin <- function(file, quiet=FALSE, chunkSize=10, snpOnly=FALSE){
 
     ## HANDLE ARGUMENTS ##
-    ext <- .readExt(file)
-    ext <- toupper(ext)
-    if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
+    if (!is(file, "connection")) {
+        ext <- .readExt(file)
+        ext <- toupper(ext)
+        if(!ext %in% c("FASTA", "FA", "FAS")) warning("wrong file extension - '.fasta', '.fa' or '.fas' expected")
+    }
     if(!quiet) cat("\n Converting FASTA alignment into a DNAbin object... \n\n")
 
 

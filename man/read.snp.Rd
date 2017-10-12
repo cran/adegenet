@@ -4,8 +4,8 @@
 \alias{read.snp}
 \title{Reading Single Nucleotide Polymorphism data}
 \usage{
-read.snp(file, quiet = FALSE, chunkSize = 1000,
-  parallel = require("parallel"), n.cores = NULL, ...)
+read.snp(file, quiet = FALSE, chunkSize = 1000, parallel = FALSE,
+  n.cores = NULL, ...)
 }
 \arguments{
 \item{file}{a character string giving the path to the file to convert, with
@@ -77,9 +77,6 @@ locNames(obj)
 }
 
 }
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
-}
 \seealso{
 - \code{?genlight} for a description of the class
 \code{"\linkS4class{genlight}"}.
@@ -95,5 +92,7 @@ format.
 - \code{\link{import2genind}}: read multiallelic markers from various
 software into adegenet.\cr
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

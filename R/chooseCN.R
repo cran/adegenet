@@ -49,10 +49,14 @@
 #' plotted (TRUE, default) or not (FALSE).
 #' @param edit.nb a logical stating whether the resulting graph should be
 #' edited manually for corrections (TRUE) or not (FALSE, default).
+#' @param check.duplicates a logical indicating if duplicate coordinates should be detected; this can be an issue for some graphs; TRUE by default.
+#'
 #' @return Returns a connection network having the class \code{nb} or
 #' \code{listw}. The xy coordinates are passed as attribute to the created
 #' object.
+#'
 #' @author Thibaut Jombart \email{t.jombart@@imperial.ac.uk}
+#'
 #' @seealso \code{\link{spca}}
 #' @keywords spatial utilities
 #' @examples
@@ -72,8 +76,10 @@
 #' @importFrom spdep "tri2nb" "gabrielneigh" "graph2nb" "relativeneigh" "dnearneigh" "knearneigh" "knn2nb" "nb2listw" "mat2listw" "listw2mat" "lag.listw" "card"
 #' @import ade4
 #'
-chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL, k=NULL,
-                     a=NULL, dmin=NULL, plot.nb=TRUE, edit.nb=FALSE){
+chooseCN <- function(xy, ask = TRUE, type = NULL, result.type = "nb",
+                     d1 = NULL, d2 = NULL, k = NULL, a = NULL,
+                     dmin = NULL, plot.nb = TRUE, edit.nb = FALSE,
+                     check.duplicates = TRUE){
 
   if(is.data.frame(xy)) xy <- as.matrix(xy)
   if(ncol(xy) != 2) stop("xy does not have two columns.")
@@ -110,7 +116,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
   }
 
   ## check for uniqueness of coordinates
-  if(any(xyTable(xy)$number>1)){ # if duplicate coords
+  if(check.duplicates && any(xyTable(xy)$number>1)){ # if duplicate coords
       DUPLICATE.XY <- TRUE
   } else {
       DUPLICATE.XY <- FALSE
@@ -141,7 +147,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         cat("\t Inverse distances (type 7)\n")
         cat("Answer: ")
 
-        type <- as.integer(readLines(n = 1))
+        type <- as.integer(readLines(con = getOption('adegenet.testcon'), n = 1))
         temp <- type < 1 |type > 7
         if(temp) cat("\nWrong answer\n")
 
@@ -196,9 +202,9 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
         dig <- options("digits")
         options("digits=5")
         cat("\n Enter minimum distance: ")
-        d1 <- as.numeric(readLines(n = 1))
+        d1 <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
         cat("\n Enter maximum distance \n(dmin=", d2min, ", dmax=", d2max, "): ")
-        d2 <- readLines(n = 1)
+        d2 <- readLines(con = getOption('adegenet.testcon'), n = 1)
         ## handle character
         if(d2=="dmin") {
             d2 <- d2min
@@ -221,7 +227,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
     if(type==6){
       if(is.null(k)) {
         cat("\n Enter the number of neighbours: ")
-        k <- as.numeric(readLines(n = 1))
+        k <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
       }
       cn <- knearneigh(x=xy, k=k)
       cn <- knn2nb(cn, sym=TRUE)
@@ -231,16 +237,16 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
     if(type==7){
         if(is.null(a)) {
             cat("\n Enter the exponent: ")
-            a <- as.numeric(readLines(n = 1))
+            a <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
         }
         cn <- as.matrix(dist(xy))
         if(is.null(dmin)) {
             cat("\n Enter the minimum distance \n(range = 0 -", max(cn),"): ")
-            dmin <- as.numeric(readLines(n = 1))
+            dmin <- as.numeric(readLines(con = getOption('adegenet.testcon'), n = 1))
         }
         if(a<1) { a <- 1 }
         thres <- mean(cn)/1e8
-        if(dmin > thres) dmin <- thres
+        if(dmin < thres) dmin <- thres
         cn[cn < dmin] <- dmin
         cn <- 1/(cn^a)
         diag(cn) <- 0
@@ -255,7 +261,7 @@ chooseCN <- function(xy,ask=TRUE, type=NULL, result.type="nb", d1=NULL, d2=NULL,
     if(ask & plot.nb) {
       plot(cn,xy)
       cat("\nKeep this graph (y/n)? ")
-    ans <- tolower(readLines(n=1))
+    ans <- tolower(readLines(con = getOption('adegenet.testcon'), n=1))
       if(ans=="n") {chooseAgain <- TRUE} else {chooseAgain <- FALSE}
     }
     else if(plot.nb){

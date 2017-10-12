@@ -98,8 +98,14 @@ adegenetWeb <- function(){
 
 #' @rdname web
 #' @export
-adegenetTutorial <- function(which=c("basics","spca","dapc","genomics","strata")){
-    which <- match.arg(which)
+adegenetTutorial <- function(which = c("basics","spca","dapc","genomics","strata")){
+
+    ## which <- match.arg(which)
+    which <- which[1]
+    choices <- c("basics","spca","dapc","genomics","strata","genclust")
+    if (!which %in% choices) {
+        stop("Unknown tutorial")
+    }
     if(which=="basics"){
         url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-basics.pdf"
         cat("\n")
@@ -132,6 +138,13 @@ adegenetTutorial <- function(which=c("basics","spca","dapc","genomics","strata")
         url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-strata.pdf"
         cat("\n")
         cat("  >> Opening the strata tutorial.\n")
+        cat("  >> Seeking url: ",url,"\n ", sep="")
+        cat("\n")
+    }
+    if(which=="genclust"){
+        url <- "https://github.com/thibautjombart/adegenet/raw/master/tutorials/tutorial-genclust.pdf"
+        cat("\n")
+        cat("  >> Opening the genclust tutorial.\n")
         cat("  >> Seeking url: ",url,"\n ", sep="")
         cat("\n")
     }
@@ -251,7 +264,7 @@ corner <- function(text, posi="topleft",  inset=0.1, ...){
     char <- c("?","??","?!?!?")
     for(i in 1:3){
         cat("\nGrind",  char[i], " (y/N): ")
-        x <- readLines(n=1)
+        x <- readLines(con = getOption('adegenet.testcon'), n=1)
         if(x!="y") {
             cat("\n =( \n")
             return(invisible())
@@ -384,3 +397,21 @@ funky <- colorRampPalette(c("#A6CEE3","#1F78B4","#B2DF8A",
                             "#33A02C","#FB9A99","#E31A1C",
                             "#FDBF6F","#FF7F00","#CAB2D6",
                             "#6A3D9A","#FFFF99","#B15928"))
+
+
+
+## viridis
+virid <- colorRampPalette(c("#440154FF", "#482173FF", "#433E85FF", "#38598CFF",
+                            "#2D708EFF", "#25858EFF", "#1E9B8AFF", "#2BB07FFF",
+                            "#51C56AFF", "#85D54AFF", "#C2DF23FF", "#FDE725FF"))
+
+
+## reorder colors for hybrids
+hybridpal <- function(col.pal = virid) {
+    function(n) {
+        if (n < 3) {
+            return(col.pal(n))
+        }
+        col.pal(n)[c(1, n, 2:(n-1))]
+    }
+}

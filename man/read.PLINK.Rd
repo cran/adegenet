@@ -78,10 +78,7 @@ the '.raw' format.
 Data need to be exported from PLINK using the option "--recodeA" (and NOT
 "--recodeAD"). The PLINK command should therefore look like: \code{plink
 --file data --recodeA}. For more information on this topic, please look at
-this webpage: \url{http://pngu.mgh.harvard.edu/~purcell/plink/dataman.shtml}
-}
-\author{
-Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+this webpage: \url{http://zzz.bwh.harvard.edu/plink/}
 }
 \seealso{
 - \code{?genlight} for a description of the class
@@ -100,5 +97,7 @@ format.
 - another function \code{read.plink} is available in the package
 \code{snpMatrix}.
 }
+\author{
+Thibaut Jombart \email{t.jombart@imperial.ac.uk}
+}
 \keyword{manip}
-

@@ -1,3 +1,49 @@
+
+
+			CHANGES IN ADEGENET VERSION 2.1.0
+NEW FEATURES
+	- new set of functions implementing 'snapclust' for genetic
+	clustering using fast maximum-likelihood estimation; new functions
+	include: `snapclust`, `snapclust.choose.k`, and methods for `AIC`,
+	`AICc`, `BIC`, `KIC`
+
+	- compoplot is now a generic with methods for different objects,
+	including dapc and snapclust
+
+	- spca is now a generic with methods for genind, data.frame and
+	genlight objects
+
+	- a new generic wrapper `export_to_mvmapper` has been added, which
+	exports multivariate analyses (e.g. DAPC, sPCA, or standard dudi
+	objects) with geo-referenced units to serve as input to mvmapper
+	(https://popphylotools.github.io/mvMapper/)
+
+BUG FIXES
+	- fixed registration of C routines which could cause problems with
+	SNPbin and genlight objects.
+
+	- fixed issues relating to `read.PLINK` and the reading of `.map`
+	files (issues 94 and 188)
+
+	- fixed issues relating xvalDapc with non-table objects by registering
+	methods for genind and genlight object (issue 193)
+
+	- find.clusters with clust parameter will no longer throw an error
+	when attempting to find clusters of populations with less than
+	n/10 individuals (issue 184)
+
+
+
+			CHANGES IN ADEGENET VERSION 2.0.2
+BUG FIXES
+	o df2genind will now replace "." in alleles with "_" (or "p" if sep = "_")
+	see https://github.com/thibautjombart/adegenet/issues/132 for details
+
+	o if several locus names would partially match through grep,
+	df2genind would output an incorrect genind object
+	NA-wise. Reported by Elizabeth, see
+	https://github.com/thibautjombart/adegenet/issues/160
+
 			CHANGES IN ADEGENET VERSION 2.0.1
 NEW FEATURES
 	o Hs is now much faster and will scale better for large number of

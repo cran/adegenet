@@ -91,34 +91,34 @@
 #' \code{\link{pop}} sets the population of a set of genotypes.\cr
 #'
 #' === ANALYZING DATA ===\cr Several functions allow to use usual, and less
-#' usual analyses:\cr - \code{\link{HWE.test.genind}}: performs HWE test for
-#' all populations and loci combinations \cr - \code{\link{dist.genpop}}: computes 5 genetic distances among populations.
-#' \cr - \code{\link{monmonier}}: implementation of the Monmonier algorithm,
-#' used to seek genetic boundaries among individuals or populations. Optimized
-#' boundaries can be obtained using \code{\link{optimize.monmonier}}. Object of
-#' the class \code{monmonier} can be plotted and printed using the
-#' corresponding methods. \cr - \code{\link{spca}}: implements Jombart et al.
-#' (2008) spatial Principal Component Analysis \cr -
-#' \code{\link{global.rtest}}: implements Jombart et al. (2008) test for global
-#' spatial structures \cr - \code{\link{local.rtest}}: implements Jombart et
-#' al. (2008) test for local spatial structures \cr - \code{\link{propShared}}:
-#' computes the proportion of shared alleles in a set of genotypes (i.e. from a
-#' genind object)\cr - \code{\link{propTyped}}: function to investigate missing
-#' data in several ways \cr - \code{\link{scaleGen}}: generic method to scale
-#' \linkS4class{genind} or \linkS4class{genpop} before a principal component
-#' analysis \cr - \code{\link{Hs}}: computes the average expected
-#' heterozygosity by population in a \linkS4class{genpop}. Classically Used as
-#' a measure of genetic diversity.\cr - \code{\link{find.clusters}} and
-#' \code{\link{dapc}}: implement the Discriminant Analysis of Principal
-#' Component (DAPC, Jombart et al., 2010).\cr - \code{\link{seqTrack}}:
-#' implements the SeqTrack algorithm for recontructing transmission trees of
-#' pathogens (Jombart et al., 2010) .\cr \code{\link{glPca}}: implements PCA
-#' for \linkS4class{genlight} objects.\cr - \code{\link{gengraph}}: implements
-#' some simple graph-based clustering using genetic data.  -
-#' \code{\link{snpposi.plot}} and \code{\link{snpposi.test}}: visualize the
-#' distribution of SNPs on a genetic sequence and test their randomness.  -
-#' \code{\link{adegenetServer}}: opens up a web interface for some
-#' functionalities of the package (DAPC with cross validation and feature
+#' usual analyses:\cr - \code{\link{HWE.test.genind}}: performs HWE test for all
+#' populations and loci combinations \cr - \code{\link{dist.genpop}}: computes 5
+#' genetic distances among populations.  \cr - \code{\link{monmonier}}:
+#' implementation of the Monmonier algorithm, used to seek genetic boundaries
+#' among individuals or populations. Optimized boundaries can be obtained using
+#' \code{\link{optimize.monmonier}}. Object of the class \code{monmonier} can be
+#' plotted and printed using the corresponding methods. \cr -
+#' \code{\link{spca}}: implements Jombart et al.  (2008) spatial Principal
+#' Component Analysis \cr - \code{\link{global.rtest}}: implements Jombart et
+#' al. (2008) test for global spatial structures \cr -
+#' \code{\link{local.rtest}}: implements Jombart et al. (2008) test for local
+#' spatial structures \cr - \code{\link{propShared}}: computes the proportion of
+#' shared alleles in a set of genotypes (i.e. from a genind object)\cr -
+#' \code{\link{propTyped}}: function to investigate missing data in several ways
+#' \cr - \code{\link{scaleGen}}: generic method to scale \linkS4class{genind} or
+#' \linkS4class{genpop} before a principal component analysis \cr -
+#' \code{\link{Hs}}: computes the average expected heterozygosity by population
+#' in a \linkS4class{genpop}. Classically Used as a measure of genetic
+#' diversity.\cr - \code{\link{find.clusters}} and \code{\link{dapc}}: implement
+#' the Discriminant Analysis of Principal Component (DAPC, Jombart et al.,
+#' 2010).\cr - \code{\link{seqTrack}}: implements the SeqTrack algorithm for
+#' recontructing transmission trees of pathogens (Jombart et al., 2010) .\cr
+#' \code{\link{glPca}}: implements PCA for \linkS4class{genlight} objects.\cr -
+#' \code{\link{gengraph}}: implements some simple graph-based clustering using
+#' genetic data.  - \code{\link{snpposi.plot}} and \code{\link{snpposi.test}}:
+#' visualize the distribution of SNPs on a genetic sequence and test their
+#' randomness.  - \code{\link{adegenetServer}}: opens up a web interface for
+#' some functionalities of the package (DAPC with cross validation and feature
 #' selection).\cr
 #'
 #' === GRAPHICS ===\cr - \code{\link{colorplot}}: plots points with associated
@@ -212,6 +212,15 @@
 #' @S3method as.matrix genlight
 #' @S3method as.matrix genpop
 #' @S3method c SNPbin
+#' @S3method cbind SNPbin
+#' @S3method "[" haploGen
+#' @S3method cbind genlight
+#' @S3method rbind genlight
+#' @S3method xvalDapc data.frame
+#' @S3method xvalDapc default
+#' @S3method xvalDapc genind
+#' @S3method xvalDapc genlight
+#' @S3method xvalDapc matrix
 #' @S3method colorplot default
 #' @S3method colorplot spca
 #' @S3method dapc data.frame
@@ -262,10 +271,16 @@
 #' @S3method snpposi.test DNAbin
 #' @S3method snpposi.test integer
 #' @S3method snpposi.test numeric
+#' @S3method spca default
+#' @S3method spca matrix
+#' @S3method spca data.frame
+#' @S3method spca genind
+#' @S3method spca genpop
 #' @S3method summary dapc
 #' @S3method summary spca
 #' @S3method print genindSummary
 #' @S3method print genpopSummary
+#'
 #'
 #' @import methods
 #'
@@ -285,15 +300,22 @@
 #'
 #' @importFrom MASS "lda"
 #'
-#' @importFrom ape "as.character.DNAbin" "as.DNAbin" "as.DNAbin.alignment" "as.DNAbin.character" "as.DNAbin.list" "as.list.DNAbin" "as.matrix.DNAbin" "cbind.DNAbin" "c.DNAbin" "[.DNAbin" "labels.DNAbin" "print.DNAbin" "rbind.DNAbin" "dist.dna" "seg.sites"
+#' @importFrom ape "as.character.DNAbin" "as.DNAbin" "as.DNAbin.alignment"
+#' "as.DNAbin.character" "as.DNAbin.list" "as.list.DNAbin" "as.matrix.DNAbin"
+#' "cbind.DNAbin" "c.DNAbin" "[.DNAbin" "labels.DNAbin" "print.DNAbin"
+#' "rbind.DNAbin" "dist.dna" "seg.sites"
 #'
-#' @importFrom igraph "graph.data.frame" "V" "V<-" "E" "E<-" "layout.fruchterman.reingold" "as.igraph" "plot.igraph" "print.igraph" "graph.adjacency" "clusters"
+#' @importFrom igraph "graph.data.frame" "V" "V<-" "E" "E<-"
+#' "layout.fruchterman.reingold" "as.igraph" "plot.igraph" "print.igraph"
+#' "graph.adjacency" "clusters"
 #'
 #' @importFrom shiny "runApp" "renderPrint"
 #'
-#' @importFrom  ggplot2 "ggplot" "geom_density" "geom_rug" "labs" "aes" "xlim" "guides" "guide_legend" "geom_boxplot" "geom_violin" "geom_jitter" "coord_flip"
+#' @importFrom ggplot2 "ggplot" "geom_density" "geom_rug" "labs" "aes" "xlim"
+#' "guides" "guide_legend" "geom_boxplot" "geom_violin" "geom_jitter"
+#' "coord_flip"
 #'
-#' @useDynLib adegenet
+#' @useDynLib adegenet, .registration = TRUE
 #'
 
 
