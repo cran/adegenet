@@ -1,4 +1,32 @@
 
+			CHANGES IN ADEGENET VERSION 2.1.1
+NEW FEATURES
+	- New documentation for `snapclust` and the associated functions.
+
+	- New example for `snapclust.choose.k`.
+
+	- New tutorial for `snapclust` available through
+	`adegenetTutorial`.
+
+	- New dataset and example for `export_to_mvmapper`.
+
+	- `snapclust` now implemented for haploid individuals.
+
+
+BUG FIXES
+	- A warning will be issued if the user specifies a ploidy range
+	that is less than the observed allele dosage when data is imported
+	by df2genind. See:
+	https://github.com/thibautjombart/adegenet/issues/216 for details.
+
+	- solved issue regarding group membership probabilities in large
+	datasets (many loci) with `snapclust`. See:
+	https://github.com/thibautjombart/adegenet/issues/221
+
+	- fixed an issue in the log-likelihood computation for
+	heterozygotes in `snapclust`.
+
+
 
 			CHANGES IN ADEGENET VERSION 2.1.0
 NEW FEATURES
@@ -18,6 +46,9 @@ NEW FEATURES
 	objects) with geo-referenced units to serve as input to mvmapper
 	(https://popphylotools.github.io/mvMapper/)
 
+	- the new function `spca_randtest` implements a Monte Carlo test
+	for spatial structure in the sPCA framework.
+
 BUG FIXES
 	- fixed registration of C routines which could cause problems with
 	SNPbin and genlight objects.
@@ -29,7 +60,7 @@ BUG FIXES
 	methods for genind and genlight object (issue 193)
 
 	- find.clusters with clust parameter will no longer throw an error
-	when attempting to find clusters of populations with less than
+	when attempting to find clusters of populations with fewer than
 	n/10 individuals (issue 184)
 
 

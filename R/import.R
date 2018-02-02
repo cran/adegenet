@@ -267,7 +267,7 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
     if (any(ploidy > 1)){
         allele.data <- strsplit(X, sep)
         n.items <- sapply(allele.data, length)
-        locus.data <- rep(rep(loc.names, each=nind), n.items)
+        locus.data <- rep(rep(loc.names, each = nind), n.items)
         ind.data <- rep(rep(ind.names,ncol(X)), n.items)
         allele.data <- unlist(allele.data)
     } else {
@@ -348,7 +348,18 @@ df2genind <- function(X, sep=NULL, ncode=NULL, ind.names=NULL, loc.names=NULL,
       # M_KH1837           1
     }
 
-
+    ploidmat <- vapply(loc.names, function(i){
+      rowSums(out[, grepl(paste0("^", i, "\\."), colnames(out)), drop = FALSE], na.rm = TRUE)
+      }, FUN.VALUE = double(nrow(out)))
+    if (max(ploidmat, na.rm = TRUE) > max(ploidy, na.rm = TRUE)) {
+      oran <- paste(range(ploidmat, na.rm = TRUE), collapse = "-")
+      eran <- paste(range(ploidy, na.rm = TRUE), collapse = "-")
+      msg <- paste0("The observed allele dosage (", oran, ") ", 
+                    "does not match the defined ploidy ", "(", eran, ").\n",
+                    "Please check that your input parameters (ncode, sep) ",
+                    "are correct.")
+      warning(msg, immediate. = TRUE)
+    }
     ## call upon genind constructor
     prevcall <- match.call()
     out <- genind(tab=out, pop=pop, prevcall=prevcall, ploidy=ploidy, type=type,
@@ -412,7 +423,7 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
     txt <- scan(file,skip=2,what="character",sep="\n",quiet=TRUE)
     txt <- gsub("\t"," ",txt)
     ## check that nloc is consistent with actual nloc (bug-report 1.2-2.02)
-    temp <- temp <- .rmspaces(txt[length(txt)])
+    temp <- temp <- trimws(txt[length(txt)])
     nlocbis <- length(unlist(strsplit(temp, "[[:space:]]+")))-1
     if(nloc != nlocbis) {
         warning(paste("\n== Genetix file error == \n",
@@ -436,11 +447,11 @@ read.genetix <- function(file=NULL,quiet=FALSE) {
         temp[i] <- index
         index <- index + pop.nind[i] + 2
     }
-    pop.names <- .rmspaces(pop.names)
+    pop.names <- trimws(pop.names)
 
     ## retrieve genotypes infos
     txt <- txt[-c(temp,temp+1)]
-    txt <- .rmspaces(txt)
+    txt <- trimws(txt)
     txt <- sapply(1:length(txt),function(i) unlist(strsplit(txt[i],"([[:space:]]+)|([[:blank:]]+)")) )
     X <- t(txt)
     if(ncol(X) == (nloc+1)){
@@ -523,7 +534,7 @@ read.fstat <- function(file, quiet=FALSE){
 
     ## build genotype matrix
     txt <- txt[-(1:(nloc+1))]
-    txt <- .rmspaces(txt)
+    txt <- trimws(txt)
     txt <- sapply(1:length(txt),function(i) unlist(strsplit(txt[i],"([[:space:]]+)|([[:blank:]]+)")) )
     X <- t(txt)
     pop <- as.character(X[,1])
@@ -615,7 +626,7 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     locinfo <- txt[locinfo.idx]
     locinfo <- paste(locinfo,collapse=",")
     loc.names <- unlist(strsplit(locinfo,"([,]|[\n])+"))
-    loc.names <- .rmspaces(loc.names)
+    loc.names <- trimws(loc.names)
     nloc <- length(loc.names)
     txt <- txt[-locinfo.idx]
 
@@ -649,12 +660,12 @@ read.genepop <- function(file, ncode=2L, quiet=FALSE){
     temp <- sapply(1:length(txt),function(i) strsplit(txt[i],","))
     ## temp is a list with nind elements, first being ind. name and 2nd, genotype
 
-    ind.names <- sapply(temp,function(e) e[1])
-    ind.names <- .rmspaces(ind.names)
+    ind.names <- vapply(temp, function(e) e[1], character(1))
+    ind.names <- trimws(ind.names)
     ## individuals' name are now clean
 
-    vec.genot <- sapply(temp,function(e) e[2])
-    vec.genot <- .rmspaces(vec.genot)
+    vec.genot <- vapply(temp, function(e) e[2], character(1))
+    vec.genot <- trimws(vec.genot)
 
     ## X is a individual x locus genotypes matrix
     X <- matrix(unlist(strsplit(vec.genot,"[[:space:]]+")),ncol=nloc,byrow=TRUE)
@@ -846,7 +857,7 @@ read.structure <- function(file, n.ind=NULL, n.loc=NULL,  onerowperind=NULL,
 
     ## markers names
     if(row.marknames != 0) {
-        loc.names <- .rmspaces(txt[row.marknames])
+        loc.names <- trimws(txt[row.marknames])
         loc.names <- unlist(strsplit(loc.names,"[[:blank:]]+"))
     } else {
         loc.names <- .genlab("L",n.loc)
