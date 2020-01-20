@@ -1,10 +1,10 @@
 Package: adegenet
-Version: 2.1.1
+Version: 2.1.2
 Encoding: UTF-8
 Title: Exploratory Analysis of Genetic and Genomic Data
 Author: Thibaut Jombart, Zhian N. Kamvar, Caitlin Collins, Roman Lustrik, Marie-
-    Pauline Beugin, Brian J. Knaus, Peter Solymos, Vladimir Mikryukov, Klaus Schliep, Tiago Maié, Libor Morkovsky, Ismail Ahmed, Anne Cori, Federico Calboli, RJ Ewing
-Maintainer: Thibaut Jombart <thibautjombart@gmail.com>
+    Pauline Beugin, Brian J. Knaus, Peter Solymos, Vladimir Mikryukov, Klaus Schliep, Tiago Maié, Libor Morkovsky, Ismail Ahmed, Anne Cori, Federico Calboli, RJ Ewing, Frédéric Michaud, Rebecca DeCamp
+Maintainer: Zhian N. Kamvar <zkamvar@gmail.com>
 Suggests: pegas, hierfstat, akima, maps, splancs, tripack, testthat,
         poppr
 Depends: R (>= 2.14), methods, ade4
@@ -37,8 +37,8 @@ Collate: adegenet.package.R datasets.R dist.genlight.R orthobasis.R
         export_to_mvmapper.R doc_C_routines.R zzz.R
 License: GPL (>= 2)
 LazyLoad: yes
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 NeedsCompilation: yes
-Packaged: 2018-02-02 16:20:48 UTC; thibaut
+Packaged: 2020-01-20 07:41:20 UTC; zhian
 Repository: CRAN
-Date/Publication: 2018-02-02 18:21:36 UTC
+Date/Publication: 2020-01-20 19:50:02 UTC

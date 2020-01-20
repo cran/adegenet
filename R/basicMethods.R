@@ -14,9 +14,10 @@ setMethod("$<-","genpop",function(x,name,value) {
 .drop_alleles <- function(x, toKeep){
   all.vec <- unlist(alleles(x), use.names = FALSE)[toKeep]
   loc.fac <- factor(locFac(x)[toKeep])
+  present_alleles <- colSums(tab(x), na.rm = TRUE) > 0L
 
   x@all.names <- split(all.vec, loc.fac)
-  x@loc.n.all  <- setNames(tabulate(loc.fac), levels(loc.fac))
+  x@loc.n.all <- setNames(tabulate(loc.fac), levels(loc.fac)) #vapply(split(present_alleles, loc.fac), sum, integer(1))
   x@loc.fac   <- loc.fac
   return(x)
 }
@@ -268,8 +269,8 @@ setMethod ("show", "genind", function(object){
 
   cat("\n   @tab: ", nrow(tab(x)), "x", ncol(tab(x)), "matrix of allele counts" )
 
-  if(!is.null(nAll(x))){
-    alleletxt <- paste("(range: ", paste(range(nAll(x)), collapse="-"), ")", sep="")
+  if (!is.null(nAll(x))){
+    alleletxt <- paste("(range: ", paste(range(nAll(x, onlyObserved = FALSE)), collapse="-"), ")", sep="")
     cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   }
 
@@ -354,7 +355,7 @@ setMethod ("show", "genpop", function(object){
   cat("\n   @tab: ", nrow(tab(x)), "x", ncol(tab(x)), "matrix of allele counts" )
 
   if(!is.null(nAll(x))){
-    alleletxt <- paste("(range: ", paste(range(nAll(x)), collapse="-"), ")", sep="")
+    alleletxt <- paste("(range: ", paste(range(nAll(x, onlyObserved = FALSE)), collapse="-"), ")", sep="")
     cat("\n   @loc.n.all: number of alleles per locus", alleletxt)
   }
 
@@ -426,7 +427,7 @@ setMethod ("summary", signature(object="genind"), function(object, verbose = TRU
 
 
   ## codom case ##
-  res$loc.n.all <- nAll(x)
+  res$loc.n.all <- nAll(x, onlyObserved = TRUE)
 
   temp <- tab(genind2genpop(x,quiet=TRUE))
 
@@ -495,7 +496,7 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
 
 
   ## codom case ##
-  res$loc.n.all <- nAll(x)
+  res$loc.n.all <- nAll(x, onlyObserved = TRUE)
 
   res$pop.n.all <- apply(tab(x),1,function(r) sum(r>0,na.rm=TRUE))
 
@@ -522,6 +523,9 @@ setMethod ("summary", signature(object="genpop"), function(object, verbose = TRU
 #######################
 ## print for summaries
 #######################
+
+#' @method print genindSummary
+#' @export
 print.genindSummary <- function(x, ...){
     if(!is.null(x$n)) cat("\n// Number of individuals:", x$n)
     if(!is.null(x$n.by.pop)) cat("\n// Group sizes:", x$n.by.pop)
@@ -534,6 +538,8 @@ print.genindSummary <- function(x, ...){
 } # end print.genindSummary
 
 
+#' @method print genpopSummary
+#' @export
 print.genpopSummary <- function(x, ...){
     if(!is.null(x$n.pop)) cat("\n// Number of populations:", x$n.pop)
     if(!is.null(x$loc.n.all)) cat("\n// Number of alleles per locus:", x$loc.n.all)
@@ -547,11 +553,15 @@ print.genpopSummary <- function(x, ...){
 ###############
 # Methods "is"
 ###############
+#' @method is genind
+#' @export
 is.genind <- function(x){
   res <- ( is(x, "genind") & validObject(x))
   return(res)
 }
 
+#' @method is genpop
+#' @export
 is.genpop <- function(x){
   res <- ( is(x, "genpop") & validObject(x))
   return(res)

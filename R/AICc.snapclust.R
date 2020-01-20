@@ -1,7 +1,6 @@
-#' snapclust's corrected Akaike Information Criterion (AICc)
+#' Compute Akaike Information Criterion for small samples (AICc) for snapclust
 #'
-#' This function computes Akaike Information Criterion for small samples (AICc)
-#' for \code{snapclust} results.
+#' Do not use. We work on that stuff. Contact us if interested.
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
@@ -12,22 +11,7 @@
 #' @param ... Further arguments for compatibility with the \code{AIC} generic
 #'     (currently not used).
 #'
-#' @references Beugin M-P, Gayet T, Pontier D, Devillard S, Jombart T. A fast
-#'     likelihood solution to the genetic clustering problem. Methods Ecol
-#'     Evol. 2018;00:1–11. \url{https://doi.org/10.1111/2041-210X.12968}
-#'
-#' @seealso
-#' \itemize{
-#'  \item \code{\link{snapclust}}: to identify clusters
-#'
-#'  \item \code{\link{snapclust.choose.k}}: to find the number of clusters
-#'
-#'  \item \code{\link{AIC.snapclust}}: AIC computation
-#'
-#'  \item \code{\link{BIC.snapclust}}: BIC computation
-#'
-#'  \item \code{\link{KIC.snapclust}}: KIC computation
-#' }
+#' @seealso  \code{\link{snapclust}} to generate clustering solutions.
 #'
 #' @rdname AICc
 #'

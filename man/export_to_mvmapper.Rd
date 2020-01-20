@@ -2,7 +2,6 @@
 % Please edit documentation in R/export_to_mvmapper.R
 \name{export_to_mvmapper}
 \alias{export_to_mvmapper}
-\alias{swallowtails}
 \alias{export_to_mvmapper.default}
 \alias{export_to_mvmapper.dapc}
 \alias{export_to_mvmapper.dudi}
@@ -13,14 +12,11 @@ export_to_mvmapper(x, ...)
 
 \method{export_to_mvmapper}{default}(x, ...)
 
-\method{export_to_mvmapper}{dapc}(x, info, write_file = TRUE,
-  out_file = NULL, ...)
+\method{export_to_mvmapper}{dapc}(x, info, write_file = TRUE, out_file = NULL, ...)
 
-\method{export_to_mvmapper}{dudi}(x, info, write_file = TRUE,
-  out_file = NULL, ...)
+\method{export_to_mvmapper}{dudi}(x, info, write_file = TRUE, out_file = NULL, ...)
 
-\method{export_to_mvmapper}{spca}(x, info, write_file = TRUE,
-  out_file = NULL, ...)
+\method{export_to_mvmapper}{spca}(x, info, write_file = TRUE, out_file = NULL, ...)
 }
 \arguments{
 \item{x}{The analysis to be exported. Can be a \code{dapc}, \code{spca}, or a
@@ -113,9 +109,10 @@ loc <- read.csv(input_locs, header = TRUE)
 
 # generate mvmapper input file, automatically write the output to a csv, and
 # name the output csv "mvMapper_Data.csv"
+out_dir <- tempdir()
+out_file <- file.path(out_dir, "mvMapper_Data.csv")
 
-out <- export_to_mvmapper(dapc1, loc, write_file = TRUE,
-                          out_file = "mvMapper_Data.csv")
+out <- export_to_mvmapper(dapc1, loc, write_file = TRUE, out_file = out_file)
 
 }
 \seealso{

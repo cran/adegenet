@@ -12,8 +12,6 @@
 #' \code{mvmapper} can be found at:
 #' \url{https://popphylotools.github.io/mvMapper/}
 #'
-#' @aliases swallowtails
-#' 
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com}
 #'
 #'
@@ -134,9 +132,10 @@ export_to_mvmapper.default <- function(x, ...) {
 #'
 #' # generate mvmapper input file, automatically write the output to a csv, and
 #' # name the output csv "mvMapper_Data.csv"
+#' out_dir <- tempdir()
+#' out_file <- file.path(out_dir, "mvMapper_Data.csv")
 #'
-#' out <- export_to_mvmapper(dapc1, loc, write_file = TRUE,
-#'                           out_file = "mvMapper_Data.csv")
+#' out <- export_to_mvmapper(dapc1, loc, write_file = TRUE, out_file = out_file)
 #'
 
 export_to_mvmapper.dapc <- function(x, info, write_file = TRUE, out_file = NULL, ...) {
@@ -164,10 +163,6 @@ export_to_mvmapper.dapc <- function(x, info, write_file = TRUE, out_file = NULL,
   .write_mvmapper_output(out, write_file, out_file)
   return(out)
 }
-
-
-
-
 
 
 #' @export
@@ -268,9 +263,7 @@ export_to_mvmapper.spca <- function(x, info, write_file = TRUE, out_file = NULL,
 .write_mvmapper_output <- function(x, write_file = TRUE, out_file = NULL) {
   if (write_file) {
     if (is.null(out_file)) {
-      out_file <- paste0("mvmapper_data_",
-                         gsub(" ", "_", Sys.time()),
-                         ".csv")
+      stop("please supply an output file", call. = FALSE)
     }
     message("Writing output to the file: ", out_file)
     write.csv(x, out_file, row.names = FALSE)

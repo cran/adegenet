@@ -202,6 +202,7 @@ setMethod("[", signature(x = "genlight", i = "ANY", j = "ANY", drop = "ANY"),
 ## cbind SNPbin
 ################
 ##setMethod("cbind", signature("SNPbin"), function(..., deparse.level = 1) {
+#' @export
 cbind.SNPbin <- function(..., checkPloidy=TRUE){
     myList <- list(...)
     if(!all(sapply(myList, class)=="SNPbin")) stop("some objects are not SNPbin objects")
@@ -226,6 +227,7 @@ cbind.SNPbin <- function(..., checkPloidy=TRUE){
 
 
 
+#' @export
 c.SNPbin <- function(...){
     return(cbind(...))
 }
@@ -237,6 +239,7 @@ c.SNPbin <- function(...){
 ## cbind genlight
 ##################
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
+#' @export
 cbind.genlight <- function(...){
       ## store arguments
     dots <- list(...)
@@ -302,6 +305,7 @@ cbind.genlight <- function(...){
 ##################
 ##setMethod("cbind", signature(x="genlight"), function(..., deparse.level = 1) {
 #' @importFrom dplyr bind_rows
+#' @export
 rbind.genlight <- function(...){
     ## store arguments
     dots <- list(...)
@@ -348,23 +352,15 @@ rbind.genlight <- function(...){
 ##########
 ## seppop
 ##########
-setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, quiet=TRUE, ...){
-    ## HANDLE POP ARGUMENT ##
-    if(!is.null(pop)) {
-      if (is.language(pop)){
-        setPop(x) <- pop
-      } else {
-        pop(x) <- pop
-      }
-    }
-
-    if(is.null(pop(x))) stop("pop not provided and pop(x) is NULL")
-
-    ## PERFORM SUBSETTING ##
-    kObj <- lapply(levels(pop(x)), function(lev) x[pop(x)==lev, , treatOther=treatOther, quiet=quiet, ...])
-    names(kObj) <- levels(pop(x))
-
-    return(kObj)
+setMethod("seppop", signature(x="genlight"), function(x, pop=NULL, treatOther=TRUE, keepNA = FALSE, quiet=TRUE, ...){
+  .seppop_internal(
+    x = x,
+    pop = pop,
+    treatOther = treatOther,
+    keepNA = keepNA,
+    quiet = quiet,
+    ...
+  )
 }) # end seppop
 
 

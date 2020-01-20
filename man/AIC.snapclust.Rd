@@ -2,7 +2,7 @@
 % Please edit documentation in R/AIC.snapclust.R
 \name{AIC.snapclust}
 \alias{AIC.snapclust}
-\title{snapclust's Akaike Information Criterion (AIC)}
+\title{Compute Akaike Information Criterion (AIC) for snapclust}
 \usage{
 \method{AIC}{snapclust}(object, ...)
 }
@@ -13,26 +13,10 @@
 (currently not used).}
 }
 \description{
-This function computes Akaike Information Criterion (AIC) for
-\code{snapclust} results.
-}
-\references{
-Beugin M-P, Gayet T, Pontier D, Devillard S, Jombart T. A fast
-    likelihood solution to the genetic clustering problem. Methods Ecol
-    Evol. 2018;00:1–11. \url{https://doi.org/10.1111/2041-210X.12968}
+Do not use. We work on that stuff. Contact us if interested.
 }
 \seealso{
-\itemize{
- \item \code{\link{snapclust}}: to identify clusters
-
- \item \code{\link{snapclust.choose.k}}: to find the number of clusters
-
- \item \code{\link{AICc.snapclust}}: AICc computation
-
- \item \code{\link{BIC.snapclust}}: BIC computation
-
- \item \code{\link{KIC.snapclust}}: KIC computation
-}
+\code{\link{snapclust}} to generate clustering solutions.
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}

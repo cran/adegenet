@@ -2,7 +2,7 @@
 % Please edit documentation in R/snapclust.choose.k.R
 \name{snapclust.choose.k}
 \alias{snapclust.choose.k}
-\title{Choose the number of clusters for snapclust}
+\title{Choose the number of clusters for snapclust using BIC}
 \usage{
 snapclust.choose.k(max, ..., IC = AIC, IC.only = TRUE)
 }
@@ -21,51 +21,12 @@ should be returned; if \code{FALSE}, full \code{snapclust} objects are
 returned.}
 }
 \description{
-The function \code{snapclust.choose.k} can be used to identify optimal values
-of 'k' (number of panmictic clusters) using \code{snapclust}. It runs the
-method for increasing values of 'k' and for each computes goodness-of-fit
-statistics. These statistics are all different versions of deviance penalised
-for the number of parameters, so that lower values should correspond to more
-optimal clustering solutions. Currently available statistics include AIC,
-AICc, BIC, and KIC.\cr
-}
-\details{
-There is no theoretical basis for favouring a given statistic over another
-in the case of genetic clustering. In practice, one should look for an
-'elbow' in the curve of the statistics as a function of 'k'.
-}
-\examples{
-\dontrun{
- ## 'a' is a simulated dataset with 6 populations, island model
- data(dapcIllus)
- a <- dapcIllus$a
- a
-
- ## try and choose 'k' using AIC (real value = 6)
- a.aic <- snapclust.choose.k(max = 10, a)
- plot(1:10, a.aic, xlab = "Number of clusters (k)",
-      ylab = "AIC", type = "b", pch = 20, cex = 3)
-
- ## try and choose 'k' using AIC (real value = 6)
- a.kic <- snapclust.choose.k(max = 10, a, IC = KIC)
- plot(1:10, a.kic, xlab = "Number of clusters (k)",
-      ylab = "KIC", type = "b", pch = 20, cex = 3)
-
-
-}
+Do not use. We work on that stuff. Contact us if interested.
 }
 \seealso{
-\itemize{
- \item \code{\link{snapclust}}: to identify clusters
-
- \item \code{\link{AIC.snapclust}}: AIC computation
-
- \item \code{\link{AICc.snapclust}}: AICc computation
-
- \item \code{\link{BIC.snapclust}}: BIC computation
-
- \item \code{\link{KIC.snapclust}}: KIC computation
-}
+\code{\link{snapclust}} to generate individual clustering solutions,
+and \code{\link{BIC.snapclust}} for computing BIC for \code{snapclust}
+objects.
 }
 \author{
 Thibaut Jombart \email{thibautjombart@gmail.com}

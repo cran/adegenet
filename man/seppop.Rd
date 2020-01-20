@@ -18,9 +18,9 @@
 }
 \usage{
 \S4method{seppop}{genind}(x,pop=NULL,truenames=TRUE,res.type=c("genind","matrix"),
-  drop=FALSE, treatOther=TRUE, quiet=TRUE)
+  drop=FALSE, treatOther=TRUE, keepNA = FALSE, quiet=TRUE)
 
-\S4method{seppop}{genlight}(x,pop=NULL, treatOther=TRUE, quiet=TRUE, \dots)
+\S4method{seppop}{genlight}(x,pop=NULL, treatOther=TRUE, keepNA = FALSE, quiet=TRUE, \dots)
 }
 \arguments{
   \item{x}{a \linkS4class{genind} object}
@@ -41,6 +41,9 @@
     \code{@other} slot should be treated as well (TRUE), or not
     (FALSE). See details in accessor documentations
     (\code{\link{pop}}).}
+  \item{keepNA}{If there are individuals with missing population information,
+    should they be pooled into a separate population (TRUE), or excluded (FALSE,
+    default).}
   \item{quiet}{a logical indicating whether warnings should be issued
     when trying to subset components of the \code{@other} slot (TRUE),
     or not (FALSE, default). }

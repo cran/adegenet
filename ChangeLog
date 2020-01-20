@@ -1,32 +1,54 @@
+			CHANGES IN ADEGENET VERSION 2.1.2
+
+NEW MANAGEMENT
+
+  - Zhian N. Kamvar is now the acting maintainer of the package.
+
+NEW FEATURES
+
+  - While creating genind from dataframe, it is now possible to skip
+    the test of the ploidy that was added in 2.1.1 by passing the option
+    check.ploidy = FALSE to the function df2genind. Thanks to Frederic Michaud
+    for the fix. See https://github.com/thibautjombart/adegenet/issues/231 and
+    https://github.com/thibautjombart/adegenet/pull/232 for details
+
+  - `showmekittens()` has gained several new kittens thanks to @rdecamp
+
+  - A new data set called `swallowtails` has been added to demonstrate the
+    export to MVmapper functionality.
+    
+BUG FIXES
+
+  - A bug where the number of alleles per locus was unaffected after subsetting
+    a population with `drop = FALSE` has been fixed. Now, by default, the 
+    `@loc.n.all` slot (accessor: `nAll()`) will store the number of observed
+    alleles in the current data set, regardless of whether or not these were
+    dropped from the data matrix. 
+    See https://github.com/thibautjombart/adegenet/issues/234 for details.
+    
+  - `seppop()` will now take into account `NA` population assignments with the
+    new `keepNA` argument. 
+    See https://github.com/thibautjombart/adegenet/pull/236 for details.
+
+  - `snapclust()` likelihood calculation was incorrect for haploids. This has
+    been fixed in commits 3a5f820db388c9821c3095cd29ad3cd3843237a5 and
+    e41d2d598369bb5921465a60adffac9ecb61f86d. 
+
+MISC
+
+  - `snapclust()` will give a better warning message when the number of
+    samples in the dataset exceeds computer precision. See
+    https://github.com/thibautjombart/adegenet/issues/221 for details.
+    
+  - `df2genind()` now imports data >100x faster 
+    (@KlausVigo, https://github.com/thibautjombart/adegenet/pulls/260)
 
 			CHANGES IN ADEGENET VERSION 2.1.1
-NEW FEATURES
-	- New documentation for `snapclust` and the associated functions.
-
-	- New example for `snapclust.choose.k`.
-
-	- New tutorial for `snapclust` available through
-	`adegenetTutorial`.
-
-	- New dataset and example for `export_to_mvmapper`.
-
-	- `snapclust` now implemented for haploid individuals.
-
-
 BUG FIXES
-	- A warning will be issued if the user specifies a ploidy range
-	that is less than the observed allele dosage when data is imported
-	by df2genind. See:
-	https://github.com/thibautjombart/adegenet/issues/216 for details.
 
-	- solved issue regarding group membership probabilities in large
-	datasets (many loci) with `snapclust`. See:
-	https://github.com/thibautjombart/adegenet/issues/221
-
-	- fixed an issue in the log-likelihood computation for
-	heterozygotes in `snapclust`.
-
-
+  - A warning will be issued if the user specifies a ploidy range that is less
+    than the observed allele dosage when data is imported by df2genind. See
+    https://github.com/thibautjombart/adegenet/issues/216 for details.
 
 			CHANGES IN ADEGENET VERSION 2.1.0
 NEW FEATURES

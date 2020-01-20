@@ -1,47 +1,6 @@
 #' Maximum-likelihood genetic clustering using EM algorithm
 #'
-#' The function \code{snapclust} implements fast maximum-likelihood (ML) genetic
-#' clustering using a 2-step approach: find a 'good' initial starting point
-#' using a fast geometric (distance-based) approach, followed by an efficient
-#' likelihood optimization using the expectation-maximization (EM)
-#' algorithm. The likelihood for a given locus is defined as the probability of
-#' a given genotype given the allele frequencies of its originating population,
-#' as defined by Hardy-Weinberg equilibrium. Different approaches are available
-#' for the initial distance-based clustering (see argument \code{pop.ini}). The
-#' current implementation is designed for haploid or diploid data, and assumes
-#' constant ploidy within the dataset.
-#'
-#' This function can be used in two modes:
-#'
-#' \itemize{
-#'
-#'  \item genetic clustering mode: assign individuals to a known number 'k'
-#'  of panmictic clusters; see \code{\link{snapclust.choose.k}} for identifying
-#'  optimal values of 'k'.
-#'
-#'  \item hybrid mode: as previous mode, but with the additional constraint that
-#'  clusters are either one of the 2 parental populations, or any hybrid classes
-#'  in between, as defined by the parameter \code{hybrid.coef}.
-#'
-#' }
-#'
-#' This method is documented in an online tutorial, which can be opened by typing:
-#' \code{adegenetTutorial("snapclust")}.
-#' 
-#' @seealso
-#' \itemize{
-#'  \item \code{\link{snapclust.choose.k}} to choose 'k' using various
-#'     goodness-of-fit statistics
-#'
-#'  \item \code{\link{AIC.snapclust}}: AIC computation
-#'
-#'  \item \code{\link{AICc.snapclust}}: AICc computation
-#'
-#'  \item \code{\link{BIC.snapclust}}: BIC computation
-#'
-#'  \item \code{\link{KIC.snapclust}}: KIC computation
-#'
-#'  }
+#' Do not use. We work on that stuff. Contact us if interested.
 #'
 #' @author Thibaut Jombart \email{thibautjombart@@gmail.com} and Marie-Pauline
 #' Beugin
@@ -56,7 +15,7 @@
 #'
 #' @param pop.ini parameter indicating how the initial group membership should
 #'     be found. If \code{NULL}, groups are chosen at random, and the algorithm
-#'     will be run \code{n.start} times. If "kmeans", then the function
+#'     will be run \code{n.start times}. If "kmeans", then the function
 #'     \code{find.clusters} is used to define initial groups using the K-means
 #'     algorithm. If "ward", then the function \code{find.clusters} is used to
 #'     define initial groups using the Ward algorithm. Alternatively, a factor
@@ -116,10 +75,6 @@
 #'
 #' }
 #'
-#' @references Beugin M-P, Gayet T, Pontier D, Devillard S, Jombart T. A fast
-#'     likelihood solution to the genetic clustering problem. Methods Ecol
-#'     Evol. 2018;00:1–11. \url{https://doi.org/10.1111/2041-210X.12968}
-#' 
 #' @examples
 #' \dontrun{
 #' data(microbov)
@@ -173,7 +128,7 @@
 #'
 #' ## method with back-cross
 #' res2.back <- snapclust(y, k = 2, hybrids = TRUE, hybrid.coef = c(.25,.5))
-#'  compoplot(res2.back, col.pal = hybridpal(), n.col = 2)
+#'  compoplot(res2.hyb, col.pal = hybridpal(), n.col = 2)
 #'
 #' }
 
