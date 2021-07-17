@@ -1,6 +1,6 @@
 Package: adegenet
 Title: Exploratory Analysis of Genetic and Genomic Data
-Version: 2.1.3
+Version: 2.1.4
 Authors@R: 
     c(person(given = "Thibaut",
              family = "Jombart",
@@ -79,7 +79,7 @@ Suggests: pegas, hierfstat, akima, maps, splancs, tripack, testthat,
         poppr
 Encoding: UTF-8
 LazyLoad: yes
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate: 'adegenet.package.R' 'datasets.R' 'dist.genlight.R'
         'orthobasis.R' 'classes.R' 'constructors.R' 'accessors.R'
         'basicMethods.R' 'handling.R' 'auxil.R' 'minorAllele.R'
@@ -99,7 +99,7 @@ Collate: 'adegenet.package.R' 'datasets.R' 'dist.genlight.R'
         'spca_randtest.R' 'export_to_mvmapper.R' 'doc_C_routines.R'
         'zzz.R'
 NeedsCompilation: yes
-Packaged: 2020-05-09 21:50:18 UTC; zhian
+Packaged: 2021-07-17 17:29:06 UTC; zhian
 Author: Thibaut Jombart [aut] (<https://orcid.org/0000-0003-2226-8692>),
   Zhian N. Kamvar [aut, cre] (<https://orcid.org/0000-0003-1458-7108>),
   Caitlin Collins [ctb],
@@ -120,4 +120,4 @@ Author: Thibaut Jombart [aut] (<https://orcid.org/0000-0003-2226-8692>),
   Alexandre Courtiol [ctb] (<https://orcid.org/0000-0003-0637-2959>)
 Maintainer: Zhian N. Kamvar <zkamvar@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-05-10 22:00:02 UTC
+Date/Publication: 2021-07-17 18:00:02 UTC
