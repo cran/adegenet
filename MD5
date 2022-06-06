@@ -1,5 +1,5 @@
-2a5e4ff7014bdab6a3df32e72fb14710 *ChangeLog
-11e946037fa05e5ccce79bada1b79330 *DESCRIPTION
+61f1066e8d95533cfc5064525bc79a07 *ChangeLog
+346e404f0f084511fd371fea454b14b1 *DESCRIPTION
 dfa68f818c2fe29783780f4c924869f4 *NAMESPACE
 5ebf3ab120b8dc51059621f42255e069 *R/AIC.snapclust.R
 957a38141833031d3003f04796430466 *R/AICc.snapclust.R
@@ -13,7 +13,7 @@ e15a6bd7d43060f74695502fa53bf86c *R/Hs.R
 84e11f18ef037cfbe863f5c8db6df080 *R/adegenet.package.R
 8b7e90b6cdb2c75a642893b5f685c876 *R/auxil.R
 0723487b8e4195e58fd94967586b398b *R/basicMethods.R
-b552db935be229fd9d146d41e3c42cbd *R/chooseCN.R
+32649db15ca921a1704c95e30822c0d1 *R/chooseCN.R
 2dfb172b9f06057918208e5b6faf92ac *R/classes.R
 5d0497800ffe7562f61ce7eef5b24983 *R/colorplot.R
 50a990b28c74d01dd26e9162ee8c9391 *R/compoplot.R
@@ -57,14 +57,14 @@ d26f4532dc66a292e7cdb4706e6a50e1 *R/scale.R
 f3754052ba4e1be2a967333b57606d21 *R/seqTrack.R
 83d38fa9f6e82fcf7c1be3bdf50d841e *R/sequences.R
 c8067fab3348da179bbc350cece12460 *R/servers.R
-9557bafa0653db0c09b4b7ff39776683 *R/setAs.R
+eb9f9e3d1b55d78029a78ac67f595e4f *R/setAs.R
 baa7026747e5668ce0b8b50d0ee769dd *R/showmekittens.R
 684cd5c34cbda7c5360e992401df68f9 *R/simOutbreak.R
 ffbd8f9ad91830b23abb9aa81ff6990e *R/snapclust.R
 eb1f67d0dacc64e14de733d7a186f469 *R/snapclust.choose.k.R
 4da0ad18c9806384a2e0187d45537f0d *R/snpposi.R
 8ae498ab44be85ccdc50851954608419 *R/snpzip.R
-266b57b7b3cfd8d08ca76e3bfe0a5697 *R/spca.R
+7ac4da052e8a813efbb63a7a0ea4fd74 *R/spca.R
 3ecfe5fcc822f032b4f4aab8a581c3bc *R/spca_randtest.R
 1b132461c8acb40e2ba2980f8736a189 *R/strataMethods.R
 77e407a3a82a0bdc637b70ab077d2e50 *R/xvalDapc.R
@@ -183,7 +183,7 @@ f1a37774b533164d26949f125583e877 *man/snapclust.choose.k.Rd
 a07dc761eaed6ce13e3ba2c1ef1c7949 *man/snpzip.rd
 b8478f2203f480e09bfaaadd2ebc55ae *man/spca.Rd
 c657d396cb519d8be6a9eed6848dc2a9 *man/spca.rtests.Rd
-d2577c7fcf5c221c8a1b62daabc13244 *man/spcaIllus.Rd
+ecdb95eb6f1a4829dfc8590c40fe18b5 *man/spcaIllus.Rd
 4b95bf51a91698da2894d8440b729e59 *man/spca_randtest.Rd
 0c4910974db9c87977b03c11b32fefc4 *man/strata-methods.Rd
 f3b25293162e571f794d148dd18646f2 *man/swallowtails.Rd
@@ -207,6 +207,7 @@ a4741000c21083b73369b373a13098b2 *tests/testthat/Rplots.pdf
 242f851f5434f1d0f193ebb3671925e6 *tests/testthat/test-genind2genpop.R
 01622b18130f09e1b609c9f349a56ceb *tests/testthat/test-prop.R
 f6baa9d24f4f94cc93aec41b876a83d8 *tests/testthat/test-seppop.R
+465a620421a82e800e4da23d5cb5fccb *tests/testthat/test-setAs.R
 6e3e5545a7934c8d9a03bfd755142a7f *tests/testthat/test_accessors.R
 64c69022f9d492be121322178f080618 *tests/testthat/test_compoplot.R
 439335b7a33235df9b82fe46c0ef281d *tests/testthat/test_constructors.R
