@@ -1,5 +1,5 @@
-5e48890b25f16d3b3b98b1755b7760d8 *ChangeLog
-01599d4f26755cbcc1f329254ccc790b *DESCRIPTION
+d68357a274881ca0a34e5d7306cfaa09 *ChangeLog
+3647f000b232b9550f56313f6a76f90d *DESCRIPTION
 dfa68f818c2fe29783780f4c924869f4 *NAMESPACE
 5ebf3ab120b8dc51059621f42255e069 *R/AIC.snapclust.R
 957a38141833031d3003f04796430466 *R/AICc.snapclust.R
@@ -200,7 +200,7 @@ fede1fa0994f4422788d288a681c5c2d *src/adesub.h
 36960816108fe11d20d147f8099c0f48 *src/monmonier-utils.c
 30a3776e7b777916198cf651f234dca4 *src/sharedAll.c
 881ca764d622a92f691543628cd6d2d8 *src/snpbin.c
-0f2d21d147aa34f8ad13c93ef33992d8 *src/snpbin.h
+94189b4d9d81289553cbe7fcbe70e374 *src/snpbin.h
 902d68e0a32942936d7bcac7de400bfe *tests/testthat.R
 1e059ba9872ee43edeec99b3482d9baa *tests/testthat/test-findclust.R
 242f851f5434f1d0f193ebb3671925e6 *tests/testthat/test-genind2genpop.R
