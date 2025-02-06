@@ -1,6 +1,6 @@
 Package: adegenet
 Title: Exploratory Analysis of Genetic and Genomic Data
-Version: 2.1.10
+Version: 2.1.11
 Authors@R: 
     c(person(given = "Thibaut",
              family = "Jombart",
@@ -67,7 +67,13 @@ Authors@R:
        person(given = "Pavel",
               family = "Dimens",
               role = "ctb",
-              comment = c(ORCID = "0000-0003-3823-0373"))
+              comment = c(ORCID = "0000-0003-3823-0373")),
+       person(given = "Max",
+              family = "Coulter",
+              role = "ctb"),
+       person(given = "Ivan",
+              family = "Krylov",
+              role = "ctb")
        )
 Description: Toolset for the exploration of genetic and genomic
     data. Adegenet provides formal (S4) classes for storing and handling
@@ -87,7 +93,7 @@ Suggests: adespatial, pegas, hierfstat, maps, spdep, interp, splancs,
         poppr, testthat
 Encoding: UTF-8
 LazyLoad: yes
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Collate: 'adegenet.package.R' 'datasets.R' 'dist.genlight.R'
         'orthobasis.R' 'classes.R' 'constructors.R' 'accessors.R'
         'basicMethods.R' 'handling.R' 'auxil.R' 'minorAllele.R'
@@ -107,7 +113,7 @@ Collate: 'adegenet.package.R' 'datasets.R' 'dist.genlight.R'
         'spca_randtest.R' 'export_to_mvmapper.R' 'doc_C_routines.R'
         'zzz.R'
 NeedsCompilation: yes
-Packaged: 2023-01-25 22:43:53 UTC; zhian
+Packaged: 2025-02-06 21:23:20 UTC; zkamvar
 Author: Thibaut Jombart [aut] (<https://orcid.org/0000-0003-2226-8692>),
   Zhian N. Kamvar [aut, cre] (<https://orcid.org/0000-0003-1458-7108>),
   Caitlin Collins [ctb],
@@ -127,7 +133,9 @@ Author: Thibaut Jombart [aut] (<https://orcid.org/0000-0003-2226-8692>),
   Rebecca DeCamp [ctb],
   Alexandre Courtiol [ctb] (<https://orcid.org/0000-0003-0637-2959>),
   Lindsay V. Clark [ctb] (<https://orcid.org/0000-0002-3881-9252>),
-  Pavel Dimens [ctb] (<https://orcid.org/0000-0003-3823-0373>)
+  Pavel Dimens [ctb] (<https://orcid.org/0000-0003-3823-0373>),
+  Max Coulter [ctb],
+  Ivan Krylov [ctb]
 Maintainer: Zhian N. Kamvar <zkamvar@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-01-26 22:00:23 UTC
+Date/Publication: 2025-02-06 22:40:02 UTC
